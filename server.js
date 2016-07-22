@@ -10,7 +10,7 @@ var JWT_SECRET = 'hermeszeus';
 
 var db = null;
 //var messages;
-MongoClient.connect(process.env..MONGOLAB_URI || "mongodb://localhost:27017/hermius", function(err, dbconn){
+MongoClient.connect(process.env.MONGOLAB_URI || "mongodb://localhost:27017/hermius", function(err, dbconn){
 	if (!err) {
 		console.log("We are connected");
 		db = dbconn;
