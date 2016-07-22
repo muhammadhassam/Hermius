@@ -111,6 +111,6 @@ app.put('/users/signin', function(req, res, next){
 	//res.send();
 });
 
-app.listen(process.env.PORT, function () {
+app.listen(3003, function () {
   console.log('Example app listening on port 3003!');
 });
