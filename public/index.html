@@ -1,0 +1,110 @@
+<html ng-app="hermius">
+<head>
+	<title>Hermius</title>
+	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="angular.min.js"></script>
+	<script type="text/javascript" src="angular-route.js"></script>
+	<script type="text/javascript" src="angular-cookies.js"></script>
+	<script type="text/javascript">
+		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
+
+
+		app.config(function($routeProvider, $locationProvider){
+			$routeProvider
+		   .when('/', {
+		    templateUrl: 'home.html',
+		    controller: 'HomeController',
+			})
+
+			.when('/signup', {
+		    templateUrl: 'signup.html',
+		    controller: 'SignupController',
+			});   
+		});
+
+		app.run(function($rootScope, $cookies){
+			if($cookies.get('token') && $cookies.get('currentUser')) {
+				$rootScope.token = $cookies.get('token');
+				$rootScope.currentUser = $cookies.get('currentUser');
+			}
+		});
+
+		app.controller('HomeController', function($rootScope, $scope, $http, $cookies){
+			
+			$scope.SubmitNewMessage = function(){
+				$http.post('/messages', {newMessage: $scope.newMessage},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+					getMessages();
+					$scope.newMessage = '';
+				});
+			};
+
+			//Login function
+			$scope.signin = function(){
+				$http.put('/users/signin', {username: $scope.username, password: $scope.password}).then(function(res){
+					console.log(res.data.token);
+					$cookies.put('token', res.data.token);
+					$cookies.put('currentUser', $scope.username);
+					$rootScope.token = res.data.token;
+					$rootScope.currentUser = $scope.username;
+					//alert('Successfully signed in!');
+				}, function(err) {
+					alert('Wrong Username or Password');
+				});
+			};
+
+
+
+			//Logout Function
+			$scope.logout = function(){
+				$cookies.remove('token');
+				$cookies.remove('currentUser');
+				$rootScope.token = null;
+				$rootScope.currentUser = null;
+			};
+
+			//Remove a message
+			$scope.removeMessage = function(message){
+				$http.put('/messages/remove', 
+					{message: message}, 
+					{headers: {
+				 		'authorization': $rootScope.token
+				 	}}).then(function(){
+					getMessages();
+				});
+			};
+
+			function getMessages(){
+				$http.get('/messages').then(function(response){
+				$scope.messages = response.data;
+				});
+			}
+
+			getMessages();
+
+		});
+
+		app.controller('SignupController', function($scope, $http){
+			$scope.submitSignup = function(){
+				var newUser = {
+					username: $scope.username,
+					password: $scope.password
+				};
+				$http.post('/users', newUser).then(function(){
+					alert('User Successfully created');
+				});
+			};
+		});
+	</script>
+</head>
+<body >
+	<div class="panel panel-default">
+		<h1 class="page-title"><a href="#/" >Hermius</h1></a>
+	</div>
+	
+	<div ng-view></div>
+</body>
+</html>
