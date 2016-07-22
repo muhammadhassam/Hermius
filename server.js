@@ -10,7 +10,7 @@ var JWT_SECRET = 'hermeszeus';
 
 var db = null;
 //var messages;
-MongoClient.connect("mongodb://localhost:27017/hermius", function(err, dbconn){
+MongoClient.connect(process.env..MONGOLAB_URI || "mongodb://localhost:27017/hermius", function(err, dbconn){
 	if (!err) {
 		console.log("We are connected");
 		db = dbconn;
@@ -111,6 +111,6 @@ app.put('/users/signin', function(req, res, next){
 	//res.send();
 });
 
-app.listen(3003, function () {
+app.listen(process.env.PORT, function () {
   console.log('Example app listening on port 3003!');
 });
