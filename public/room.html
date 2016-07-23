@@ -1,0 +1,65 @@
+<div class="row feed">
+	<div class="col-md-3" style="background-color: #FAFAFA; border: 1px solid #efefef">
+		<H2 style="color: #337AB7">Welcome</H2>
+			<h4>Hi {{ currentUser}}</h4>
+			<a href ng-click="logout()">Logout.</a>
+
+			<H2 style="color: #337AB7">Rooms</H2>
+			<a href="#/room"> Create a new Meeting Room?</a>
+			<H2 style="color: #337AB7">People</H2>
+			<input type="text" placeholder="username"></input>
+			<button type="button" class="btn btn-secondary ">Invite</button>
+			<BR><BR>
+			<ul class="list-group">
+				<li class="list-group-item">
+					<a href="#" >John</a>
+				</li>
+				<li class="list-group-item">
+					<a href="#">Steve </a>
+				</li>
+				<li class="list-group-item">
+					<a href="#" >jack</a>
+				</li>
+				<li class="list-group-item">
+					<a href="#" >Claire</a>
+				</li>
+			</ul>
+	</div>
+	<div class="col-md-7" style="border: 1px solid #efefef">
+		<H2 style="color: #337AB7">Meeting Room Name</H2>
+		<h3 ng-repeat = "message in messages">
+			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+			Hello
+			<a href ng-click="removeMessage(message)"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
+			<BR>
+			<small>{{message.username}}</small>
+		</h3>
+			<ul class="list-group">
+				<li class="list-group-item">
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+					<a href="#" >John</a>
+					<p style="color: #736c66">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tincidunt laoreet arcu, quis ornare orci scelerisque nec. Sed sit amet hendrerit diam. </p>
+				</li>
+				<li class="list-group-item">
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+					<a href="#" >John</a>
+					<p style="color: #736c66">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tincidunt laoreet arcu, quis ornare orci scelerisque nec. Sed sit amet hendrerit diam. </p>
+				</li>
+				<li class="list-group-item">
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+					<a href="#" >Steve</a>
+					<p style="color: #736c66">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc tincidunt laoreet arcu, quis ornare orci scelerisque nec. Sed sit amet hendrerit diam. </p>
+				</li>
+			</ul>
+			<div class="new-message" ng-show="currentUser">
+				<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">
+				<br>
+				<button type="button" class="btn btn-primary" ng-click="">Send</button>
+			</div>
+	</div>
+	<div class = "col-md-2" style="background-color: #FAFAFA; border: 1px solid #efefef">
+		<H2 style="color: #337AB7">Agenda</H2>
+
+		<h4>- #Tada</h4>
+	</div>
+</div>

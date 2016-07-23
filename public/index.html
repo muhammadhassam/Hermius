@@ -20,7 +20,12 @@
 			.when('/signup', {
 		    templateUrl: 'signup.html',
 		    controller: 'SignupController',
-			});   
+			})
+
+			.when('/room', {
+		    templateUrl: 'room.html',
+		    controller: 'RoomController',
+			});     
 		});
 
 		app.run(function($rootScope, $cookies){
@@ -82,10 +87,16 @@
 				$scope.messages = response.data;
 				});
 			}
-
 			getMessages();
+			});
 
-		});
+
+			// $scope.createRoom = function(message){
+			// 	$http.post('/room', newUser).then(function(){
+			// 		alert('User Successfully created');
+			// 	});
+			// };
+
 
 		app.controller('SignupController', function($scope, $http){
 			$scope.submitSignup = function(){

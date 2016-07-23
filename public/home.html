@@ -1,5 +1,5 @@
-<div class="row feed">
-	<div class="col-md-4">
+<div class="row feed" >
+	<div class="col-md-3" >
 		<div ng-hide="currentUser">
 			<H2 style="color: #337AB7">Login</H2>
 			<br>
@@ -14,12 +14,14 @@
 		<div ng-show="currentUser">
 			<H2 style="color: #337AB7">Welcome</H2>
 			<h4>Hi {{ currentUser}}, What's new?</h4>
-
 			<a href ng-click="logout()">Logout.</a>
+
 			<H2 style="color: #337AB7">Rooms</H2>
+			<a href="#/room"> Create a new Meeting Room?</a>
 		</div>	
+		{{message.username}}
 	</div>
-	<div class="col-md-8">
+	<div class="col-md-6">
 		<div class="new-message" ng-show="currentUser">
 			<input type="text" class="form-control" ng-model="newMessage" placeholder="Write a message!">
 			<br>
@@ -32,5 +34,10 @@
 			<BR>
 			<small>{{message.username}}</small>
 		</h3>
+	</div>
+	<div class = "col-md-3" style="background-color: #FAFAFA; border: 1px solid #337AB7">
+		<H2 style="color: #337AB7">Tasks</H2>
+
+		<h4>- #Tada</h4>
 	</div>
 </div>
