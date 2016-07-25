@@ -51,7 +51,7 @@
 				<br>
 				<button type="button" class="btn btn-primary" ng-click="SubmitNewChatMessage()">Send</button>
 			</div> -->
-			{{rooms}}
+			{{ room._id }}
 		<div ng-hide="roomName">
 			<H2 style="color: #337AB7" >Meeting Room Name</H2>
 		</div>
@@ -59,18 +59,25 @@
 			<H2 style="color: #337AB7" >{{room.name}}</H2>
 		</div>
 		
+		<div style=" height: 400px;overflow: scroll; ">
+			<ul class="list-group"  >
+				<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+					<a href="#">{{ chatMessage.username }}</a>
+					<BR>
+					<small>{{ chatMessage.text }}</small>
+					<BR>
+					<small style="font-size: 10px;">{{ chatMessage.date }}</small>
+				</li>
+			</ul>
+		</div>
 		<div class="new-message" ng-show="currentUser">
 			<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">
 			<br>
 			<button type="button" class="btn btn-primary" ng-click="SubmitNewChatMessage()">Send</button>
-		</div>
-		<h3 ng-repeat = "message in messages">
-			<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-			{{ message.text }}
-			<a href ng-click="removeMessage(message)"> <span class="glyphicon glyphicon-remove" aria-hidden="true"></span></a>
 			<BR>
-			<small>{{message.username}}</small>
-		</h3>
+			<small>Logged in as <a href=""> {{ currentUser}}</a></small>
+		</div>
 	</div>
 	<div class = "col-md-2" style="background-color: #FAFAFA; border: 1px solid #efefef">
 		<H2 style="color: #337AB7">Agenda</H2>

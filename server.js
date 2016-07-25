@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var bcrypt = require('bcryptjs');
 var jwt = require('jwt-simple');
 var app = express();
+var datetime = require('node-datetime');
 var http = http = require('http').Server(app);
 var io = require('socket.io')(http);
 
@@ -27,10 +28,23 @@ io.on('connection', function(socket){
 	//console.log('A user has connected');
 });
 
+
+
 app.get('/messages', function(req, res, next){
 	db.collection('messages', function(err, messagesCollection){
 		messagesCollection.find().toArray(function(err, messages){
 			return res.json(messages);
+
+		});
+		return	db.collection;
+	});
+});
+
+
+app.get('/chat/messages', function(req, res, next){
+	db.collection('chatMessages', function(err, chatMessagesCollection){
+		chatMessagesCollection.find().toArray(function(err, chatMessages){
+			return res.json(chatMessages);
 
 		});
 		return	db.collection;
@@ -51,19 +65,38 @@ app.get('/rooms', function(req, res, next){
 //Function to insert CHAT messages
 app.post('/chat/messages', function(req, res, next){
 
+	// var past = '2015-01-01 00:00:00';
+	// var pastDateTime = datetime.create(past);
+	// var pastNow; 
+	// // get the current timestamp of the past 
+	// setTimeout(function () {
+	    
+	//    	pastNow = pastDateTime.now();
+	//     // this would be 1420038010000 
+	//     console.log(pastNow);
+	//     // this would be 2015-01-01 00:00:10 
+	//     console.log(new Date(pastNow));
+	// }, 1000);
+	
+	var now = new Date();
+	var jsonDate = now.toJSON();
+
 	var token = req.headers.authorization;
 	var user = jwt.decode(token, JWT_SECRET);
-	var roomName = jwt.decode(token, JWT_SECRET);
+
 	//console.log(req.body.newChatMessage);
-	console.log(req.body.newRoom);
-	db.collection('chatMessages', function(err, messagesCollection){
+	//console.log(req.body.newRoom);
+	console.log(jsonDate);
+	db.collection('chatMessages', function(err, chatMessagesCollection){
 		var newChatMessage = {
 			//room: req.body.newRoom,
 			text: req.body.newChatMessage,
 			user: user._id,
 			username: user.username,
+			date: jsonDate
+
 		};
-		messagesCollection.insert(newChatMessage, {w:1}, function(err, messages){
+		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
 			return res.send();
 		});
 	});
@@ -174,7 +207,7 @@ app.put('/users/signin', function(req, res, next){
 	//res.send();
 });
 
-http.listen(3006, function () {
+app.listen(3006, function () {
   console.log('Example app listening on port 3006!');
 });
 

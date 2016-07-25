@@ -131,7 +131,7 @@
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
 
-					getMessages();
+					getChatMessages();
 					$scope.newChatMessage = '';
 				});
 			};
@@ -143,8 +143,9 @@
 				 }}).then(function(){
 				 	console.log($scope.roomName);
 					//$cookies.put('token', res.data.token);
-					$cookies.put('roomName', $scope.roomName);
-					$rootScope.roomName = $scope.roomName;
+					//$cookies.put('roomName', $scope.roomName);
+					//$rootScope.roomName = $scope.roomName;
+					getRooms();
 					$scope.roomName = '';
 				});
 			};
@@ -154,13 +155,18 @@
 				$scope.messages = response.data;
 				});
 			}
+			function getChatMessages(){
+				$http.get('/chat/messages').then(function(response){
+				$scope.chatMessages = response.data;
+				});
+			}
 
 			function getRooms(){
 				$http.get('/rooms').then(function(response){
 				$scope.rooms = response.data;
 				});
 			}
-			getMessages();
+			getChatMessages();
 			getRooms();
 
 			
