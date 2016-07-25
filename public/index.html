@@ -1,12 +1,16 @@
 <html ng-app="hermius">
 <head>
 	<title>Hermius</title>
+	
+	<script src="https://cdn.socket.io/socket.io-1.4.5.js"></script>
+	
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script type="text/javascript" src="angular.min.js"></script>
 	<script type="text/javascript" src="angular-route.js"></script>
 	<script type="text/javascript" src="angular-cookies.js"></script>
 	<script type="text/javascript">
+
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
 
 
@@ -37,6 +41,10 @@
 
 		app.controller('HomeController', function($rootScope, $scope, $http, $cookies){
 			
+
+			
+
+
 			$scope.SubmitNewMessage = function(){
 				$http.post('/messages', {newMessage: $scope.newMessage},
 				 {headers: {
@@ -50,7 +58,7 @@
 			//Login function
 			$scope.signin = function(){
 				$http.put('/users/signin', {username: $scope.username, password: $scope.password}).then(function(res){
-					console.log(res.data.token);
+					//console.log(res.data.token);
 					$cookies.put('token', res.data.token);
 					$cookies.put('currentUser', $scope.username);
 					$rootScope.token = res.data.token;
@@ -88,7 +96,10 @@
 				});
 			}
 			getMessages();
-			});
+			
+
+
+		});
 
 
 			// $scope.createRoom = function(message){
@@ -109,6 +120,53 @@
 				});
 			};
 		});
+
+
+		app.controller('RoomController', function($rootScope, $scope, $http, $cookies){
+			
+			$scope.SubmitNewChatMessage = function(){
+
+				$http.post('/chat/messages', {newChatMessage: $scope.newChatMessage},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+
+					getMessages();
+					$scope.newChatMessage = '';
+				});
+			};
+
+			$scope.AssignRoomName = function(){
+				$http.put('/newRoom', {newRoom: $scope.roomName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+				 	console.log($scope.roomName);
+					//$cookies.put('token', res.data.token);
+					$cookies.put('roomName', $scope.roomName);
+					$rootScope.roomName = $scope.roomName;
+					$scope.roomName = '';
+				});
+			};
+
+			function getMessages(){
+				$http.get('/messages').then(function(response){
+				$scope.messages = response.data;
+				});
+			}
+
+			function getRooms(){
+				$http.get('/rooms').then(function(response){
+				$scope.rooms = response.data;
+				});
+			}
+			getMessages();
+			getRooms();
+
+			
+		});
+
+
 	</script>
 </head>
 <body >

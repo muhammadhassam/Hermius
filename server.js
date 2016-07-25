@@ -5,6 +5,8 @@ var bodyParser = require('body-parser');
 var bcrypt = require('bcryptjs');
 var jwt = require('jwt-simple');
 var app = express();
+var http = http = require('http').Server(app);
+var io = require('socket.io')(http);
 
 var JWT_SECRET = 'hermeszeus';
 
@@ -21,6 +23,9 @@ app.use(bodyParser.json());
 
 app.use(express.static('public'));
 
+io.on('connection', function(socket){
+	//console.log('A user has connected');
+});
 
 app.get('/messages', function(req, res, next){
 	db.collection('messages', function(err, messagesCollection){
@@ -32,20 +37,78 @@ app.get('/messages', function(req, res, next){
 	});
 });
 
+//Function to get rooms
+app.get('/rooms', function(req, res, next){
+	db.collection('rooms', function(err, messagesCollection){
+		messagesCollection.find().toArray(function(err, messages){
+			return res.json(messages);
+
+		});
+		return	db.collection;
+	});
+});
+
+//Function to insert CHAT messages
+app.post('/chat/messages', function(req, res, next){
+
+	var token = req.headers.authorization;
+	var user = jwt.decode(token, JWT_SECRET);
+	var roomName = jwt.decode(token, JWT_SECRET);
+	//console.log(req.body.newChatMessage);
+	console.log(req.body.newRoom);
+	db.collection('chatMessages', function(err, messagesCollection){
+		var newChatMessage = {
+			//room: req.body.newRoom,
+			text: req.body.newChatMessage,
+			user: user._id,
+			username: user.username,
+		};
+		messagesCollection.insert(newChatMessage, {w:1}, function(err, messages){
+			return res.send();
+		});
+	});
+	//res.send();
+});
+
+
+//Function to select Room name
+app.put('/newRoom', function(req, res, next){
+
+	var token = req.headers.authorization;
+	var user = jwt.decode(token, JWT_SECRET);
+	console.log(req.body.newRoom);
+	db.collection('rooms', function(err, roomsCollection){
+		var newRoom = {
+			//room: req.body.newRoom,
+
+			name: req.body.newRoom,
+			//user: user._id,
+			//username: user.username
+		};
+		roomsCollection.insert(newRoom, {w:1}, function(err, messages){
+			
+			return res.send();
+		});
+
+	});
+	//res.send();
+});
 
 //Function to insert messages
 app.post('/messages', function(req, res, next){
 
 	var token = req.headers.authorization;
 	var user = jwt.decode(token, JWT_SECRET);
-	
+	//console.log(req.body.newRoom);
 	db.collection('messages', function(err, messagesCollection){
 		var newMessage = {
+			//room: req.body.newRoom,
 			text: req.body.newMessage,
 			user: user._id,
 			username: user.username
 		};
 		messagesCollection.insert(newMessage, {w:1}, function(err, messages){
+			
 			return res.send();
 		});
 	});
@@ -111,7 +174,7 @@ app.put('/users/signin', function(req, res, next){
 	//res.send();
 });
 
-app.listen(3004, function () {
-  console.log('Example app listening on port 3004!');
+http.listen(3006, function () {
+  console.log('Example app listening on port 3006!');
 });
 
