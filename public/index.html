@@ -9,10 +9,11 @@
 	<script type="text/javascript" src="angular.min.js"></script>
 	<script type="text/javascript" src="angular-route.js"></script>
 	<script type="text/javascript" src="angular-cookies.js"></script>
+	
 	<script type="text/javascript">
-
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
 
+		var meetingRoomName;
 
 		app.config(function($routeProvider, $locationProvider){
 			$routeProvider
@@ -37,13 +38,13 @@
 				$rootScope.token = $cookies.get('token');
 				$rootScope.currentUser = $cookies.get('currentUser');
 			}
+			if($cookies.get('roomToken') && $cookies.get('roomName')) {
+				$rootScope.roomToken = $cookies.get('roomToken');
+				$rootScope.roomName = $cookies.get('roomName');
+			}
 		});
 
 		app.controller('HomeController', function($rootScope, $scope, $http, $cookies){
-			
-
-			
-
 
 			$scope.SubmitNewMessage = function(){
 				$http.post('/messages', {newMessage: $scope.newMessage},
@@ -126,7 +127,7 @@
 			
 			$scope.SubmitNewChatMessage = function(){
 
-				$http.post('/chat/messages', {newChatMessage: $scope.newChatMessage},
+				$http.post('/chat/messages', {newChatMessage: $scope.newChatMessage, roomName: $rootScope.roomName},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
@@ -140,12 +141,17 @@
 				$http.put('/newRoom', {newRoom: $scope.roomName},
 				 {headers: {
 				 	'authorization': $rootScope.token
-				 }}).then(function(){
-				 	console.log($scope.roomName);
-					//$cookies.put('token', res.data.token);
-					//$cookies.put('roomName', $scope.roomName);
-					//$rootScope.roomName = $scope.roomName;
+				 }}).then(function(res){
+				 	//console.log($scope.roomName);
+					
+				 	$cookies.put('roomToken', res.data.token);
+					$cookies.put('roomName', $scope.roomName);
+					$rootScope.roomToken = res.data.token;
+					$rootScope.roomName = $scope.roomName;
+
 					getRooms();
+					meetingRoomName = $scope.roomName;
+					console.log(meetingRoomName);
 					$scope.roomName = '';
 				});
 			};

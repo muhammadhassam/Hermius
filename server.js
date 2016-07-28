@@ -64,19 +64,6 @@ app.get('/rooms', function(req, res, next){
 
 //Function to insert CHAT messages
 app.post('/chat/messages', function(req, res, next){
-
-	// var past = '2015-01-01 00:00:00';
-	// var pastDateTime = datetime.create(past);
-	// var pastNow; 
-	// // get the current timestamp of the past 
-	// setTimeout(function () {
-	    
-	//    	pastNow = pastDateTime.now();
-	//     // this would be 1420038010000 
-	//     console.log(pastNow);
-	//     // this would be 2015-01-01 00:00:10 
-	//     console.log(new Date(pastNow));
-	// }, 1000);
 	
 	var now = new Date();
 	var jsonDate = now.toJSON();
@@ -86,14 +73,15 @@ app.post('/chat/messages', function(req, res, next){
 
 	//console.log(req.body.newChatMessage);
 	//console.log(req.body.newRoom);
-	console.log(jsonDate);
+	console.log(req.body.roomName);
 	db.collection('chatMessages', function(err, chatMessagesCollection){
 		var newChatMessage = {
 			//room: req.body.newRoom,
 			text: req.body.newChatMessage,
 			user: user._id,
 			username: user.username,
-			date: jsonDate
+			date: jsonDate,
+			room: req.body.roomName
 
 		};
 		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
@@ -109,7 +97,7 @@ app.put('/newRoom', function(req, res, next){
 
 	var token = req.headers.authorization;
 	var user = jwt.decode(token, JWT_SECRET);
-	console.log(req.body.newRoom);
+	//console.log(req.body.newRoom);
 	db.collection('rooms', function(err, roomsCollection){
 		var newRoom = {
 			//room: req.body.newRoom,
@@ -119,7 +107,8 @@ app.put('/newRoom', function(req, res, next){
 			//username: user.username
 		};
 		roomsCollection.insert(newRoom, {w:1}, function(err, messages){
-			
+			//var token = jwt.encode(user, JWT_SECRET);
+			//return res.json({token: token});
 			return res.send();
 		});
 
@@ -132,13 +121,14 @@ app.post('/messages', function(req, res, next){
 
 	var token = req.headers.authorization;
 	var user = jwt.decode(token, JWT_SECRET);
-	//console.log(req.body.newRoom);
+	//console.log(req.body.roomName);
 	db.collection('messages', function(err, messagesCollection){
 		var newMessage = {
 			//room: req.body.newRoom,
 			text: req.body.newMessage,
 			user: user._id,
 			username: user.username
+			
 		};
 		messagesCollection.insert(newMessage, {w:1}, function(err, messages){
 			
@@ -207,7 +197,7 @@ app.put('/users/signin', function(req, res, next){
 	//res.send();
 });
 
-app.listen(3006, function () {
-  console.log('Example app listening on port 3006!');
+app.listen(3007, function () {
+  console.log('Example app listening on port 3007!');
 });
 
