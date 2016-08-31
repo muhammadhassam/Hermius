@@ -7,16 +7,22 @@ var jwt = require('jwt-simple');
 var app = express();
 var datetime = require('node-datetime');
 var http = http = require('http').Server(app);
-var io = require('socket.io')(http);
+var server = require('http').createServer(app);
+var io = require('socket.io')(server);
+var nodemailer = require('nodemailer');
 
 var JWT_SECRET = 'hermeszeus';
 
 var db = null;
 //var messages;
-MongoClient.connect(process.env.MONGOLAB_URI || "mongodb://localhost:27017/hermius", function(err, dbconn){
+MongoClient.connect("mongodb://localhost:27017/hermius", function(err, dbconn){
 	if (!err) {
 		console.log("We are connected");
 		db = dbconn;
+	}
+	else
+	{
+		console.log("NOT CONNECTED");
 	}
 });
 
@@ -24,8 +30,9 @@ app.use(bodyParser.json());
 
 app.use(express.static('public'));
 
+server.listen(80);
 io.on('connection', function(socket){
-	//console.log('A user has connected');
+	console.log('IO CONNECTION SUCCESSFUL');
 });
 
 
@@ -74,6 +81,7 @@ app.post('/chat/messages', function(req, res, next){
 	//console.log(req.body.newChatMessage);
 	//console.log(req.body.newRoom);
 	console.log(req.body.roomName);
+	
 	db.collection('chatMessages', function(err, chatMessagesCollection){
 		var newChatMessage = {
 			//room: req.body.newRoom,
@@ -82,6 +90,7 @@ app.post('/chat/messages', function(req, res, next){
 			username: user.username,
 			date: jsonDate,
 			room: req.body.roomName
+			//roomId: room._id
 
 		};
 		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
@@ -131,7 +140,7 @@ app.post('/messages', function(req, res, next){
 			
 		};
 		messagesCollection.insert(newMessage, {w:1}, function(err, messages){
-			
+			io.emit('{text: req.body.newMessage}');
 			return res.send();
 		});
 	});
@@ -181,8 +190,9 @@ app.post('/users', function(req, res, next){
 
 //function for signing in
 app.put('/users/signin', function(req, res, next){
+	console.log(req.body.username);
 	db.collection('users', function(err, usersCollection){
-		usersCollection.findOne({username: req.body.username, }, function(err, user){
+		usersCollection.findOne({username: req.body.username}, function(err, user){
 			bcrypt.compare(req.body.password, user.password, function(err, result){
 				if(result){
 					var token = jwt.encode(user, JWT_SECRET);
@@ -197,7 +207,7 @@ app.put('/users/signin', function(req, res, next){
 	//res.send();
 });
 
-app.listen(3007, function () {
-  console.log('Example app listening on port 3007!');
+app.listen(3014, function () {
+  console.log('Example app listening on port 3014!');
 });
 
