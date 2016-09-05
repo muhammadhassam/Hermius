@@ -1,0 +1,2 @@
+D:\Workspace Mean JS\Hermius\obj\Debug\NodejsApp1.njsprojResolveAssemblyReference.cache
+D:\Workspace Mean JS\Hermius\bin\Microsoft.NodejsTools.WebRole.dll

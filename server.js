@@ -18,7 +18,7 @@ var db = null;
 MongoClient.connect("mongodb://localhost:27017/hermius", function(err, dbconn){
 	if (!err) {
 		console.log("We are connected");
-		db = dbconn;
+        db = dbconn;   
 	}
 	else
 	{
@@ -91,9 +91,9 @@ app.post('/chat/messages', function(req, res, next){
 			date: jsonDate,
 			room: req.body.roomName
 			//roomId: room._id
-
 		};
 		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
+			io.emit('{text: req.body.newChatMessage}');
 			return res.send();
 		});
 	});
@@ -207,7 +207,7 @@ app.put('/users/signin', function(req, res, next){
 	//res.send();
 });
 
-app.listen(3014, function () {
-  console.log('Example app listening on port 3014!');
+app.listen(3015, function () {
+  console.log('Example app listening on port 3015!');
 });
 

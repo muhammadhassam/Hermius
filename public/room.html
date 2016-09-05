@@ -50,10 +50,9 @@
 				<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">
 				<br>
 				<button type="button" class="btn btn-primary" ng-click="SubmitNewChatMessage()">Send</button>
-			</div> -->
-			{{ room }} {{ roomName }}
+			</div> -->	
 		<div >
-			<H2 style="color: #337AB7" >Meeting Room Name {{ $rootScope.roomName }}</H2>
+			<H2 style="color: #337AB7" >Meeting Room Name - {{ roomName }} {{ meetingRoomName }}</H2>
 		</div>
 		<!-- <div ng-show="roomName">
 			<H2 style="color: #337AB7" >{{ roomName }}</H2>
@@ -71,7 +70,7 @@
 				</li>
 			</ul>
 		</div>
-		<div class="new-message" ng-show="currentUser">
+		<div class="new-message" ng-show="meetingRoomName">
 			<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">
 			<br>
 			<button type="button" class="btn btn-primary" ng-click="SubmitNewChatMessage()">Send</button>
