@@ -138,7 +138,8 @@
 				console.log('SOCKET IO');
 			});
 			socket.on('{text: req.body.newChatMessage}', function(data){
-				getChatMessages();
+				//getChatMessages();
+				getChatMessagesByRoom();
 			});
 
 			$scope.SubmitNewChatMessage = function(){
@@ -148,7 +149,7 @@
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
 
-					getChatMessages();
+					getChatMessagesByRoom();
 					$scope.newChatMessage = '';
 				});
 			};
@@ -166,33 +167,55 @@
 					$rootScope.roomName = $scope.roomName;
 
 					getRooms();
+
 					meetingRoomName = $scope.roomName;
 					console.log(meetingRoomName);
 					$rootScope.meetingRoomName = $scope.roomName;
 					$scope.roomName = '';
+					getChatMessagesByRoom();
 				});
 			};
 
 			function getMessages(){
 				$http.get('/messages').then(function(response){
-				$scope.messages = response.data;
+					$scope.messages = response.data;
 				});
 			}
+			function getChatMessagesByRoom(){
+				$http.get('/chat/messages/room').then(function(response){
+					//console.log()
+					$scope.chatMessages = response.data;
+					//chatMessagess = $scope.chatMessages;
+					console.log($scope.chatMessages);
+				});
+			}
+
+			function getChatMessagesByRoomTest(){
+				$http.get('/chat/messages/room/test').then(function(response){
+					//console.log()
+					$scope.chatMessages = response.data;
+					//chatMessagess = $scope.chatMessages;
+					console.log($scope.chatMessages);
+				});
+			}
+
 			function getChatMessages(){
 				$http.get('/chat/messages').then(function(response){
-				$scope.chatMessages = response.data;
+
+					$scope.chatMessages = response.data;
 				});
 			}
 
 			function getRooms(){
 				$http.get('/rooms').then(function(response){
-				$scope.rooms = response.data;
+					$scope.rooms = response.data;
 				});
 			}
-			getChatMessages();
+			getChatMessagesByRoom();
+			//getChatMessages();
 			getRooms();
 
-			
+			console.log($scope.chatMessage);
 		});
 
 

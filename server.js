@@ -58,6 +58,25 @@ app.get('/chat/messages', function(req, res, next){
 	});
 });
 
+//Function to get chat messages by Room
+app.get('/chat/messages/room', function(req, res, next){
+	db.collection('chatMessages', function(err, chatMessagesCollection){
+		// chatMessagesCollection.findOne({room: "Room 3"}, function(err, chatMessages){
+		// 	//console.log(chatMessages.text);
+		// 	console.log(chatMessages.text);
+		// 	return res.json(chatMessages);
+		// });
+		chatMessagesCollection.find({room: "Room 3"}).toArray(function(err, chatMessages){
+			//console.log(chatMessages.text);
+			console.log(chatMessages.text);
+			return res.json(chatMessages);
+		});
+		return	db.collection;
+	});
+});
+
+
+
 //Function to get rooms
 app.get('/rooms', function(req, res, next){
 	db.collection('rooms', function(err, messagesCollection){
