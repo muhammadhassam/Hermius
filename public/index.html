@@ -13,6 +13,7 @@
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
 
 		var meetingRoomName;
+		var roomNumber = 1;
         
 		app.config(function($routeProvider, $locationProvider){
 			$routeProvider
@@ -29,6 +30,11 @@
 			.when('/room', {
 		    templateUrl: 'room.html',
 		    controller: 'RoomController',
+			}) 
+
+			.when('/room/1', {
+		    templateUrl: 'room.html',
+		    controller: 'RoomController',
 			});     
 		});
 
@@ -42,6 +48,8 @@
 				$rootScope.roomName = $cookies.get('roomName');
 			}
 		});
+
+		
 
 		app.controller('HomeController', function($rootScope, $scope, $http, $cookies){
 
@@ -139,7 +147,7 @@
 			});
 			socket.on('{text: req.body.newChatMessage}', function(data){
 				//getChatMessages();
-				getChatMessagesByRoom();
+				getChatMessagesByRoomArg($rootScope.roomName);
 			});
 
 			$scope.SubmitNewChatMessage = function(){
@@ -149,7 +157,8 @@
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
 
-					getChatMessagesByRoom();
+					//getChatMessagesByRoom();
+					getChatMessagesByRoomArg($rootScope.roomName);
 					$scope.newChatMessage = '';
 				});
 			};
@@ -169,10 +178,11 @@
 					getRooms();
 
 					meetingRoomName = $scope.roomName;
-					console.log(meetingRoomName);
+					//console.log(meetingRoomName);
 					$rootScope.meetingRoomName = $scope.roomName;
 					$scope.roomName = '';
-					getChatMessagesByRoom();
+					//getChatMessagesByRoom();
+					getChatMessagesByRoomArg(meetingRoomName);
 				});
 			};
 
@@ -186,16 +196,33 @@
 					//console.log()
 					$scope.chatMessages = response.data;
 					//chatMessagess = $scope.chatMessages;
-					console.log($scope.chatMessages);
+					//console.log($scope.chatMessages);
 				});
 			}
 
-			function getChatMessagesByRoomTest(){
-				$http.get('/chat/messages/room/test').then(function(response){
-					//console.log()
+			function getChatMessagesByRoomArg(meetingRoomName){
+				console.log("hello");
+				console.log(meetingRoomName);
+				$http.put('/chat/messages/roomNameArg', {meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log(newRoom);
 					$scope.chatMessages = response.data;
 					//chatMessagess = $scope.chatMessages;
-					console.log($scope.chatMessages);
+					//console.log($scope.chatMessages);
+				});
+			}
+			$scope.getChatMessagesByRoomNameAng = function(meetingRoomName){
+				//console.log("hello2");
+				//console.log(meetingRoomName);
+				$http.put('/chat/messages/roomNameAng', {meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log(newRoom);
+					$scope.chatMessages = response.data;
+					$rootScope.meetingRoomName = meetingRoomName;
+					$rootScope.roomName = meetingRoomName;
+					console.log("Checking Root Var "+meetingRoomName);
+					console.log("Checking Root Var 2 "+meetingRoomName);
+					console.log("Checking Root Var 3 "+$rootScope.roomName);
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
 				});
 			}
 
@@ -211,7 +238,8 @@
 					$scope.rooms = response.data;
 				});
 			}
-			getChatMessagesByRoom();
+			//getChatMessagesByRoomArg("Room "+roomNumber);
+			getChatMessagesByRoomArg($rootScope.roomName);
 			//getChatMessages();
 			getRooms();
 

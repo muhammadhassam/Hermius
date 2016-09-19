@@ -61,20 +61,42 @@ app.get('/chat/messages', function(req, res, next){
 //Function to get chat messages by Room
 app.get('/chat/messages/room', function(req, res, next){
 	db.collection('chatMessages', function(err, chatMessagesCollection){
-		// chatMessagesCollection.findOne({room: "Room 3"}, function(err, chatMessages){
-		// 	//console.log(chatMessages.text);
-		// 	console.log(chatMessages.text);
-		// 	return res.json(chatMessages);
-		// });
-		chatMessagesCollection.find({room: "Room 3"}).toArray(function(err, chatMessages){
+		chatMessagesCollection.find({room: null}).toArray(function(err, chatMessages){
 			//console.log(chatMessages.text);
-			console.log(chatMessages.text);
+			//console.log(chatMessages.text);
 			return res.json(chatMessages);
 		});
 		return	db.collection;
 	});
 });
 
+//Function to get chat messages by Room Name for Front Angular Page
+app.put('/chat/messages/roomNameAng', function(req, res, next){
+	db.collection('chatMessages', function(err, chatMessagesCollection){
+		console.log("Hello 2");
+		console.log(req.body.meetingRoomName);
+		chatMessagesCollection.find({room: req.body.meetingRoomName}).toArray(function(err, chatMessages){
+			//console.log(chatMessages.text);
+			//console.log(chatMessages.text);
+			return res.json(chatMessages);
+		});
+		return	db.collection;
+	});
+});
+
+//Function to get chat messages by Room
+app.put('/chat/messages/roomNameArg', function(req, res, next){
+	db.collection('chatMessages', function(err, chatMessagesCollection){
+		console.log("Hello ");
+		console.log(req.body.meetingRoomName);
+		chatMessagesCollection.find({room: req.body.meetingRoomName}).toArray(function(err, chatMessages){
+			//console.log(chatMessages.text);
+			//console.log(chatMessages.text);
+			return res.json(chatMessages);
+		});
+		return	db.collection;
+	});
+});
 
 
 //Function to get rooms
@@ -109,6 +131,7 @@ app.post('/chat/messages', function(req, res, next){
 			username: user.username,
 			date: jsonDate,
 			room: req.body.roomName
+
 			//roomId: room._id
 		};
 		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
