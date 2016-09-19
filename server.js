@@ -73,8 +73,8 @@ app.get('/chat/messages/room', function(req, res, next){
 //Function to get chat messages by Room Name for Front Angular Page
 app.put('/chat/messages/roomNameAng', function(req, res, next){
 	db.collection('chatMessages', function(err, chatMessagesCollection){
-		console.log("Hello 2");
-		console.log(req.body.meetingRoomName);
+		//console.log("Hello 2");
+		//console.log(req.body.meetingRoomName);
 		chatMessagesCollection.find({room: req.body.meetingRoomName}).toArray(function(err, chatMessages){
 			//console.log(chatMessages.text);
 			//console.log(chatMessages.text);

@@ -32,7 +32,11 @@
 		    controller: 'RoomController',
 			}) 
 
-			.when('/room/1', {
+			// .when('/room/1', {
+		 //    templateUrl: 'room.html',
+		 //    controller: 'RoomController',
+			// }); 
+			.when('/room/:meetingRoomName', {
 		    templateUrl: 'room.html',
 		    controller: 'RoomController',
 			});     
@@ -46,6 +50,7 @@
 			if($cookies.get('roomToken') && $cookies.get('roomName')) {
 				$rootScope.roomToken = $cookies.get('roomToken');
 				$rootScope.roomName = $cookies.get('roomName');
+				meetingRoomName = $rootScope.roomName;
 			}
 		});
 
@@ -148,6 +153,7 @@
 			socket.on('{text: req.body.newChatMessage}', function(data){
 				//getChatMessages();
 				getChatMessagesByRoomArg($rootScope.roomName);
+				//getChatMessagesByRoomArg(meetingRoomName);
 			});
 
 			$scope.SubmitNewChatMessage = function(){
@@ -159,6 +165,7 @@
 
 					//getChatMessagesByRoom();
 					getChatMessagesByRoomArg($rootScope.roomName);
+
 					$scope.newChatMessage = '';
 				});
 			};
@@ -201,11 +208,12 @@
 			}
 
 			function getChatMessagesByRoomArg(meetingRoomName){
-				console.log("hello");
-				console.log(meetingRoomName);
+				//console.log("hello");
+				//console.log(meetingRoomName);
 				$http.put('/chat/messages/roomNameArg', {meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log(newRoom);
 					$scope.chatMessages = response.data;
+					meetingRoomName = $rootScope.roomName;
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
 				});
@@ -218,9 +226,7 @@
 					$scope.chatMessages = response.data;
 					$rootScope.meetingRoomName = meetingRoomName;
 					$rootScope.roomName = meetingRoomName;
-					console.log("Checking Root Var "+meetingRoomName);
-					console.log("Checking Root Var 2 "+meetingRoomName);
-					console.log("Checking Root Var 3 "+$rootScope.roomName);
+					meetingRoomName = $rootScope.roomName;
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
 				});
@@ -240,10 +246,11 @@
 			}
 			//getChatMessagesByRoomArg("Room "+roomNumber);
 			getChatMessagesByRoomArg($rootScope.roomName);
+			//getChatMessagesByRoomArg(meetingRoomName);
 			//getChatMessages();
 			getRooms();
 
-			console.log($scope.chatMessage);
+			//console.log($scope.chatMessage);
 		});
 
 

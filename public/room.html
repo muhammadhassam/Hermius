@@ -13,7 +13,7 @@
 			<h4>Select from previous meeting rooms</h4>
 			<ul class="list-group" >
 				<li class="list-group-item" ng-repeat = "room in rooms">
-					<a href="#/room/1"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>
+					<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>
 				</li>
 			</ul>
 			
