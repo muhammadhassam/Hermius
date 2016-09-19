@@ -145,6 +145,10 @@
 
 
 		app.controller('RoomController', function($rootScope, $scope, $http, $cookies){
+
+			// $scope.init = function(){
+
+			// };
 			
 			var socket = io.connect('http://localhost');
 			socket.on('connect', function(socket){
@@ -245,7 +249,10 @@
 				});
 			}
 			//getChatMessagesByRoomArg("Room "+roomNumber);
+			meetingRoomName = $rootScope.roomName;
 			getChatMessagesByRoomArg($rootScope.roomName);
+			console.log("HELLO "+meetingRoomName);
+			console.log("HELLO2 " +$rootScope.roomName);
 			//getChatMessagesByRoomArg(meetingRoomName);
 			//getChatMessages();
 			getRooms();
