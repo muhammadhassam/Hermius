@@ -20,9 +20,13 @@
 	width: 100%;
 }
 .panel {
-
 	background-color: #337AB7;
 	text-color: white;
+}
+.panel-default
+{
+	background-color: #337AB7;
+	text-color: white;	
 }
 .panel a{
 	color: white;

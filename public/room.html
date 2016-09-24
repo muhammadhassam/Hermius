@@ -1,22 +1,28 @@
-<div class="row feed">
+
+<div class="container-fluid">
 	<div class="col-md-3" style="background-color: #FAFAFA; border: 1px solid #efefef">
 		<H2 style="color: #337AB7">Welcome</H2>
 			<h4>Hi {{ currentUser}}</h4>
 			<a href ng-click="logout()">Logout.</a>
-
-			<H2 style="color: #337AB7">Rooms</H2>
-			<a href="#"> Write a name for Room</a>
-			<input type="text" class="form-control" ng-model="roomName" placeholder="Write a Room Name">
-			<button type="button" class="btn btn-secondary" style="margin-top:5px;" ng-click="AssignRoomName()">Send</button>
-			<BR>
-			<BR>
-			<h4>Select from previous meeting rooms</h4>
-			<ul class="list-group" >
-				<li class="list-group-item" ng-repeat = "room in rooms">
-					<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>
-				</li>
-			</ul>
 			
+			<div ng-hide="meetingTaskName">
+				<H2 style="color: #337AB7">Rooms</H2>
+				<a href="#"> Write a name for Room</a>
+				<input type="text" class="form-control" ng-model="roomName" placeholder="Write a Room Name">
+				<button type="button" class="btn btn-secondary" style="margin-top:5px;" ng-click="AssignRoomName()">Send</button>
+				<BR>
+				<BR>
+					
+				<h4>Select from previous meeting rooms</h4>
+				<ul  class="list-group" >
+					<li class="list-group-item" ng-repeat = "room in rooms">
+						<!--<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>-->
+						<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>
+						
+					</li>
+				</ul>
+			</div>
+
 			<H2 style="color: #337AB7">People</H2>
 			<input type="text" placeholder="username"></input>
 			<button type="button" class="btn btn-secondary ">Invite</button>
@@ -37,12 +43,21 @@
 
 			</ul>
 	</div>
-	<div class="col-md-7" style="border: 1px solid #efefef">
+	<div ng-hide="meetingRoomName"  class="col-md-7" style="border: 1px solid #efefef; ">
+		<h2 style="text-align: center; ">Nothing to display here. Please select a MeetingRoom/Project</h2>
+	</div>
+	<div ng-show="meetingRoomName"  class="col-md-7" style="border: 1px solid #efefef">
 		<div >
-			<H2 style="color: #337AB7" >Meeting Room Name - {{ roomName }} {{ meetingRoomName }}</H2>
+			<H2 style="color: #337AB7" >Project Name: {{ roomName }}, TaskName: {{ meetingTaskName }}</H2>
+		</div>
+
+		<div ng-hide="meetingTaskName" style=" height: 400px; ">
+			<h4 style="text-align: left; color: red ">Nothing to display here. Please select an existing Task or Add a new one
+				using the right column.
+			</h4>
 		</div>
 		
-		<div style=" height: 400px;overflow: scroll; ">
+		<div ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
 			<ul class="list-group"  >
 				<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
 					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
@@ -55,7 +70,8 @@
 			</ul>
 		</div>
 		<!--<div class="new-message" ng-show="meetingRoomName">-->
-		<div class="new-message">
+		
+		<div ng-show="meetingTaskName"  class="new-message">
 			<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">
 			<br>
 			<button type="button" class="btn btn-primary" ng-click="SubmitNewChatMessage()">Send</button>
@@ -63,9 +79,18 @@
 			<small>Logged in as <a href=""> {{ currentUser}}</a></small>
 		</div>
 	</div>
-	<div class = "col-md-2" style="background-color: #FAFAFA; border: 1px solid #efefef">
-		<H2 style="color: #337AB7">Agenda</H2>
-
-		<h4>- #Tada</h4>
+	<div  ng-show="meetingRoomName" class = "col-md-2" style="background-color: #FAFAFA; border: 1px solid #efefef">
+		<H2 style="color: #337AB7">Tasks</H2>
+		<h4>Add a new task in {{ meetingRoomName }}</h4>
+		<input type="text" class="form-control" ng-model="taskName" placeholder="Write a task Name">
+		<button type="button" class="btn btn-secondary" style="margin-top:5px;" ng-click="AssignTaskName()">Add</button>
+		<BR>
+		<h4>OR select from existing tasks</h4>
+		<ul ng-show="meetingRoomName" class="list-group" >
+			<li class="list-group-item" ng-repeat = "task in tasks">
+				<!--<a href="#/room/{{ room.name }}/{{ task.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByTaskNameAng(task.name)">- {{ task.name }} </button></a>-->
+				<button type="button" class="btn btn-secondary" ng-click="getChatMessagesByTaskNameAng(meetingRoomName, task.name)">#{{ task.name }} </button>
+			</li>
+		</ul>
 	</div>
 </div>

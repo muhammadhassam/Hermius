@@ -84,11 +84,38 @@ app.put('/chat/messages/roomNameAng', function(req, res, next){
 	});
 });
 
-//Function to get chat messages by Room
-app.put('/chat/messages/roomNameArg', function(req, res, next){
+
+//Function to get chat messages by Room Name && task Name for Front Angular Page
+app.put('/chat/messages/taskNameAng', function(req, res, next){
 	db.collection('chatMessages', function(err, chatMessagesCollection){
-		console.log("Hello ");
-		console.log(req.body.meetingRoomName);
+		//console.log("Hello 2");
+		console.log(req.body.roomtaskName+" yellow");
+		chatMessagesCollection.find({task: req.body.roomtaskName }).toArray(function(err, chatMessages){
+			//console.log(chatMessages.text);
+			//console.log(chatMessages);
+			return res.json(chatMessages);
+		});
+		return	db.collection;
+	});
+});
+
+//Function to get chat messages by Room Name && task Name for Front Angular Page
+app.put('/chat/messages/taskNameAng', function(req, res, next){
+	db.collection('chatMessages', function(err, chatMessagesCollection){
+		//console.log("Hello 2");
+		console.log(req.body.roomtaskName+" yellow");
+		chatMessagesCollection.find({task: req.body.roomtaskName }).toArray(function(err, chatMessages){
+			//console.log(chatMessages.text);
+			//console.log(chatMessages);
+			return res.json(chatMessages);
+		});
+		return	db.collection;
+	});
+});
+//Function to get chat messages by Room
+app.put('/chat/messages/roomandtask', function(req, res, next){
+	db.collection('chatMessages', function(err, chatMessagesCollection){
+		
 		chatMessagesCollection.find({room: req.body.meetingRoomName}).toArray(function(err, chatMessages){
 			//console.log(chatMessages.text);
 			//console.log(chatMessages.text);
@@ -99,12 +126,36 @@ app.put('/chat/messages/roomNameArg', function(req, res, next){
 });
 
 
+// //Function to get chat messages by Tasks
+// app.put('/chat/messages/taskNameArg', function(req, res, next){
+// 	db.collection('chatMessages', function(err, chatMessagesCollection){
+// 		console.log(req.body.meetingTaskName);
+// 		chatMessagesCollection.find({task: req.body.meetingTaskName}).toArray(function(err, chatMessages){
+// 			//console.log(chatMessages.text);
+// 			//console.log(chatMessages.text);
+// 			return res.json(chatMessages);
+// 		});
+// 		return	db.collection;
+// 	});
+// });
+
 //Function to get rooms
 app.get('/rooms', function(req, res, next){
 	db.collection('rooms', function(err, messagesCollection){
 		messagesCollection.find().toArray(function(err, messages){
 			return res.json(messages);
 
+		});
+		return	db.collection;
+	});
+});
+//usersCollection.findOne({username: req.body.username},
+//Function to get tasks
+app.put('/tasks', function(req, res, next){
+	//console.log(req.body.meetingRoomName+ " print");
+	db.collection('tasks', function(err, tasksCollection){
+		tasksCollection.find({room: req.body.meetingRoomName}).toArray(function(err, tasks){
+			return res.json(tasks);
 		});
 		return	db.collection;
 	});
@@ -121,7 +172,7 @@ app.post('/chat/messages', function(req, res, next){
 
 	//console.log(req.body.newChatMessage);
 	//console.log(req.body.newRoom);
-	console.log(req.body.roomName);
+	//console.log(req.body.taskName+"HELLOOOOOWDKJLKDJS");
 	
 	db.collection('chatMessages', function(err, chatMessagesCollection){
 		var newChatMessage = {
@@ -130,8 +181,8 @@ app.post('/chat/messages', function(req, res, next){
 			user: user._id,
 			username: user.username,
 			date: jsonDate,
-			room: req.body.roomName
-
+			room: req.body.roomName,
+			task: req.body.taskName
 			//roomId: room._id
 		};
 		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
@@ -158,6 +209,29 @@ app.put('/newRoom', function(req, res, next){
 			//username: user.username
 		};
 		roomsCollection.insert(newRoom, {w:1}, function(err, messages){
+			//var token = jwt.encode(user, JWT_SECRET);
+			//return res.json({token: token});
+			return res.send();
+		});
+
+	});
+	//res.send();
+});
+
+//Function to Add a task
+app.put('/newTask', function(req, res, next){
+
+	//var token = req.headers.authorization;
+	//var user = jwt.decode(token, JWT_SECRET);
+	//console.log(req.body.newTask+" addedddd in "+req.body.newRoom+ " added");
+	db.collection('tasks', function(err, tasksCollection){
+		var newTask = {
+			name: req.body.newTask,
+			room: req.body.newRoom
+			//user: user._id,
+			//username: user.username
+		};
+		tasksCollection.insert(newTask, {w:1}, function(err, tasks){
 			//var token = jwt.encode(user, JWT_SECRET);
 			//return res.json({token: token});
 			return res.send();

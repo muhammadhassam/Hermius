@@ -12,7 +12,7 @@
 	<script type="text/javascript">
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
 
-		var meetingRoomName;
+		var meetingRoomName, meetingTaskName;
 		var roomNumber = 1;
         
 		app.config(function($routeProvider, $locationProvider){
@@ -51,6 +51,11 @@
 				$rootScope.roomToken = $cookies.get('roomToken');
 				$rootScope.roomName = $cookies.get('roomName');
 				meetingRoomName = $rootScope.roomName;
+			}
+			if($cookies.get('taskToken') && $cookies.get('taskName')) {
+				$rootScope.taskToken = $cookies.get('taskToken');
+				$rootScope.taskName = $cookies.get('taskToken');
+				meetingTaskName = $rootScope.taskToken;
 			}
 		});
 
@@ -145,31 +150,33 @@
 
 
 		app.controller('RoomController', function($rootScope, $scope, $http, $cookies){
-
-			// $scope.init = function(){
-
-			// };
-			
+						
 			var socket = io.connect('http://localhost');
 			socket.on('connect', function(socket){
 				console.log('SOCKET IO');
 			});
 			socket.on('{text: req.body.newChatMessage}', function(data){
 				//getChatMessages();
-				getChatMessagesByRoomArg($rootScope.roomName);
+				//getChatMessagesByRoomArg($rootScope.roomName);
+				console.log("Hello everyone"+$rootScope.taskName+" AND"+$rootScope.roomName);
+				getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
+				
 				//getChatMessagesByRoomArg(meetingRoomName);
 			});
 
 			$scope.SubmitNewChatMessage = function(){
-
-				$http.post('/chat/messages', {newChatMessage: $scope.newChatMessage, roomName: $rootScope.roomName},
+				//console.log($rootscope.meetingTaskName+" Rootscope taskname");
+				$http.post('/chat/messages', {newChatMessage: $scope.newChatMessage, roomName: $rootScope.roomName, taskName: meetingTaskName},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
 
 					//getChatMessagesByRoom();
-					getChatMessagesByRoomArg($rootScope.roomName);
-
+					//getChatMessagesByRoomArg($rootScope.roomName);
+					//console.log(meetingTaskName+"AND AND AND"+ $rootScope.roomName);
+					console.log(meetingTaskName+ "Hellow boy2");
+					//console.log($rootscope.taskName+ "Hellow boy");
+					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 					$scope.newChatMessage = '';
 				});
 			};
@@ -193,9 +200,46 @@
 					$rootScope.meetingRoomName = $scope.roomName;
 					$scope.roomName = '';
 					//getChatMessagesByRoom();
-					getChatMessagesByRoomArg(meetingRoomName);
+					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 				});
 			};
+
+			$scope.AssignTaskName = function(){
+				console.log("Rootsccope"+$rootScope.meetingRoomName);
+				$http.put('/newTask', {newTask: $scope.taskName,  newRoom: $rootScope.meetingRoomName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(res){
+					
+
+					$cookies.put('taskToken', res.data.token);
+					$cookies.put('taskName', $scope.taskName);
+					$rootScope.taskToken = res.data.token;
+					$rootScope.taskName = $scope.taskName;
+
+					meetingTaskName = $scope.taskName;
+					
+					getTasks($rootScope.meetingRoomName);
+
+					//Extra added line -Reminder
+					getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
+					
+					//console.log(meetingTaskName+"Boa");
+					
+					$rootScope.meetingTaskName = $scope.taskName;
+					$scope.taskName = '';
+
+					
+					
+					//res.send();
+				});
+			};
+
+
+			//This function displays a list of tasks and users when the user clicks on rooms on rooms.html page
+			$scope.displayTasksAndUsers = function(meetingRoomName){
+				getTasks(meetingRoomName);
+			}
 
 			function getMessages(){
 				$http.get('/messages').then(function(response){
@@ -204,6 +248,15 @@
 			}
 			function getChatMessagesByRoom(){
 				$http.get('/chat/messages/room').then(function(response){
+					//console.log()
+					$scope.chatMessages = response.data;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}
+
+			function getChatMessagesByRoomAndTask(meetingTaskName, meetingRoomName){
+				$http.put('/chat/messages/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log()
 					$scope.chatMessages = response.data;
 					//chatMessagess = $scope.chatMessages;
@@ -222,9 +275,24 @@
 					//console.log($scope.chatMessages);
 				});
 			}
+
+			function getChatMessagesByTaskArg(meetingTaskName){
+				//console.log("hello");
+				//console.log(meetingRoomName);
+				$http.put('/chat/messages/taskNameArg', {meetingTaskName: meetingTaskName}).then(function(response){
+					//console.log(newRoom);
+					$scope.chatMessages = response.data;
+					meetingTaskName = $rootScope.taskName;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}
+
 			$scope.getChatMessagesByRoomNameAng = function(meetingRoomName){
 				//console.log("hello2");
-				//console.log(meetingRoomName);
+				//console.log(meetingRoomName+"front 2");
+				console.log(meetingRoomName+"New");
+				getTasks(meetingRoomName);
 				$http.put('/chat/messages/roomNameAng', {meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log(newRoom);
 					$scope.chatMessages = response.data;
@@ -233,6 +301,26 @@
 					meetingRoomName = $rootScope.roomName;
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
+				});
+			}
+
+			//Function to get Chat Messages based on task name on front end
+			$scope.getChatMessagesByTaskNameAng = function(meetingRoomName, taskName){
+
+				$http.put('/chat/messages/taskNameAng', {roomtaskName: taskName, meetingRoomName: meetingRoomName}).then(function(response){
+
+					// $scope.chatMessages = response.data;
+					// meetingTaskName = taskName;
+					// $rootScope.meetingTaskName = $scope.taskName;
+					// $scope.taskName = '';
+
+					$scope.chatMessages = response.data;
+					$rootScope.meetingTaskName = taskName;
+					$rootScope.taskName = meetingTaskName;
+					meetingTaskName = taskName;
+
+					
+
 				});
 			}
 
@@ -248,14 +336,39 @@
 					$scope.rooms = response.data;
 				});
 			}
+			function getTasks(meetingRoomName){
+				console.log("Printing the task "+meetingRoomName);
+				$http.put('/tasks', {meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log($scope.tasks);
+					//console.log($rootScope.meetingTaskName+" Rootscope taskname");
+					$scope.tasks = response.data;
+				});
+			}
+
+
+
 			//getChatMessagesByRoomArg("Room "+roomNumber);
-			meetingRoomName = $rootScope.roomName;
-			getChatMessagesByRoomArg($rootScope.roomName);
-			console.log("HELLO "+meetingRoomName);
-			console.log("HELLO2 " +$rootScope.roomName);
+			//meetingRoomName = $rootScope.roomName;
+			//getChatMessagesByRoomArg($rootScope.roomName);
+			//console.log("HELLOWW "+$rootscope.taskName+" inhk "+$rootScope.roomName);
+			
+			console.log(meetingTaskName+ "Helowsksdjk");
+			getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+			
+			
+			//console.log(meetingTaskName+ "elo");
+			//console.log(meetingTaskName+ "orange");
+			
+			//getChatMessagesByTaskArg("UI Design");
+
+			//console.log("HELLO "+meetingRoomName);
+			//console.log("HELLO2 " +$rootScope.roomName);
 			//getChatMessagesByRoomArg(meetingRoomName);
 			//getChatMessages();
 			getRooms();
+			getTasks($rootScope.taskName);
+			//console.log( $rootScope.roomName+" front");
+			
 
 			//console.log($scope.chatMessage);
 		});
@@ -264,10 +377,36 @@
 	</script>
 </head>
 <body >
+	<!--
 	<div class="panel panel-default">
-		<h1 class="page-title"><a href="#/" >Hermius</h1></a>
+			<h1 class="page-title"><a href="#/" >Hermius </h1></a>
+			<span class=" glyphicon glyphicon-user pull-right" style="color: black; margin-right: 15px"></span>
 	</div>
-	
+	-->
+	<div ng-hide="currentUser" class="panel panel-primary">
+		<div class="panel-heading">
+			<h1>
+				<a href="#/" >Hermius </a>
+				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
+					<a href="#/signup">Not a member? Signup</a>
+				</span>
+			</h1>      
+		</div>
+	</div>
+
+	<div ng-show="currentUser" class="panel panel-primary">
+		<div class="panel-heading">
+			<h1>
+				<a href="#/" >Hermius </a>
+				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
+					Hi,{{currentUser}}
+					<br>
+					<a href  ng-click="logout()" >Logout</a>
+				</span>
+			</h1>      
+		</div>
+	</div>
+
 	<div ng-view></div>
 </body>
 </html>
