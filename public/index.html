@@ -174,7 +174,7 @@
 					//getChatMessagesByRoom();
 					//getChatMessagesByRoomArg($rootScope.roomName);
 					//console.log(meetingTaskName+"AND AND AND"+ $rootScope.roomName);
-					console.log(meetingTaskName+ "Hellow boy2");
+					//console.log(meetingTaskName+ "Hellow boy2");
 					//console.log($rootscope.taskName+ "Hellow boy");
 					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 					$scope.newChatMessage = '';
@@ -188,6 +188,7 @@
 				 }}).then(function(res){
 				 	//console.log($scope.roomName);
 					
+
 				 	$cookies.put('roomToken', res.data.token);
 					$cookies.put('roomName', $scope.roomName);
 					$rootScope.roomToken = res.data.token;
@@ -201,11 +202,14 @@
 					$scope.roomName = '';
 					//getChatMessagesByRoom();
 					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				}, function(err){
+					alert('Room/Project already exists');
 				});
 			};
 
+			//This function creates a task from front end page room.html
 			$scope.AssignTaskName = function(){
-				console.log("Rootsccope"+$rootScope.meetingRoomName);
+				//console.log("Rootsccope"+$rootScope.meetingRoomName);
 				$http.put('/newTask', {newTask: $scope.taskName,  newRoom: $rootScope.meetingRoomName},
 				 {headers: {
 				 	'authorization': $rootScope.token
@@ -235,25 +239,42 @@
 				});
 			};
 
+			//This function adds people in tasks (front end room.html)
+			$scope.addPeopleInTasks = function(){
+				//console.log("Current Task: "+ meetingTaskName);
+				console.log("Current Room: "+ $rootScope.meetingRoomName);
+				$http.post('/room/task/user', {username: $scope.username, taskName: meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
+					console.log("User added");
+				},function(err){
+					console.log(err);
+					alert('User does not exist');
+				});
+			};
 
 			//This function displays a list of tasks and users when the user clicks on rooms on rooms.html page
 			$scope.displayTasksAndUsers = function(meetingRoomName){
 				getTasks(meetingRoomName);
 			}
 
+			function getUsers(){
+				$http.get('/users/find').then(function(response){
+					$scope.users = response.data;
+				});
+			}
+			
 			function getMessages(){
 				$http.get('/messages').then(function(response){
 					$scope.messages = response.data;
 				});
 			}
-			function getChatMessagesByRoom(){
-				$http.get('/chat/messages/room').then(function(response){
-					//console.log()
-					$scope.chatMessages = response.data;
-					//chatMessagess = $scope.chatMessages;
-					//console.log($scope.chatMessages);
-				});
-			}
+			// function getChatMessagesByRoom(){
+			// 	$http.get('/chat/messages/room').then(function(response){
+			// 		//console.log()
+			// 		$scope.chatMessages = response.data;
+			// 		//chatMessagess = $scope.chatMessages;
+			// 		//console.log($scope.chatMessages);
+			// 	});
+			// }
 
 			function getChatMessagesByRoomAndTask(meetingTaskName, meetingRoomName){
 				$http.put('/chat/messages/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
@@ -291,11 +312,11 @@
 			$scope.getChatMessagesByRoomNameAng = function(meetingRoomName){
 				//console.log("hello2");
 				//console.log(meetingRoomName+"front 2");
-				console.log(meetingRoomName+"New");
+				//console.log(meetingRoomName+"New");
 				getTasks(meetingRoomName);
 				$http.put('/chat/messages/roomNameAng', {meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log(newRoom);
-					$scope.chatMessages = response.data;
+					//$scope.chatMessages = response.data;
 					$rootScope.meetingRoomName = meetingRoomName;
 					$rootScope.roomName = meetingRoomName;
 					meetingRoomName = $rootScope.roomName;
@@ -353,7 +374,7 @@
 			//console.log("HELLOWW "+$rootscope.taskName+" inhk "+$rootScope.roomName);
 			
 			console.log(meetingTaskName+ "Helowsksdjk");
-			getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+			//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 			
 			
 			//console.log(meetingTaskName+ "elo");
@@ -366,7 +387,8 @@
 			//getChatMessagesByRoomArg(meetingRoomName);
 			//getChatMessages();
 			getRooms();
-			getTasks($rootScope.taskName);
+			getUsers();
+			//getTasks($rootScope.taskName);
 			//console.log( $rootScope.roomName+" front");
 			
 

@@ -24,23 +24,13 @@
 			</div>
 
 			<H2 style="color: #337AB7">People</H2>
-			<input type="text" placeholder="username"></input>
-			<button type="button" class="btn btn-secondary ">Invite</button>
+			<input type="text" placeholder="username" ng-model="username"></input>
+			<button type="button" class="btn btn-secondary " ng-click="addPeopleInTasks()">Invite</button>
 			<BR><BR>
-			<ul class="list-group" >
-				<li class="list-group-item">
-					<a href="#" >John </a>
+			<ul class="list-group" ng-show="username!=null" style="height: 500px;">
+				<li class="list-group-item" ng-repeat="user in users | filter: username">
+					<a href="#/room/{{ room.name }}">{{ user.username }} </a>
 				</li>
-				<li class="list-group-item">
-					<a href="#">Steve </a>
-				</li>
-				<li class="list-group-item">
-					<a href="#" >jack</a>
-				</li>
-				<li class="list-group-item">
-					<a href="#" >Claire</a>
-				</li>
-
 			</ul>
 	</div>
 	<div ng-hide="meetingRoomName"  class="col-md-7" style="border: 1px solid #efefef; ">

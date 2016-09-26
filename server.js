@@ -85,26 +85,26 @@ app.put('/chat/messages/roomNameAng', function(req, res, next){
 });
 
 
-//Function to get chat messages by Room Name && task Name for Front Angular Page
-app.put('/chat/messages/taskNameAng', function(req, res, next){
-	db.collection('chatMessages', function(err, chatMessagesCollection){
-		//console.log("Hello 2");
-		console.log(req.body.roomtaskName+" yellow");
-		chatMessagesCollection.find({task: req.body.roomtaskName }).toArray(function(err, chatMessages){
-			//console.log(chatMessages.text);
-			//console.log(chatMessages);
-			return res.json(chatMessages);
-		});
-		return	db.collection;
-	});
-});
+// //Function to get chat messages by Room Name && task Name for Front Angular Page
+// app.put('/chat/messages/taskNameAng', function(req, res, next){
+// 	db.collection('chatMessages', function(err, chatMessagesCollection){
+// 		//console.log("Hello 2");
+// 		console.log(req.body.roomtaskName+" yellow");
+// 		chatMessagesCollection.find({task: req.body.roomtaskName }).toArray(function(err, chatMessages){
+// 			//console.log(chatMessages.text);
+// 			//console.log(chatMessages);
+// 			return res.json(chatMessages);
+// 		});
+// 		return	db.collection;
+// 	});
+// });
 
 //Function to get chat messages by Room Name && task Name for Front Angular Page
 app.put('/chat/messages/taskNameAng', function(req, res, next){
 	db.collection('chatMessages', function(err, chatMessagesCollection){
 		//console.log("Hello 2");
-		console.log(req.body.roomtaskName+" yellow");
-		chatMessagesCollection.find({task: req.body.roomtaskName }).toArray(function(err, chatMessages){
+		//console.log(req.body.roomtaskName+" yellow");
+		chatMessagesCollection.find({$and:[{task: req.body.roomtaskName} , { room: req.body.meetingRoomName}]}).toArray(function(err, chatMessages){
 			//console.log(chatMessages.text);
 			//console.log(chatMessages);
 			return res.json(chatMessages);
@@ -112,12 +112,13 @@ app.put('/chat/messages/taskNameAng', function(req, res, next){
 		return	db.collection;
 	});
 });
-//Function to get chat messages by Room
+//Function to get chat messages by Room and task
 app.put('/chat/messages/roomandtask', function(req, res, next){
 	db.collection('chatMessages', function(err, chatMessagesCollection){
-		
-		chatMessagesCollection.find({room: req.body.meetingRoomName}).toArray(function(err, chatMessages){
-			//console.log(chatMessages.text);
+		console.log("Checking task name: "+ req.body.roomtaskName);
+		console.log("Checking task name2: "+ req.body.meetingTaskName);
+		chatMessagesCollection.find({$and:[{task: req.body.roomtaskName} , { room: req.body.meetingRoomName}]}).toArray(function(err, chatMessages){
+			///console.log(chatMessages.text);
 			//console.log(chatMessages.text);
 			return res.json(chatMessages);
 		});
@@ -149,7 +150,7 @@ app.get('/rooms', function(req, res, next){
 		return	db.collection;
 	});
 });
-//usersCollection.findOne({username: req.body.username},
+
 //Function to get tasks
 app.put('/tasks', function(req, res, next){
 	//console.log(req.body.meetingRoomName+ " print");
@@ -204,19 +205,73 @@ app.put('/newRoom', function(req, res, next){
 		var newRoom = {
 			//room: req.body.newRoom,
 
-			name: req.body.newRoom,
+			name: req.body.newRoom
 			//user: user._id,
 			//username: user.username
 		};
-		roomsCollection.insert(newRoom, {w:1}, function(err, messages){
-			//var token = jwt.encode(user, JWT_SECRET);
-			//return res.json({token: token});
-			return res.send();
+		roomsCollection.findOne(newRoom,function(err, room){
+			if(room){
+				return res.status(400).send();
+			}
+			else{
+				roomsCollection.insert(newRoom, {w:1}, function(err, messages){
+					
+					//var token = jwt.encode(user, JWT_SECRET);
+					//return res.json({token: token});
+					return res.send();
+				});
+			}
 		});
-
 	});
-	//res.send();
 });
+
+app.post('/room/task/user', function(req, res, next){
+	//db.collection('tasks', function(err, tasksCollection){
+
+		var userVar = {
+			username: req.body.username
+		};
+		console.log("userVar: "+userVar);
+
+		db.collection('users', function(err, usersCollection){
+			usersCollection.findOne(userVar,function(err, user){
+				if(user){
+					db.collection('tasks', function(err, tasksCollection){
+
+						// var username = 
+						
+						// {
+						// 	users:{$elemMatch: {username: req.body.username}
+						// };
+
+						//tasksCollection.find({users:{$elemMatch: {username: req.body.username}}},function(err, user){
+							//if(user){
+								//return res.status(400).send();
+							//}
+							//else{
+								tasksCollection.update(
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.taskName },
+								{ $push: { users:  req.body.username } }
+								)
+								return res.send();
+							//}
+						//});
+
+						
+					});	
+				}
+				else{
+					return res.status(404).send();
+				}
+			});
+		});
+		console.log(req.body);
+		//chatMessagesCollection.find({$and:[{task: req.body.roomtaskName} , { room: req.body.meetingRoomName}]}).toArray(function(err, chatMessages){
+	//});
+});
+
 
 //Function to Add a task
 app.put('/newTask', function(req, res, next){
@@ -227,7 +282,12 @@ app.put('/newTask', function(req, res, next){
 	db.collection('tasks', function(err, tasksCollection){
 		var newTask = {
 			name: req.body.newTask,
-			room: req.body.newRoom
+			room: req.body.newRoom,
+			users: [
+				//{
+					req.body.newUser
+				//}
+				]
 			//user: user._id,
 			//username: user.username
 		};
@@ -303,6 +363,19 @@ app.post('/users', function(req, res, next){
 	});
 	//res.send();
 });
+
+
+//Function to search users
+app.get('/users/find', function(req, res, next){
+	db.collection('users', function(err, usersCollection){
+		usersCollection.find().toArray(function(err, users){
+			return res.json(users);
+
+		});
+		return	db.collection;
+	});
+});
+
 
 //function for signing in
 app.put('/users/signin', function(req, res, next){
