@@ -27,9 +27,18 @@
 			<input type="text" placeholder="username" ng-model="username"></input>
 			<button type="button" class="btn btn-secondary " ng-click="addPeopleInTasks()">Invite</button>
 			<BR><BR>
-			<ul class="list-group" ng-show="username!=null" style="height: 500px;">
+			<!--<ul class="list-group" ng-show="username!=null" style="height: 500px;">
 				<li class="list-group-item" ng-repeat="user in users | filter: username">
 					<a href="#/room/{{ room.name }}">{{ user.username }} </a>
+				</li>
+			</ul>-->
+			<ul class="list-group" >
+				<li class="list-group-item" ng-repeat="task in tasks ">
+					
+					<!--<a href="#/room/{{ room.name }}">{{ task.users}} </a>-->
+					<li class="list-group-item" ng-repeat="username in task.users">
+						<a href="#/room/{{ room.name }}">{{ username }} </a>
+					</li>
 				</li>
 			</ul>
 	</div>
@@ -62,10 +71,26 @@
 		<!--<div class="new-message" ng-show="meetingRoomName">-->
 		
 		<div ng-show="meetingTaskName"  class="new-message">
-			<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">
-			<br>
-			<button type="button" class="btn btn-primary" ng-click="SubmitNewChatMessage()">Send</button>
-			<BR>
+			<button ng-model="clickedText" ng-click="showTextBox()" type="button" class="btn btn-secondary" aria-label="Left Align" style="margin-bottom: 5px; padding: 4px 10px 4px 10px">
+			<span >Aa</span>
+			</button>
+			<button ng-model="clickedLink" ng-click="showLinkBox()" type="button" class="btn btn-secondary" aria-label="Left Align" style="margin-bottom: 5px; ">
+			<span class= "glyphicon glyphicon-link" ></span>
+			</button>
+			</br>
+			<div ng-show="clickedLink">
+				<H4 style="color: #337AB7">Label:-</H4>
+				<input type="text" class="form-control" ng-model="newLabel" placeholder="Add a Label">
+				<H4 style="color: #337AB7">Link:-</H4>
+				<input type="text" class="form-control" ng-model="newLink" placeholder="Add a link">
+				<br>
+				<button type="button" class="btn btn-primary" ng-click="SubmitNewLink()">Send Link</button>
+			</div>
+			<div ng-show="clickedText">
+				<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">
+				<br>
+				<button type="button" class="btn btn-primary" ng-click="SubmitNewChatMessage()">Send</button>
+			</div>
 			<small>Logged in as <a href=""> {{ currentUser}}</a></small>
 		</div>
 	</div>
@@ -75,12 +100,36 @@
 		<input type="text" class="form-control" ng-model="taskName" placeholder="Write a task Name">
 		<button type="button" class="btn btn-secondary" style="margin-top:5px;" ng-click="AssignTaskName()">Add</button>
 		<BR>
-		<h4>OR select from existing tasks</h4>
+		<h5>OR select from existing tasks</h5>
 		<ul ng-show="meetingRoomName" class="list-group" >
-			<li class="list-group-item" ng-repeat = "task in tasks">
+			<button style="width: 100%" ng-model="clickedTaskButton" ng-click="showTasks()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Tasks
+			</button>
+			<li class="list-group-item" ng-repeat = "task in tasks" style="overflow-wrap: break-word" ng-show="clickedTaskButton">
 				<!--<a href="#/room/{{ room.name }}/{{ task.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByTaskNameAng(task.name)">- {{ task.name }} </button></a>-->
-				<button type="button" class="btn btn-secondary" ng-click="getChatMessagesByTaskNameAng(meetingRoomName, task.name)">#{{ task.name }} </button>
+				<button type="button" class="btn btn-secondary" ng-click="getChatMessagesByTaskNameAng(meetingRoomName, task.name)"><span  style="color: #337AB7"> #{{ task.name }} </span></button>
 			</li>
 		</ul>
+		<ul class="list-group" ng-show="meetingTaskName">
+			<button style="width: 100%" ng-model="clickedLinkButton" ng-click="showLinks()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Links
+			</button>
+			<li class="list-group-item" ng-repeat = "link in links" style="overflow-wrap: break-word" ng-show="clickedLinkButton">
+				<span style="color: #337AB7; font-weight: bold">Label: </span>{{link.label}}<br>
+				<a href="{{link.text}}"> {{link.text }}</a>
+				<!--<a href="#/room/{{ room.name }}/{{ task.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByTaskNameAng(task.name)">- {{ task.name }} </button></a>-->
+				<!--<button type="button" class="btn btn-secondary" ng-click="getChatMessagesByTaskNameAng(meetingRoomName, task.name)">#{{ task.name }} </button> -->
+			</li>
+		</ul>
+
+		<!--<div class="dropdown" ng-show="meetingTaskName" style="overflow-wrap: break-word">
+		<button style="width: 100%" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Links
+		</button>
+		<div class="dropdown-menu" aria-labelledby="dropdownMenuButton" >
+			<a class="dropdown-item" href="#">aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa</a>
+		</div>
+		</div>-->
+
 	</div>
 </div>

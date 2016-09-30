@@ -1,7 +1,13 @@
 <html ng-app="hermius">
 <head>
 	<title>Hermius</title>
-	
+
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script type="text/javascript" src="angular.min.js"></script>
@@ -14,6 +20,8 @@
 
 		var meetingRoomName, meetingTaskName;
 		var roomNumber = 1;
+		var linkButton = false;
+		var taskButton = false;
         
 		app.config(function($routeProvider, $locationProvider){
 			$routeProvider
@@ -166,6 +174,8 @@
 
 			$scope.SubmitNewChatMessage = function(){
 				//console.log($rootscope.meetingTaskName+" Rootscope taskname");
+				
+
 				$http.post('/chat/messages', {newChatMessage: $scope.newChatMessage, roomName: $rootScope.roomName, taskName: meetingTaskName},
 				 {headers: {
 				 	'authorization': $rootScope.token
@@ -180,6 +190,32 @@
 					$scope.newChatMessage = '';
 				});
 			};
+
+			
+			$scope.SubmitNewLink = function(){
+				//console.log($rootscope.meetingTaskName+" Rootscope taskname");
+				
+
+				$http.post('/chat/links', {newLink: $scope.newLink, roomName: $rootScope.roomName, taskName: meetingTaskName, newLabel: $scope.newLabel},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+					
+					$http.post('/chat/messages', {newChatMessage: $scope.newLink, roomName: $rootScope.roomName, taskName: meetingTaskName},
+					{headers: {
+						'authorization': $rootScope.token
+					}}).then(function(){
+
+						getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+						$scope.newChatMessage = '';
+					});
+					
+					getLinksByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					$scope.newLink = '';
+					$scope.newLabel = '';
+				});
+			};
+
 
 			$scope.AssignRoomName = function(){
 				$http.put('/newRoom', {newRoom: $scope.roomName},
@@ -239,6 +275,8 @@
 				});
 			};
 
+
+
 			//This function adds people in tasks (front end room.html)
 			$scope.addPeopleInTasks = function(){
 				//console.log("Current Task: "+ meetingTaskName);
@@ -261,6 +299,16 @@
 					$scope.users = response.data;
 				});
 			}
+
+			
+
+			//This function will get users based on task
+			function getUsersBasedOnTask()  {
+				$http.get('/users/find/task').then(function(response){
+					console.log(response.data);
+					$scope.taskUsers = response.data;
+				});
+			}
 			
 			function getMessages(){
 				$http.get('/messages').then(function(response){
@@ -280,6 +328,14 @@
 				$http.put('/chat/messages/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log()
 					$scope.chatMessages = response.data;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}
+			function getLinksByRoomAndTask(meetingTaskName, meetingRoomName){
+				$http.put('/chat/links/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
+					console.log(response.data)
+					$scope.links = response.data;
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
 				});
@@ -334,13 +390,15 @@
 					// meetingTaskName = taskName;
 					// $rootScope.meetingTaskName = $scope.taskName;
 					// $scope.taskName = '';
+					//console.log("Room Name: "+meetingRoomName+" AND Task Name: "+taskName);
+					getLinksByRoomAndTask(taskName, meetingRoomName);
 
 					$scope.chatMessages = response.data;
 					$rootScope.meetingTaskName = taskName;
 					$rootScope.taskName = meetingTaskName;
 					meetingTaskName = taskName;
 
-					
+					$scope.showTextBox();
 
 				});
 			}
@@ -360,13 +418,46 @@
 			function getTasks(meetingRoomName){
 				console.log("Printing the task "+meetingRoomName);
 				$http.put('/tasks', {meetingRoomName: meetingRoomName}).then(function(response){
-					//console.log($scope.tasks);
-					//console.log($rootScope.meetingTaskName+" Rootscope taskname");
+					
+					//console.log($rootScope.meetingTaskName+" Rootscope taskname");`
 					$scope.tasks = response.data;
+					//console.log($scope.tasks);
 				});
 			}
 
+			//This method shows a linkbox on room page when link button is clicked
+			$scope.showLinkBox = function(){
+				$scope.clickedLink = true;
+				$scope.clickedText = false;
+			}
+			//This method shows a text on room page when link button is clicked
+			$scope.showTextBox = function(){
+				$scope.clickedText = true;
+				$scope.clickedLink = false;
+			}
 
+			//This function will get links on click of a button
+			$scope.showLinks = function(){
+				if(linkButton == false ){
+					$scope.clickedLinkButton = true;
+					linkButton = true;
+				}
+				else{
+					$scope.clickedLinkButton = false;
+					linkButton = false;
+				}
+			}
+			//This function will get links on click of a button
+			$scope.showTasks = function(){
+				if(taskButton == false ){
+					$scope.clickedTaskButton = true;
+					taskButton = true;
+				}
+				else{
+					$scope.clickedTaskButton = false;
+					taskButton = false;
+				}
+			}
 
 			//getChatMessagesByRoomArg("Room "+roomNumber);
 			//meetingRoomName = $rootScope.roomName;
@@ -388,6 +479,8 @@
 			//getChatMessages();
 			getRooms();
 			getUsers();
+			//getUsersBasedOnTask();
+
 			//getTasks($rootScope.taskName);
 			//console.log( $rootScope.roomName+" front");
 			

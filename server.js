@@ -116,11 +116,24 @@ app.put('/chat/messages/taskNameAng', function(req, res, next){
 app.put('/chat/messages/roomandtask', function(req, res, next){
 	db.collection('chatMessages', function(err, chatMessagesCollection){
 		console.log("Checking task name: "+ req.body.roomtaskName);
-		console.log("Checking task name2: "+ req.body.meetingTaskName);
+		//console.log("Checking task name2 : "+ req.body.meetingTaskName); //Desn't work
 		chatMessagesCollection.find({$and:[{task: req.body.roomtaskName} , { room: req.body.meetingRoomName}]}).toArray(function(err, chatMessages){
 			///console.log(chatMessages.text);
 			//console.log(chatMessages.text);
 			return res.json(chatMessages);
+		});
+		return	db.collection;
+	});
+});
+//Function to get Links by Room and task
+app.put('/chat/links/roomandtask', function(req, res, next){
+	db.collection('links', function(err, linksCollection){
+		//console.log("Checking task name: "+ req.body.roomtaskName);
+		//console.log("Checking task name2 : "+ req.body.meetingTaskName); //Desn't work
+		linksCollection.find({$and:[{task: req.body.roomtaskName} , { room: req.body.meetingRoomName}]}).toArray(function(err, links){
+			///console.log(chatMessages.text);
+			//console.log(chatMessages.text);
+			return res.json(links);
 		});
 		return	db.collection;
 	});
@@ -195,6 +208,39 @@ app.post('/chat/messages', function(req, res, next){
 });
 
 
+//Function to insert LINKS
+app.post('/chat/links', function(req, res, next){
+	
+	var now = new Date();
+	var jsonDate = now.toJSON();
+
+	var token = req.headers.authorization;
+	var user = jwt.decode(token, JWT_SECRET);
+
+	//console.log(req.body.newChatMessage);
+	//console.log(req.body.newRoom);
+	//console.log(req.body.taskName+"HELLOOOOOWDKJLKDJS");
+	console.log(req.body.newLabel+ "Yo");
+	db.collection('links', function(err, linksCollection){
+		var newLink = {
+			//room: req.body.newRoom,
+			text: req.body.newLink,
+			label: req.body.newLabel,
+			username: user.username,
+			room: req.body.roomName,
+			task: req.body.taskName,
+			date: jsonDate
+			//roomId: room._id
+		};
+		linksCollection.insert(newLink, {w:1}, function(err, newLink){
+			io.emit('{text: req.body.newLink}');
+			return res.send();
+		});
+	});
+	//res.send();
+});
+
+
 //Function to select Room name
 app.put('/newRoom', function(req, res, next){
 
@@ -244,20 +290,21 @@ app.post('/room/task/user', function(req, res, next){
 						// 	users:{$elemMatch: {username: req.body.username}
 						// };
 
-						//tasksCollection.find({users:{$elemMatch: {username: req.body.username}}},function(err, user){
-							//if(user){
-								//return res.status(400).send();
-							//}
-							//else{
+						// tasksCollection.find({users:{$elemMatch: {username: req.body.username}}},function(err, user){
+						// 	console.log(user);
+						// 	if(user){
+						// 		return res.status(400).send();
+						// 	}
+						// 	else{
 								tasksCollection.update(
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.taskName },
-								{ $push: { users:  req.body.username } }
+								{ $push: { users:  { username: req.body.username } } }
 								)
 								return res.send();
-							//}
-						//});
+						// 	}
+						// });
 
 						
 					});	
@@ -284,9 +331,9 @@ app.put('/newTask', function(req, res, next){
 			name: req.body.newTask,
 			room: req.body.newRoom,
 			users: [
-				//{
-					req.body.newUser
-				//}
+				{
+					username: req.body.newUser
+				}
 				]
 			//user: user._id,
 			//username: user.username
@@ -371,6 +418,16 @@ app.get('/users/find', function(req, res, next){
 		usersCollection.find().toArray(function(err, users){
 			return res.json(users);
 
+		});
+		return	db.collection;
+	});
+});
+
+//Function to search users based on tasks
+app.get('/users/find/task', function(req, res, next){
+	db.collection('tasks', function(err, tasksCollection){
+		tasksCollection.find({users}).toArray(function(err, users){
+			return res.json(users);
 		});
 		return	db.collection;
 	});
