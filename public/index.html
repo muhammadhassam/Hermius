@@ -1,7 +1,18 @@
 <html ng-app="hermius">
 <head>
 	<title>Hermius</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
 
+    <!-- Morris Charts CSS -->
+    <link href="css/plugins/morris.css" rel="stylesheet">
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+	<!-- Angular Animate -->
+	<!--<script src="path/to/angular.js"></script>-->
+	<!--<script src="/node_modules/angular-animate/angular-animate.js"></script>-->
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
@@ -9,6 +20,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
+	<!-- Custom Stylesheets -->
 	<link rel="stylesheet" type="text/css" href="style.css">
 	<script type="text/javascript" src="angular.min.js"></script>
 	<script type="text/javascript" src="angular-route.js"></script>
@@ -26,7 +38,7 @@
 		app.config(function($routeProvider, $locationProvider){
 			$routeProvider
 		   .when('/', {
-		    templateUrl: 'home.html',
+		    templateUrl: 'home2.html',
 		    controller: 'HomeController',
 			})
 
@@ -66,6 +78,7 @@
 				meetingTaskName = $rootScope.taskToken;
 			}
 		});
+		
 
 		
 
@@ -79,15 +92,34 @@
 				getMessages();
 			});
 
-			$scope.SubmitNewMessage = function(){
-				$http.post('/messages', {newMessage: $scope.newMessage},
+			$scope.SubmitNewMessage = function(meetingRoomName, meetingTaskName){
+				//console.log("Room"+meetingRoomName+", Task: "+meetingTaskName);
+				$http.post('/messages', {newMessage: $scope.newMessage, roomName: meetingRoomName, taskName: meetingTaskName},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
-					getMessages();
+					//getMessages();
+					console.log("HELLOWW"+meetingRoomName);
+					getMessagesbyRoomAndTask(meetingRoomName, meetingTaskName);
 					$scope.newMessage = '';
 				});
 			};
+
+			//This function gets rooms
+			function getRooms(){
+				$http.get('/rooms').then(function(response){
+					$scope.rooms = response.data;
+				});
+			}
+			//This function gets tasks based on meetingRoom
+			function getTasks(meetingRoomName){
+				//console.log("Printing the task "+meetingRoomName);
+				$http.put('/tasks', {meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log($rootScope.meetingTaskName+" Rootscope taskname");`
+					$scope.tasks = response.data;
+					//console.log($scope.tasks);
+				});
+			}
 
 			//Login function
 			$scope.signin = function(){
@@ -121,19 +153,57 @@
 					{headers: {
 				 		'authorization': $rootScope.token
 				 	}}).then(function(){
-					getMessages();
+					//getMessages();
+					getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 				});
 			};
 
-			function getMessages(){
-				$http.get('/messages').then(function(response){
+			// function getMessages(){
+			// 	$http.get('/messages').then(function(response){
+			// 	$scope.messages = response.data;
+			// 	});
+			// }
+			
+			function getMessagesbyRoomAndTask(meetingRoomName, meetingTaskName){
+				$http.put('/messages',{roomName: meetingRoomName, taskName: meetingTaskName}).then(function(response){
 				$scope.messages = response.data;
+				//console.log(response.data);
 				});
 			}
-			getMessages();
 			
+			
+			//This function will get links on click of a button and will call the getTasks(meetingRoomName) method 
+			$scope.showLinks = function(meetingRoomName){
+				if(linkButton == false ){
+					$scope.clickedLinkButton = true;
+					linkButton = true;
+					//getTasks(meetingRoomName);
+					getFeedsByRoomNameAng(meetingRoomName);
+				}
+				else{
+					$scope.clickedLinkButton = false;
+					linkButton = false;
+				}
+			}
+
+			
+			function getFeedsByRoomNameAng(meetingRoomName){
+				getTasks(meetingRoomName);
+				$rootScope.meetingRoomName = meetingRoomName;
+
+			}
+			//$scope.SubmitNewLink = function(meetingTaskName){
+			$scope.getFeedsByTasks = function(taskName){
+				$rootScope.meetingTaskName = taskName;
+				//console.log($rootScope.meetingTaskName+"Hello");
+				//console.log($rootScope.meetingRoomName+"ueli"+taskName);
+				getMessagesbyRoomAndTask($rootScope.meetingRoomName, taskName);
+			}
 
 
+
+			//getMessages();
+			getRooms();
 		});
 
 
@@ -379,6 +449,7 @@
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
 				});
+
 			}
 
 			//Function to get Chat Messages based on task name on front end
@@ -498,7 +569,63 @@
 			<span class=" glyphicon glyphicon-user pull-right" style="color: black; margin-right: 15px"></span>
 	</div>
 	-->
-	<div ng-hide="currentUser" class="panel panel-primary">
+<div id="wrapper">
+
+	<div ng-hide="currentUser" >
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#/">Hermius</a>
+            </div>
+            <!-- Top Menu Items -->
+            <ul class="nav navbar-right top-nav">
+			 <li>
+				<a href="#/signup" >Not a member? Signup</a>
+        	</li>
+            </ul>
+	</div>
+
+
+	<div ng-show="currentUser" >
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#/">Hermius</a>
+            </div>
+            <!-- Top Menu Items -->
+            <ul class="nav navbar-right top-nav">
+                <li class="dropdown">
+                    <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>{{currentUser}} </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li>
+							<a href  ng-click="logout()" > <i class="fa fa-fw fa-power-off"></i>Log Out</a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+	</div>
+
+</div>
+	
+	<!--<div ng-hide="currentUser" class="panel panel-primary">
 		<div class="panel-heading">
 			<h1>
 				<a href="#/" >Hermius </a>
@@ -520,8 +647,11 @@
 				</span>
 			</h1>      
 		</div>
+	</div>-->
+
+	<div ng-view style="margin-top: 70px;">
 	</div>
 
-	<div ng-view></div>
+
 </body>
 </html>

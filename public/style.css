@@ -14,11 +14,7 @@
 .page-title{
 	margin-left: 100px;	
 }
-.new-message{
-	border: 1px solid #337AB7;
-	padding: 20px;
-	width: 100%;
-}
+
 .panel {
 	background-color: #337AB7;
 	text-color: white;
@@ -32,4 +28,172 @@
 	color: white;
 }
 
+/* Top Navigation START*/
 
+.top-nav {
+    padding: 0 15px;
+}
+
+.top-nav>li {
+    display: inline-block;
+    float: left;
+}
+
+.top-nav>li>a {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    line-height: 20px;
+    color: #999;
+}
+
+.top-nav>li>a:hover,
+.top-nav>li>a:focus,
+.top-nav>.open>a,
+.top-nav>.open>a:hover,
+.top-nav>.open>a:focus {
+    color: #fff;
+    background-color: #000;
+}
+
+.top-nav>.open>.dropdown-menu {
+    float: left;
+    position: absolute;
+    margin-top: 0;
+    border: 1px solid rgba(0,0,0,.15);
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+    background-color: #fff;
+    -webkit-box-shadow: 0 6px 12px rgba(0,0,0,.175);
+    box-shadow: 0 6px 12px rgba(0,0,0,.175);
+}
+
+.top-nav>.open>.dropdown-menu>li>a {
+    white-space: normal;
+}
+/* Top Navigation END*/
+
+/* Secondary Button START*/
+.btn-secondary{
+	background-color: #222;
+	color: white;
+}
+.btn-secondary:hover{
+	background-color: #000;
+	color: white;
+}
+
+/* Buttons END*/
+
+
+
+/* Side Navigation */
+
+@media(min-width:768px) {
+    .side-nav {
+        position: fixed;
+        top: 51px;
+        left: 225px;
+        width: 225px;
+        margin-left: -225px;
+        border: none;
+        border-radius: 0;
+        overflow-y: auto;
+        background-color: #222;
+        bottom: 0;
+        overflow-x: hidden;
+        padding-bottom: 40px;
+    }
+
+    .side-nav>li>a {
+		color: white;
+        width: 225px;
+    }
+
+    .side-nav li a:hover,
+    .side-nav li a:focus {
+        outline: none;
+        background-color: #000 !important;
+    }
+}
+
+.side-nav>li>ul {
+    padding: 0;
+}
+
+.side-nav>li>ul>li>a {
+    display: block;
+    padding: 10px 15px 10px 38px;
+    text-decoration: none;
+    color: #999;
+}
+
+.side-nav>li>ul>li>a:hover {
+    color: #fff;
+}
+
+
+/* Side nav styling ENDS */
+
+
+
+/* Page styling START*/
+#wrapper {
+    padding-left: 0;
+}
+
+#page-wrapper {
+	margin-top: 0px;
+    width: 100%;
+	padding: 0px;
+    background-color: #fff;
+}
+
+.huge {
+    font-size: 50px;
+    line-height: normal;
+}
+
+@media(min-width:768px) {
+    #wrapper {
+        padding-left: 225px;
+    }
+
+    #page-wrapper {
+		margin-top: -30px;
+        padding: 10px;
+    }
+}
+
+/* Page styling START*/
+
+
+/* Feed styling START*/
+.singlefeed{
+	border: 1px solid #e3e3e3;
+	padding: 20px;
+	background-color: #fafafa;
+	margin-top: 20px;
+}
+.username{
+	color: #337AB7;
+	font-size: 20px;
+	padding-left: 5px;
+}
+.feedtext{
+	font-weight: normal;
+	font-size: 20px;
+}
+.new-message{
+	border: 1px solid #e3e3e3;
+	padding: 20px;
+	width: 100%;
+}
+.feed-demo-image{
+	border: 3px solid #fef3f3;
+	margin-bottom: 5px;
+	width: 100%;
+}
+
+
+
+/* Feed styling ENDS*/

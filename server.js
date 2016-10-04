@@ -37,9 +37,11 @@ io.on('connection', function(socket){
 
 
 
-app.get('/messages', function(req, res, next){
+app.put('/messages', function(req, res, next){
+
 	db.collection('messages', function(err, messagesCollection){
-		messagesCollection.find().toArray(function(err, messages){
+		console.log(req.body.taskName+"yepo"+req.body.roomName);
+		messagesCollection.find({$and:[{room: req.body.roomName} , { task: req.body.taskName}]}).toArray(function(err, messages){
 			return res.json(messages);
 
 		});
@@ -174,6 +176,7 @@ app.put('/tasks', function(req, res, next){
 		return	db.collection;
 	});
 });
+
 
 //Function to insert CHAT messages
 app.post('/chat/messages', function(req, res, next){
@@ -353,13 +356,15 @@ app.post('/messages', function(req, res, next){
 
 	var token = req.headers.authorization;
 	var user = jwt.decode(token, JWT_SECRET);
-	//console.log(req.body.roomName);
+	//console.log("RoomName: "+req.body.roomName+", TaskName: "+req.body.taskName);
 	db.collection('messages', function(err, messagesCollection){
 		var newMessage = {
 			//room: req.body.newRoom,
 			text: req.body.newMessage,
 			user: user._id,
-			username: user.username
+			username: user.username,
+			room: req.body.roomName,
+			task: req.body.taskName
 			
 		};
 		messagesCollection.insert(newMessage, {w:1}, function(err, messages){
