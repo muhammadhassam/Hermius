@@ -47,6 +47,11 @@
 		    controller: 'SignupController',
 			})
 
+			.when('/signin', {
+		    templateUrl: 'signin.html',
+		    controller: 'HomeController',
+			})
+
 			.when('/room', {
 		    templateUrl: 'room.html',
 		    controller: 'RoomController',
@@ -99,7 +104,7 @@
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
 					//getMessages();
-					console.log("HELLOWW"+meetingRoomName);
+					//console.log("HELLOWW"+meetingRoomName);
 					getMessagesbyRoomAndTask(meetingRoomName, meetingTaskName);
 					$scope.newMessage = '';
 				});
@@ -158,6 +163,33 @@
 				});
 			};
 
+			//This function adds a like to the feed (adds username)
+			$scope.likeMessage = function(user, message, date){
+				//console.log($rootScope.currentUser+ " liked a post: "+message+", date: "+date);
+				$http.put('/like', {username: $rootScope.currentUser, messageText: message, messageDate: date}).then(function(response){
+					//console.log(response.data);
+					//getLikes(response.data);
+					$scope.messageLikes = response.data;
+					getLikes($scope.messageLikes);
+					console.log($scope.messageLikes+" Response for Likes");
+				});
+			};
+
+			function getLikes(likes){
+				//$http.put('/like', {username: $rootScope.currentUser, messageText: message, messageDate: date}).then(function(response){
+					//console.log(response.data);
+					//getLikes(response.data);
+					// $scope.messageLikes = response.data;
+					// getLikes($scope.messageLikes);
+					// console.log($scope.messageLikes+" Response for Likes");
+					angular.forEach(likes, function(item, index){
+						item.likes.splice(0,1);
+						$scope.likes = item.likes;
+						console.log($scope.likes);
+					});
+				//});
+				
+			}
 			// function getMessages(){
 			// 	$http.get('/messages').then(function(response){
 			// 	$scope.messages = response.data;
@@ -166,8 +198,9 @@
 			
 			function getMessagesbyRoomAndTask(meetingRoomName, meetingTaskName){
 				$http.put('/messages',{roomName: meetingRoomName, taskName: meetingTaskName}).then(function(response){
-				$scope.messages = response.data;
-				//console.log(response.data);
+					$scope.messages = response.data;
+					getLikes($scope.messages);
+					//console.log(response.data);
 				});
 			}
 			
@@ -350,35 +383,54 @@
 			//This function adds people in tasks (front end room.html)
 			$scope.addPeopleInTasks = function(){
 				//console.log("Current Task: "+ meetingTaskName);
-				console.log("Current Room: "+ $rootScope.meetingRoomName);
+				//console.log("Current Room: "+ $rootScope.meetingRoomName);
 				$http.post('/room/task/user', {username: $scope.username, taskName: meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
-					console.log("User added");
+					//console.log("User added");
+					getUsersBasedOnTask(meetingTaskName);
+					$scope.username = "";
 				},function(err){
 					console.log(err);
-					alert('User does not exist');
+					if(err.status == 404){
+						alert('User does not exist');
+					}
+					else if(err.status == 400){
+						alert('User already exists');
+					}
+						
 				});
 			};
+
+			//This method gets users based on task to show on front
+			function getUsersBasedOnTask(taskName){
+				$http.put('/showUsers',{taskName: taskName}).then(function(response){
+					$scope.taskUsers = response.data;
+					angular.forEach($scope.taskUsers, function(item, index){
+						item.users.splice(0,1);
+						$scope.users = item.users;
+					});
+				});
+			}
 
 			//This function displays a list of tasks and users when the user clicks on rooms on rooms.html page
 			$scope.displayTasksAndUsers = function(meetingRoomName){
 				getTasks(meetingRoomName);
 			}
 
-			function getUsers(){
-				$http.get('/users/find').then(function(response){
-					$scope.users = response.data;
-				});
-			}
+			// function getUsers(){
+			// 	$http.get('/users/find').then(function(response){
+			// 		$scope.users = response.data;
+			// 	});
+			// }
 
 			
 
 			//This function will get users based on task
-			function getUsersBasedOnTask()  {
-				$http.get('/users/find/task').then(function(response){
-					console.log(response.data);
-					$scope.taskUsers = response.data;
-				});
-			}
+			// function getUsersBasedOnTask()  {
+			// 	$http.get('/users/find/task').then(function(response){
+			// 		console.log(response.data);
+			// 		$scope.taskUsers = response.data;
+			// 	});
+			// }
 			
 			function getMessages(){
 				$http.get('/messages').then(function(response){
@@ -470,6 +522,7 @@
 					meetingTaskName = taskName;
 
 					$scope.showTextBox();
+					getUsersBasedOnTask(meetingTaskName);
 
 				});
 			}
@@ -549,7 +602,7 @@
 			//getChatMessagesByRoomArg(meetingRoomName);
 			//getChatMessages();
 			getRooms();
-			getUsers();
+			//getUsers();
 			//getUsersBasedOnTask();
 
 			//getTasks($rootScope.taskName);

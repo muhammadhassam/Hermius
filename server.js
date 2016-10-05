@@ -280,13 +280,26 @@ app.post('/room/task/user', function(req, res, next){
 		var userVar = {
 			username: req.body.username
 		};
-		console.log("userVar: "+userVar);
+		//console.log("userVar: "+userVar);
 
 		db.collection('users', function(err, usersCollection){
 			usersCollection.findOne(userVar,function(err, user){
 				if(user){
 					db.collection('tasks', function(err, tasksCollection){
-
+						tasksCollection.find({$and:[{"users": {$in:[{username: req.body.username}]}}, {name: req.body.taskName}]}).toArray(function(err, users){
+							if(users.length > 0){
+								return res.status(400).send();
+							}
+							else{
+								tasksCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.taskName },
+								{ $push: { users: {username: req.body.username }} }
+								)
+								return res.send();
+							}
+						});
 						// var username = 
 						
 						// {
@@ -299,13 +312,7 @@ app.post('/room/task/user', function(req, res, next){
 						// 		return res.status(400).send();
 						// 	}
 						// 	else{
-								tasksCollection.update(
-								//{ name: req.body.taskName },
-								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
-								{name: req.body.taskName },
-								{ $push: { users:  { username: req.body.username } } }
-								)
-								return res.send();
+								
 						// 	}
 						// });
 
@@ -351,8 +358,20 @@ app.put('/newTask', function(req, res, next){
 	//res.send();
 });
 
+//Function to show users when user clicks on task or invite
+app.put('/showUsers', function(req, res, next){
+	db.collection('tasks', function(err, tasksCollection){
+		tasksCollection.find({name: req.body.taskName}).toArray(function(err, tasks){
+			return res.json(tasks);
+		});
+		return db.collection;
+	});
+});
+
 //Function to insert messages
 app.post('/messages', function(req, res, next){
+	var now = new Date();
+	var jsonDate = now.toJSON();
 
 	var token = req.headers.authorization;
 	var user = jwt.decode(token, JWT_SECRET);
@@ -364,7 +383,19 @@ app.post('/messages', function(req, res, next){
 			user: user._id,
 			username: user.username,
 			room: req.body.roomName,
-			task: req.body.taskName
+			task: req.body.taskName,
+			date: jsonDate,
+			likes: [
+				{
+					username: req.body.newUser
+				}
+			],
+			comments: [
+				{
+					username: req.body.newUser,
+					text: req.body.commentText
+				}
+			]
 			
 		};
 		messagesCollection.insert(newMessage, {w:1}, function(err, messages){
@@ -374,6 +405,33 @@ app.post('/messages', function(req, res, next){
 	});
 	//res.send();
 });
+
+//Function to like a post
+app.put('/like', function(req, res, next){
+
+	console.log(req.body.username+ " liked a post: "+req.body.messageText+", date: "+req.body.messageDate);
+//usersCollection.find().toArray(function(err, users){
+	db.collection('messages', function(err, messagesCollection){
+		messagesCollection.find({$and:[{text: req.body.messageText}, { date: req.body.messageDate}]}).toArray(function(err, like){
+			//console.log("Inside push");
+			messagesCollection.update(
+				{text: req.body.messageText},
+				
+				{ $push: { likes:  { username: req.body.username } } }
+			)
+			return res.json(like);
+
+		});
+
+
+		// messagesCollection.update(
+		// {name: req.body.taskName },
+		// { $push: { likes:  { username: req.body.username } } }
+		// )
+		// return res.send();
+	});
+});
+
 
 //Function to remove messages
 app.put('/messages/remove', function(req, res, next){

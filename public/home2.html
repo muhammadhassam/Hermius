@@ -64,38 +64,41 @@
                 <!-- /.row -->
                <div class="row" >
                     <div class="col-md-8">
-                        <div ng-show="meetingTaskName" class="new-message" ng-show="currentUser">
-                            <span style="font-size: 20px;" class="fa fa-user" aria-hidden="true"></span> <span class="username">{{currentUser}}</span>
-                            <input type="text" class="form-control" ng-model="newMessage" placeholder="Write something about task you selected...">
-                            <br>
-                            <button type="button" class="btn btn-secondary pull-right" ng-click="SubmitNewMessage(meetingRoomName,meetingTaskName)">Post</button>
-                            <br>
-                        </div>
-
                         <div ng-hide="meetingTaskName" class="singlefeed" style="margin-top: 0px;">
                             <img class="feed-demo-image" src="images/team.jpg" alt="team">
                             <br>
                             <span style="font-size: 20px;" class="fa fa-user" aria-hidden="true"></span> <span class="username">Hermius</span>
                             <br>
-                            <span class="feedtext">Welcome to Hermius. Select a Project and task to view its feeds</span>
+                            <span class="feedtext">Welcome to Hermius. Select a Project and its task to view its feeds</span>
                             <BR>
                             <BR>
-                            <!--<i style="color: #5A5A5A;" class="fa fa-thumbs-up"></i> Like &nbsp;&nbsp;<i style="color: #5A5A5A;" class="fa fa-comment"></i> Comment
-                            <div class="input-group">
-                                <span class="input-group-addon" id="basic-addon1">...</span>
-                                <input type="text" class="form-control" placeholder="Write a comment..." aria-describedby="basic-addon1">
-                            </div>-->
                         </div>
-                        
+
+                        <div ng-show="meetingTaskName" class="new-message" ng-show="currentUser">
+                            <span style="font-size: 20px;" class="fa fa-user" aria-hidden="true"></span> <span class="username">{{currentUser}}</span>
+                            <input type="text" class="form-control" ng-model="newMessage" placeholder="Write something about task you selected...">
+                            <br>
+                            <span style="color: #337AB7"> #{{meetingRoomName}} #{{meetingTaskName}}</span>
+                            <button type="button" class="btn btn-secondary pull-right" ng-click="SubmitNewMessage(meetingRoomName,meetingTaskName)">Post</button>
+                            <br>
+                        </div>
 
                         <div ng-repeat = "message in messages | orderBy: reverse:true" class="singlefeed" class="animate-repeat">
                             <span style="font-size: 20px;" class="fa fa-user" aria-hidden="true"></span> <span class="username">{{message.username}}</span>
                             <a href ng-click="removeMessage(message)"> <span style="color: #5A5A5A" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span></a>
                             <br>
-                            <span class="feedtext">{{ message.text }}</span>
+                            <a ng-model="date">Date: {{message.date}}</a>
+                            <br>
+                            <span class="feedtext">{{ message.text }} </span>
                             <BR>
+                            <span style="color: #337AB7"> #{{meetingRoomName}} #{{meetingTaskName}}</span>
                             <BR>
-                            <i style="color: #5A5A5A;" class="fa fa-thumbs-up"></i> Like &nbsp;&nbsp;<i style="color: #5A5A5A;" class="fa fa-comment"></i> Comment
+                            <a href="" ng-click="likeMessage(message.username, message.text, message.date)" ><i style="color: #5A5A5A;" class="fa fa-thumbs-up"></i> Like </a>&nbsp;&nbsp;<i style="color: #5A5A5A;" class="fa fa-comment"></i> Comment
+                            </BR>
+                            {{likes.length}} People like this
+                            <div ng-repeat="like in likes ">
+                                {{like.username}}
+                            </div>                            
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1">...</span>
                                 <input type="text" class="form-control" placeholder="Write a comment..." aria-describedby="basic-addon1">
@@ -110,17 +113,13 @@
                             <br>
                             <span style="font-size: 20px;" class="fa fa-user" aria-hidden="true"></span> <span class="username">Hermius</span>
                             <br>
-                            <span class="feedtext">Welcome to Hermius. Select a Project and task to view its feeds</span>
+                            <span class="feedtext">Welcome to Hermius. Select a Project and its task to view different feeds</span>
                             <BR>
                             <BR>
-                            <!--<i style="color: #5A5A5A;" class="fa fa-thumbs-up"></i> Like &nbsp;&nbsp;<i style="color: #5A5A5A;" class="fa fa-comment"></i> Comment
-                            <div class="input-group">
-                                <span class="input-group-addon" id="basic-addon1">...</span>
-                                <input type="text" class="form-control" placeholder="Write a comment..." aria-describedby="basic-addon1">
-                            </div>-->
                         </div>
                     </div>
                     <!-- /sidebar -->   
+
                 </div>
                 <!-- /.row -->
             </div>

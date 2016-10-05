@@ -31,15 +31,15 @@
 					<a href="#/room/{{ room.name }}">{{ user.username }} </a>
 				</li>
 			</ul>-->
-			<ul class="list-group" >
-				<li class="list-group-item" ng-repeat="task in tasks ">
-					
+			<ul class="list-group">
+				<li class="list-group-item"  ng-repeat="user in users ">
 					<!--<a href="#/room/{{ room.name }}">{{ task.users}} </a>-->
-					<li class="list-group-item" ng-repeat="username in task.users">
-						<a href="#/room/{{ room.name }}">{{ username }} </a>
-					</li>
+					<a href="">{{ user.username }} </a>
 				</li>
 			</ul>
+			<!--<div ng-repeat="user in users">
+				{{user.username}}
+			</div>-->
 	</div>
 	<div ng-hide="meetingRoomName"  class="col-md-7" style="border: 1px solid #efefef; background-color: #e1e1e1">
 		<h2 style="text-align: center; ">Nothing to display here. Please select a MeetingRoom/Project</h2>
