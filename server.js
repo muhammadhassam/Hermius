@@ -14,6 +14,20 @@ var smtpTransport = require('nodemailer-smtp-transport');
 
 var JWT_SECRET = 'hermeszeus';
 
+var multer  = require('multer');
+var filename;
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public')
+  },
+  filename: function (req, file, cb) {
+    cb(null,  Date.now()+file.originalname);
+  }
+});
+
+var upload = multer({ storage: storage });
+
+
 var db = null;
 //var messages;
 MongoClient.connect("mongodb://localhost:27017/FYP", function(err, dbconn){
@@ -35,6 +49,26 @@ server.listen(80);
 io.on('connection', function(socket){
 	//console.log('IO CONNECTION SUCCESSFUL');
 });
+
+// function to save uplaos file
+app.post('/profile',upload.any(), function (req, res, next) {
+  // req.file is the `avatar` file
+  // req.body will hold the text fields, if there were any
+ // console.log(req.body);
+  console.log(req.files);
+  var filename= req.files;
+    
+// db.collection('View',function(err,collection){
+// 	var newCommnt= {comment:req.files};
+// collection.insert(newCommnt, {w:1}, function(err, result) {
+     
+//      //return res.send(req.files);
+//   });
+// });
+return res.json(req.files);
+
+});
+
 
 
 
@@ -331,8 +365,8 @@ app.post('/users', function(req, res, next){
 		        // Store hash in your password DB. 
 				var newUser = {
 				username: req.body.username,
-				password: hash
-				
+				password: hash,
+                email:req.body.Email				
 				};
 				usersCollection.insert(newUser, {w:1}, function(err, messages){
 				return res.send();
@@ -516,8 +550,17 @@ db.collection('tasks', function(err, tasksCollection){
 });
 });
 
-
-
+// function to show profile
+app.put('/show/User/profile', function(req, res, next){
+	console.log( "print");
+	db.collection('users', function(err, usersCollection){
+		usersCollection.find({username: req.body.name}).toArray(function(err, users){
+			//console.log(req.body.name);
+			return res.json(users);
+		});
+		return	db.collection;
+	});
+});
 
 
 app.listen(3015, function () {

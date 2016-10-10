@@ -30,7 +30,7 @@
 			}) 
 			 .when('/userprofile', {
 		     templateUrl: 'profile.html',
-		    controller: '',
+		    controller: 'profileController',
 			 }) 
 			.when('/room/:meetingRoomName', {
 		    templateUrl: 'room.html',
@@ -119,13 +119,115 @@
 			$scope.submitSignup = function(){
 				var newUser = {
 					username: $scope.username,
-					password: $scope.password
+					password: $scope.password,
+					Email:$scope.email
 				};
 				$http.post('/users', newUser).then(function(){
 					alert('User Successfully created');
 				});
 			};
 		});
+
+// services and others
+
+ app.directive('fileModel', ['$parse', function ($parse) {
+            return {
+               restrict: 'A',
+               link: function(scope, element, attrs) {
+                  var model = $parse(attrs.fileModel);
+                  var modelSetter = model.assign;
+                  
+                  
+                  
+                  element.bind('change', function(evt){
+                     scope.$apply(function(){
+                        modelSetter(scope, element[0].files[0]);
+                        
+                     });
+                  });
+               }
+            };
+         }]);
+
+
+
+app.service('fileUpload', ['$http','$q', function ($http,$q) {
+             var showImage;
+             var readImage=3;
+             var deffered = $q.defer();
+            //this.uploadFileToUrl = function(file, uploadUrl){
+              this.post =function(uploadUrl,data){
+                //$rootScope.$apply();
+               var fd = new FormData();
+               for(var key in data)
+               //{
+               //fd.append('file', file);
+               fd.append(key,data[key]);
+              //}
+               $http.post(uploadUrl, fd, {
+                  transformRequest: angular.identity,
+                  headers: {'Content-Type': undefined}
+               })
+            
+               .success(function(response){
+               deffered.resolve(response);
+               
+               })
+            
+               .error(function(reponse){
+               })
+                    
+            }
+            this.fileName = function()
+            {           
+                      
+                   return deffered.promise;
+            }
+            console.log("Ssssss");
+            
+
+
+         }]);
+
+
+
+
+ app.controller("profileController",[ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
+
+$scope.imgSrc="default.png";
+function showUserProfile()
+{
+    $http.put('/show/User/profile',{name:$rootScope.currentUser}).then(function(response){
+                  console.log($rootScope.currentUser);
+				  //console.log($rootScope.meetingTaskName);
+				  $scope.userProfile = response.data;
+				   console.log(response.data);
+                    //$scope.users=response.data;
+                 });
+}
+        showUserProfile();
+
+$scope.submit = function()
+   {     
+          
+                          var promise = fileUpload.fileName();
+                          promise.then(function(data){
+                            $scope.image=data;
+                            //console.log($scope.image);
+                          }) 
+               var uploadUrl = '/profile';
+               //fileUpload.uploadFileToUrl(file, uploadUrl);
+               fileUpload.post(uploadUrl,$scope.myFile);
+                //storeFiles();             
+   };
+
+
+
+
+ }]);
+
+
+
 		app.controller('RoomController', function($rootScope, $scope, $http, $cookies){
 						
 			var socket = io.connect('http://localhost');
@@ -283,8 +385,8 @@
 					$rootScope.meetingTaskName = taskName;
 					//$rootScope.taskName = meetingTaskName; 
 					meetingTaskName = taskName;
-                    console.log(meetingRoomName);
-                    console.log(meetingTaskName);
+                    //console.log(meetingRoomName);
+                    //console.log(meetingTaskName);
 					getUserBasedOnTask(meetingTaskName);
                     getChatMessagesByRoomAndTask( meetingRoomName, meetingTaskName);
 					
@@ -362,11 +464,11 @@
            $http.put('/users/show',{roomtaskName: taskName}).then(function(response){
                     console.log(taskName);
 					$scope.tasksUser=response.data;
-					console.log(response.data);
+					//console.log(response.data);
                      	 angular.forEach($scope.tasksUser, function(item,index){
-                        console.log(item.users+"array");
+                        //console.log(item.users+"array");
 						
-							console.log(item.users.length);
+							//console.log(item.users.length);
 							item.users.splice(0,1);
 						$scope.user=item.users;
 						  
@@ -387,10 +489,10 @@
 	   function showTaskandRoomforUser()
 	   {
            $http.put('/show/loginUser',{name:$rootScope.currentUser,taskName:$rootScope.meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
-                  console.log($rootScope.currentUser);
+                  //console.log($rootScope.currentUser);
 				  //console.log($rootScope.meetingTaskName);
 				  $scope.userTasks = response.data;
-				   console.log(response.data);
+				   //console.log(response.data);
                     //$scope.users=response.data;
                  });
 	   }
@@ -398,15 +500,25 @@
        function showTaskandRoomforUsername()
 	   {
            $http.put('/show/loginUser/rooms',{name:$rootScope.currentUser,taskName:$rootScope.meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
-                  console.log($rootScope.currentUser);
+                  //console.log($rootScope.currentUser);
 				  //console.log($rootScope.meetingTaskName);
 				  $scope.userRooms = response.data;
-				   console.log(response.data);
+				   //console.log(response.data);
                     //$scope.users=response.data;
                  });
 	   }
-
-
+// function to show profile
+// function showUserProfile()
+// {
+//     $http.get('/show/User/profile',{name:$rootScope.currentUser}).then(function(response){
+//                   console.log($rootScope.currentUser);
+// 				  //console.log($rootScope.meetingTaskName);
+// 				  //$scope.userRooms = response.data;
+// 				   console.log(response.data);
+//                     //$scope.users=response.data;
+//                  });
+// }
+//         showUserProfile();
         showTaskandRoomforUsername(); 
 	    showTaskandRoomforUser();
 	   
