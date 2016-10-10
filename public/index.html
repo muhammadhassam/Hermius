@@ -1,0 +1,455 @@
+<html ng-app="hermius">
+<head>
+	<title>Hermius</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+	<link rel="stylesheet" type="text/css" href="style.css">
+	<script type="text/javascript" src="angular.min.js"></script>
+	<script type="text/javascript" src="angular-route.js"></script>
+	<script type="text/javascript" src="angular-cookies.js"></script>
+	<script src="http://localhost:80/socket.io/socket.io.js"></script>
+	<script type="text/javascript">
+		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
+		var meetingRoomName, meetingTaskName;
+		var roomNumber = 1;
+        
+		app.config(function($routeProvider, $locationProvider){
+			$routeProvider
+		   .when('/', {
+		    templateUrl: 'home.html',
+		    controller: 'HomeController',
+			})
+			.when('/signup', {
+		    templateUrl: 'signup.html',
+		    controller: 'SignupController',
+			})
+			.when('/room', {
+		    templateUrl: 'room.html',
+		    controller: 'RoomController',
+			}) 
+			 .when('/userprofile', {
+		     templateUrl: 'profile.html',
+		    controller: '',
+			 }) 
+			.when('/room/:meetingRoomName', {
+		    templateUrl: 'room.html',
+		    controller: 'RoomController',
+			});     
+		});
+		app.run(function($rootScope, $cookies){
+			if($cookies.get('token') && $cookies.get('currentUser')) {
+				$rootScope.token = $cookies.get('token');
+				$rootScope.currentUser = $cookies.get('currentUser');
+			}
+			if($cookies.get('roomToken') && $cookies.get('roomName')) {
+				$rootScope.roomToken = $cookies.get('roomToken');
+				$rootScope.roomName = $cookies.get('roomName');
+				meetingRoomName = $rootScope.roomName;
+			}
+			if($cookies.get('taskToken') && $cookies.get('taskName')) {
+				$rootScope.taskToken = $cookies.get('taskToken');
+				$rootScope.taskName = $cookies.get('taskToken');
+				meetingTaskName = $rootScope.taskToken;
+			}
+		});
+		
+		app.controller('HomeController', function($rootScope, $scope, $http, $cookies){
+			var socket = io.connect('http://localhost');
+			socket.on('connect', function(socket){
+				console.log('SOCKET IO');
+			});
+			socket.on('{text: req.body.newMessage}', function(data){
+				getMessages();
+			});
+			$scope.SubmitNewMessage = function(){
+				$http.post('/messages', {newMessage: $scope.newMessage},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+					getMessages();
+					$scope.newMessage = '';
+				});
+			};
+			//Login function
+			$scope.signin = function(){
+				//console.log($scope.username);
+				$http.put('/users/signin', {username: $scope.username, password: $scope.password}).then(function(res){
+					//console.log(res.data.token);
+					$cookies.put('token', res.data.token);
+					$cookies.put('currentUser', $scope.username);
+					$rootScope.token = res.data.token;
+					$rootScope.currentUser = $scope.username;
+					//alert('Successfully signed in!');
+				}, function(err) {
+					alert('Wrong Username or Password');
+				});
+			};
+			//Logout Function
+			$scope.logout = function(){
+				$cookies.remove('token');
+				$cookies.remove('currentUser');
+				$rootScope.token = null;
+				$rootScope.currentUser = null;
+			};
+			//Remove a message
+			$scope.removeMessage = function(message){
+				$http.put('/messages/remove', 
+					{message: message}, 
+					{headers: {
+				 		'authorization': $rootScope.token
+				 	}}).then(function(){
+					getMessages();
+				});
+			};
+			function getMessages(){
+				$http.get('/messages').then(function(response){
+				$scope.messages = response.data;
+				});
+			}
+			getMessages();
+			
+		});
+			// $scope.createRoom = function(message){
+			// 	$http.post('/room', newUser).then(function(){
+			// 		alert('User Successfully created');
+			// 	});
+			// };
+		app.controller('SignupController', function($scope, $http){
+			$scope.submitSignup = function(){
+				var newUser = {
+					username: $scope.username,
+					password: $scope.password
+				};
+				$http.post('/users', newUser).then(function(){
+					alert('User Successfully created');
+				});
+			};
+		});
+		app.controller('RoomController', function($rootScope, $scope, $http, $cookies){
+						
+			var socket = io.connect('http://localhost');
+			socket.on('connect', function(socket){
+			//	console.log('SOCKET IO');
+			});
+			socket.on('{text: req.body.newChatMessage}', function(data){
+				//getChatMessages();
+				//getChatMessagesByRoomArg($rootScope.roomName);
+				//console.log("Hello everyone"+$rootScope.taskName+" AND"+$rootScope.roomName);
+				getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
+				
+				//getChatMessagesByRoomArg(meetingRoomName);
+			});
+			$scope.SubmitNewChatMessage = function(){
+				//console.log($rootscope.meetingTaskName+" Rootscope taskname");
+				$http.post('/chat/messages', {newChatMessage: $scope.newChatMessage, roomName: $rootScope.roomName, taskName: meetingTaskName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+					//getChatMessagesByRoom();
+					//getChatMessagesByRoomArg($rootScope.roomName);
+					//console.log(meetingTaskName+"AND AND AND"+ $rootScope.roomName);
+				//	console.log(meetingTaskName+ "Hellow boy2");
+					//console.log($rootscope.taskName+ "Hellow boy");
+                    //meetingRoomName, meetingTaskName
+                    //$rootScope.roomName
+					getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
+					$scope.newChatMessage = '';
+				});
+			};
+			$scope.AssignRoomName = function(){
+				$http.put('/newRoom', {newRoom: $scope.roomName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(res){
+				 	//console.log($scope.roomName);
+					
+				 	$cookies.put('roomToken', res.data.token);
+					$cookies.put('roomName', $scope.roomName);
+					$rootScope.roomToken = res.data.token;
+					$rootScope.roomName = $scope.roomName;
+					getRooms();
+					meetingRoomName = $scope.roomName;
+					//console.log(meetingRoomName);
+					$rootScope.meetingRoomName = $scope.roomName;
+					$scope.roomName = '';
+					//getChatMessagesByRoom();
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				},function(err){
+                    alert("room already exists");
+
+				});
+			};
+			$scope.AssignTaskName = function(){
+				//console.log("Rootsccope"+$rootScope.meetingRoomName);
+				$http.put('/newTask', {newTask: $scope.taskName,  newRoom: $rootScope.meetingRoomName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(res){
+					
+					$cookies.put('taskToken', res.data.token);
+					$cookies.put('taskName', $scope.taskName);
+					$rootScope.taskToken = res.data.token;
+					$rootScope.taskName = $scope.taskName;
+					meetingTaskName = $scope.taskName;
+					
+					getTasks($rootScope.meetingRoomName);
+					//Extra added line -Reminder
+					//getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
+					
+					//console.log(meetingTaskName+"Boa");
+					
+					$rootScope.meetingTaskName = $scope.taskName;
+					$scope.taskName = '';
+					
+					
+					//res.send();
+				},function(err){
+                    alert("task already exists for this room");
+
+				});
+			};
+			//This function displays a list of tasks and users when the user clicks on rooms on rooms.html page
+			$scope.displayTasksAndUsers = function(meetingRoomName){
+				getTasks(meetingRoomName);
+			}
+			function getMessages(){
+				$http.get('/messages').then(function(response){
+					$scope.messages = response.data;
+				});
+			}
+		/*	function getChatMessagesByRoom(){
+				$http.get('/chat/messages/room').then(function(response){
+					//console.log()
+					$scope.chatMessages = response.data;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}*/
+			function getChatMessagesByRoomAndTask(meetingRoomName, meetingTaskName){
+				$http.put('/chat/messages/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log()
+					$scope.chatMessages = response.data;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}
+		/*	function getChatMessagesByRoomArg(meetingRoomName){
+				//console.log("hello");
+				//console.log(meetingRoomName);
+				$http.put('/chat/messages/roomNameArg', {meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log(newRoom);
+				//	$scope.chatMessages = response.data;
+					meetingRoomName = $rootScope.roomName;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}*/
+			/*function getChatMessagesByTaskArg(meetingTaskName){
+				//console.log("hello");
+				//console.log(meetingRoomName);
+				$http.put('/chat/messages/taskNameArg', {meetingTaskName: meetingTaskName}).then(function(response){
+					//console.log(newRoom);
+					$scope.chatMessages = response.data;
+					meetingTaskName = $rootScope.taskName;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}*/
+			$scope.getChatMessagesByRoomNameAng = function(meetingRoomName){
+				//console.log("hello2");
+				//console.log(meetingRoomName+"front 2");
+				//console.log(meetingRoomName+"New");
+				getTasks(meetingRoomName);
+				$http.put('/chat/messages/roomNameAng', {meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log(newRoom);
+					//$scope.chatMessages = response.data;
+					$rootScope.meetingRoomName = meetingRoomName;
+					$rootScope.roomName = meetingRoomName;
+					meetingRoomName = $rootScope.roomName;
+					//chatMessagess = $scope.chatMessages;
+					//console.log($scope.chatMessages);
+				});
+			}
+			//Function to get Chat Messages based on task name on front end
+			$scope.getChatMessagesByTaskNameAng = function(meetingRoomName, taskName){
+				$http.put('/chat/messages/taskNameAng', {roomtaskName: taskName, meetingRoomName: meetingRoomName}).then(function(response){
+					// $scope.chatMessages = response.data;
+					// meetingTaskName = taskName;
+                     console.log(meetingRoomName);
+                     console.log(taskName);
+					// $rootScope.meetingTaskName = $scope.taskName;
+					// $scope.taskName = '';
+					$rootScope.meetingTaskName = taskName;
+					//$rootScope.taskName = meetingTaskName; 
+					meetingTaskName = taskName;
+                    console.log(meetingRoomName);
+                    console.log(meetingTaskName);
+					getUserBasedOnTask(meetingTaskName);
+                    getChatMessagesByRoomAndTask( meetingRoomName, meetingTaskName);
+					
+				});
+			}
+
+		/*	function getChatMessages(){
+				$http.get('/chat/messages').then(function(response){
+					$scope.chatMessages = response.data;
+				});
+			}*/
+			function getRooms(){
+				$http.get('/rooms').then(function(response){
+					$scope.rooms = response.data;
+				});
+			}
+			function getTasks(meetingRoomName){
+			//	console.log("Printing the task "+meetingRoomName);
+				$http.put('/tasks', {meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log($scope.tasks);
+					//console.log($rootScope.meetingTaskName+" Rootscope taskname");
+					$scope.tasks = response.data;
+					$scope.inviteUser=response.data;
+					//console.log(response.data);
+			// 		 angular.forEach($scope.tasks, function(item){
+            //             console.log(item.users+"array");
+			// 			$scope.user=item.users;  
+            //    });
+				});
+			}
+			//getChatMessagesByRoomArg("Room "+roomNumber);
+			//meetingRoomName = $rootScope.roomName;
+			//getChatMessagesByRoomArg($rootScope.roomName);
+			//console.log("HELLOWW "+$rootscope.taskName+" inhk "+$rootScope.roomName);
+			
+			//console.log(meetingTaskName+ "Helowsksdjk");
+			//getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
+			
+			
+			//console.log(meetingTaskName+ "elo");
+			//console.log(meetingTaskName+ "orange");
+			
+			//getChatMessagesByTaskArg("UI Design");
+			//console.log("HELLO "+meetingRoomName);
+			//console.log("HELLO2 " +$rootScope.roomName);
+			//getChatMessagesByRoomArg(meetingRoomName);
+			//getChatMessages();
+
+       $scope.inviteUsers= function()
+	   {
+     
+           
+			$http.post('/invite/user', {username: $scope.invite, taskName: meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
+					console.log(response.data);
+					$scope.inviteUser= response.data;
+					getUserBasedOnTask(meetingTaskName);
+				},function(err){
+					//console.log(err);
+					alert('User does not exist');
+					//console.log(response.data);
+				});
+	   }
+	   function getUsers(){
+
+           $http.get('/users/invite').then(function(response){
+                   // console.log("Get user");
+				$scope.users=response.data;
+                 });
+
+	   }
+
+
+	   function getUserBasedOnTask(taskName){
+                
+           $http.put('/users/show',{roomtaskName: taskName}).then(function(response){
+                    console.log(taskName);
+					$scope.tasksUser=response.data;
+					console.log(response.data);
+                     	 angular.forEach($scope.tasksUser, function(item,index){
+                        console.log(item.users+"array");
+						
+							console.log(item.users.length);
+							item.users.splice(0,1);
+						$scope.user=item.users;
+						  
+               });
+                    //$scope.users=response.data;
+                 });
+	   }
+	   // rough method
+	   function checkArray()
+	   {
+		   
+            $http.put('/rough/check',{name:"arslan"}).then(function(response){
+                   console.log(response.data);
+                    //$scope.users=response.data;
+                 });
+
+	   }
+	   function showTaskandRoomforUser()
+	   {
+           $http.put('/show/loginUser',{name:$rootScope.currentUser,taskName:$rootScope.meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
+                  console.log($rootScope.currentUser);
+				  //console.log($rootScope.meetingTaskName);
+				  $scope.userTasks = response.data;
+				   console.log(response.data);
+                    //$scope.users=response.data;
+                 });
+	   }
+
+       function showTaskandRoomforUsername()
+	   {
+           $http.put('/show/loginUser/rooms',{name:$rootScope.currentUser,taskName:$rootScope.meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
+                  console.log($rootScope.currentUser);
+				  //console.log($rootScope.meetingTaskName);
+				  $scope.userRooms = response.data;
+				   console.log(response.data);
+                    //$scope.users=response.data;
+                 });
+	   }
+
+
+        showTaskandRoomforUsername(); 
+	    showTaskandRoomforUser();
+	   
+	      //checkArray();
+
+            getUsers();
+			getRooms();
+			getTasks($rootScope.taskName);
+			
+		});
+	</script>
+</head>
+<body >
+	<!--
+	<div class="panel panel-default">
+			<h1 class="page-title"><a href="#/" >Hermius </h1></a>
+			<span class=" glyphicon glyphicon-user pull-right" style="color: black; margin-right: 15px"></span>
+	</div>
+	-->
+	<div ng-hide="currentUser" class="panel panel-primary">
+		<div class="panel-heading">
+			<h1>
+				<a href="#/" >Hermius </a>
+				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
+					<a href="#/signup">Not a member? Signup</a>
+				</span>
+			</h1>      
+		</div>
+	</div>
+
+	<div ng-show="currentUser" class="panel panel-primary">
+		<div class="panel-heading">
+			<h1>
+				<a href="#/" >Hermius </a>
+				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
+					Hi,{{currentUser}}
+					<br>
+					<a href  ng-click="logout()" >Logout</a>
+				</span>
+			</h1>      
+		</div>
+	</div>
+
+	<div ng-view></div>
+</body>
+</html>

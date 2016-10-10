@@ -1,0 +1,33 @@
+.body{
+	margin-top: 0px;
+}
+.feed{
+	margin-left: 100px;
+	margin-right: 100px;
+	margin-top: 50px;
+	min-height: 1000px;
+}
+.feed h3{
+	border: 1px solid #337AB7;
+	padding: 20px;
+}
+.page-title{
+	margin-left: 100px;	
+}
+.new-message{
+	border: 1px solid #337AB7;
+	padding: 20px;
+	width: 100%;
+}
+.panel {
+	background-color: #337AB7;
+	text-color: white;
+}
+.panel-default
+{
+	background-color: #337AB7;
+	text-color: white;	
+}
+.panel a{
+	color: white;
+}
