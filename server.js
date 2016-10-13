@@ -10,6 +10,17 @@ var http = http = require('http').Server(app);
 var server = require('http').createServer(app);
 var io = require('socket.io')(server);
 var nodemailer = require('nodemailer');
+var multer  = require('multer');
+var storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, './public')
+  },
+  filename: function (req, file, cb) {
+    cb(null,  Date.now()+file.originalname);
+  }
+});
+
+var upload = multer({ storage: storage });
 
 var JWT_SECRET = 'hermeszeus';
 
@@ -34,6 +45,37 @@ server.listen(80);
 io.on('connection', function(socket){
 	console.log('IO CONNECTION SUCCESSFUL');
 });
+
+app.post('/profile',upload.any(), function (req, res, next) {
+  // req.file is the `avatar` file
+  // req.body will hold the text fields, if there were any
+ // console.log(req.body);
+  console.log(req.files);
+  var filename= req.files;
+    
+// db.collection('View',function(err,collection){
+// 	var newCommnt= {comment:req.files};
+// collection.insert(newCommnt, {w:1}, function(err, result) {
+     
+//      //return res.send(req.files);
+//   });
+// });
+return res.json(req.files);
+
+});
+
+// function to show profile
+app.put('/show/User/profile', function(req, res, next){
+	console.log( "print");
+	db.collection('users', function(err, usersCollection){
+		usersCollection.find({username: req.body.name}).toArray(function(err, users){
+			//console.log(req.body.name);
+			return res.json(users);
+		});
+		return	db.collection;
+	});
+});
+
 
 
 

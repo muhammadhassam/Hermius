@@ -56,15 +56,14 @@
 		    templateUrl: 'room.html',
 		    controller: 'RoomController',
 			}) 
-
-			// .when('/room/1', {
-		 //    templateUrl: 'room.html',
-		 //    controller: 'RoomController',
-			// }); 
 			.when('/room/:meetingRoomName', {
 		    templateUrl: 'room.html',
 		    controller: 'RoomController',
-			});     
+			})
+			.when('/profile', {
+		     templateUrl: 'profile.html',
+		    controller: 'profileController',
+			 });     
 		});
 
 		app.run(function($rootScope, $cookies){
@@ -85,7 +84,104 @@
 		});
 		
 
-		
+app.directive('fileModel', ['$parse', function ($parse) {
+            return {
+               restrict: 'A',
+               link: function(scope, element, attrs) {
+                  var model = $parse(attrs.fileModel);
+                  var modelSetter = model.assign;
+                  
+                  
+                  
+                  element.bind('change', function(evt){
+                     scope.$apply(function(){
+                        modelSetter(scope, element[0].files[0]);
+                        
+                     });
+                  });
+               }
+            };
+         }]);
+
+
+
+app.service('fileUpload', ['$http','$q', function ($http,$q) {
+             var showImage;
+             var readImage=3;
+             var deffered = $q.defer();
+            //this.uploadFileToUrl = function(file, uploadUrl){
+              this.post =function(uploadUrl,data){
+                //$rootScope.$apply();
+               var fd = new FormData();
+               for(var key in data)
+               //{
+               //fd.append('file', file);
+               fd.append(key,data[key]);
+              //}
+               $http.post(uploadUrl, fd, {
+                  transformRequest: angular.identity,
+                  headers: {'Content-Type': undefined}
+               })
+            
+               .success(function(response){
+               deffered.resolve(response);
+               
+               })
+            
+               .error(function(reponse){
+               })
+                    
+            }
+            this.fileName = function()
+            {           
+                      
+                   return deffered.promise;
+            }
+            //console.log("Ssssss");
+            
+
+
+         }]);
+
+
+
+
+		app.controller('profileController', [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
+
+			console.log("reached");
+               $scope.imgSrc="default.png";
+function showUserProfile()
+{
+    $http.put('/show/User/profile',{name:$rootScope.currentUser}).then(function(response){
+                  console.log($rootScope.currentUser);
+				  //console.log($rootScope.meetingTaskName);
+				  $scope.userProfile = response.data;
+				   console.log(response.data);
+                    //$scope.users=response.data;
+                 });
+}
+        showUserProfile();
+
+$scope.submit = function()
+   {     
+          
+                          var promise = fileUpload.fileName();
+                          promise.then(function(data){
+                            $scope.image=data;
+                            //console.log($scope.image);
+                          }) 
+               var uploadUrl = '/profile';
+               //fileUpload.uploadFileToUrl(file, uploadUrl);
+               fileUpload.post(uploadUrl,$scope.myFile);
+                //storeFiles();             
+   };
+
+
+
+
+
+
+		}]);
 
 		app.controller('HomeController', function($rootScope, $scope, $http, $cookies){
 
@@ -635,7 +731,9 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#/">Hermius</a>
+                <a class="navbar-brand" href="#/profile">Hermius</a>
+				<a class="navbar-brand" href="#/profile">Profile</a>
+				<!--<a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>-->
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
@@ -658,6 +756,7 @@
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#/">Hermius</a>
+				<a href="#/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
             </div>
             <!-- Top Menu Items -->
             <ul class="nav navbar-right top-nav">
@@ -665,7 +764,7 @@
                     <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>{{currentUser}} </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
+                            <a href="#/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
                         <li class="divider"></li>
                         <li>

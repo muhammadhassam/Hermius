@@ -1,0 +1,60 @@
+
+<div class="container-fluid">
+
+<div "row feed">
+
+
+    <!--<ul ng-repeat="file in image">
+        <li >{{file.filename}}</li>
+        <img ng-src="{{file.filename}}"></img> 
+    </ul>-->
+<p></p>
+<div class="col-md-2" style="border: 1px solid #337AB7; padding-top: 20px; margin-top:50px;">
+    <div ng-show="image" ng-repeat="file in image">
+<img src="{{file.filename}}" class="img-circle"  width="60%"></img> </br>
+</div>
+<div ng-hide="image">
+    <img src="{{imgSrc}}" class="img-circle"  width="60%"></img> </br>
+    </div>
+
+<p></p>
+    <form encType="multipart/form-data">
+<input type="file" id="examplefile" file-model="myFile.file" name="myimage">
+<input type="submit" ng-click="submit()" class="btn btn-default" >submit</input>
+</form>
+
+    </div>
+
+<div class="col-md-6" style="border: 1px solid #337AB7; padding-top: 20px; margin-top:50px;" >
+     
+     <div class="container-fluid">
+      <div class="panel panel-default">
+          <div class="panel-heading">   
+     <b class="text-muted">  UserName </b></br>
+   <h1 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{use.username}}</h1>
+   </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-footer">
+   <b class="text-muted"> Contact </b> </br>
+   <h1><span class="glyphicon glyphicon-star" aria-hidden="true"></span> 0323365527</h1>
+        </div>
+    </div>
+<div class="panel panel-default">
+<div class="panel-heading">
+    <b class="text-muted"> Email </b> </br>
+   <h1 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> {{use.email}}</h1>
+   </div>
+</div>
+<div class="panel panel-default">
+    <div class="panel-footer">
+    <b class="text-muted"> Team </b> </br>
+   <h1> <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Fc College</h1>
+   </div>
+   </div>
+   <button ng-click="changeprofile()" class="btn btn-default">UPDATE</button>
+   </div>
+    </div>
+
+    </div>
+</div>
