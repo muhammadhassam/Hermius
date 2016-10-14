@@ -47,19 +47,18 @@ io.on('connection', function(socket){
 });
 
 app.post('/profile',upload.any(), function (req, res, next) {
-  // req.file is the `avatar` file
-  // req.body will hold the text fields, if there were any
- // console.log(req.body);
+  
+  console.log(req.body.username);
   console.log(req.files);
   var filename= req.files;
-    
-// db.collection('View',function(err,collection){
-// 	var newCommnt= {comment:req.files};
-// collection.insert(newCommnt, {w:1}, function(err, result) {
+//collection.update({_id:"123"}, {$set: {author:"Jessica"}});    
+ db.collection('users',function(err,collection){
+ 	//var newCommnt= {comment:req.files};
+ collection.update({username:req.body.username},{$set:{file:req.files}}, {w:1}, function(err, result) {
      
 //      //return res.send(req.files);
-//   });
-// });
+   });
+ });
 return res.json(req.files);
 
 });
@@ -508,7 +507,8 @@ app.post('/users', function(req, res, next){
 		        // Store hash in your password DB. 
 				var newUser = {
 				username: req.body.username,
-				password: hash
+				password: hash,
+				file:''
 				
 				};
 				usersCollection.insert(newUser, {w:1}, function(err, messages){

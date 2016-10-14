@@ -149,12 +149,16 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 
 		app.controller('profileController', [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
 
-			console.log("reached");
+			//console.log("reached");
+//			$scope.user = {};
+//$scope.user.latitude = myLat;
+			console.log($rootScope.currentUser);
+			$scope.currentUser=$rootScope.currentUser;
 			$scope.imgSrc="default.png";
 			function showUserProfile()
 			{
 				$http.put('/show/User/profile',{name:$rootScope.currentUser}).then(function(response){
-							console.log($rootScope.currentUser);
+							//console.log($rootScope.currentUser);
 							//console.log($rootScope.meetingTaskName);
 							$scope.userProfile = response.data;
 							console.log(response.data);
@@ -162,9 +166,13 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 							});
 			}
 			showUserProfile();
-
+                 //$scope.user = {latitude: myLat}; 
+				 $scope.myFile={username:$rootScope.currentUser};
 			$scope.submit = function()
-			{               
+			{
+				//$scope.myFile={username:$rootScope.currentUser};
+				//$scope.myFile.username= $rootScope.currentUser;  
+				//$scope.myFile.username={username:$rootScope.currentUser};            
 				var promise = fileUpload.fileName();
 				promise.then(function(data){
 				$scope.image=data;
@@ -173,10 +181,10 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				var uploadUrl = '/profile';
 				//fileUpload.uploadFileToUrl(file, uploadUrl);
 				fileUpload.post(uploadUrl,$scope.myFile);
-				//storeFiles();             
+		    	             
 			};
 
-
+            
 
 
 
