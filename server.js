@@ -342,23 +342,6 @@ app.post('/room/task/user', function(req, res, next){
 								return res.send();
 							}
 						});
-						// var username = 
-						
-						// {
-						// 	users:{$elemMatch: {username: req.body.username}
-						// };
-
-						// tasksCollection.find({users:{$elemMatch: {username: req.body.username}}},function(err, user){
-						// 	console.log(user);
-						// 	if(user){
-						// 		return res.status(400).send();
-						// 	}
-						// 	else{
-								
-						// 	}
-						// });
-
-						
 					});	
 				}
 				else{
@@ -450,18 +433,41 @@ app.post('/messages', function(req, res, next){
 
 //Function to like a post
 app.put('/like', function(req, res, next){
-
 	console.log(req.body.username+ " liked a post: "+req.body.messageText+", date: "+req.body.messageDate);
-//usersCollection.find().toArray(function(err, users){
 	db.collection('messages', function(err, messagesCollection){
 		messagesCollection.find({$and:[{text: req.body.messageText}, { date: req.body.messageDate}]}).toArray(function(err, like){
 			//console.log("Inside push");
-			messagesCollection.update(
-				{text: req.body.messageText},
+
+			//messagesCollection.find({"likes": {$in:[{username: req.body.username}]}}).toArray(function(err, likes){
+				console.log(like.likes+ "Likes");
+							if(like.length > 0){
+								console.log("if");
+								return res.status(400).send();
+							}
+							else{
+								// tasksCollection.update(	
+								// //{ name: req.body.taskName },
+								// //{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								// {name: req.body.taskName },
+								// { $push: { users: {username: req.body.username }} }
+								// )
+								// return res.send();
+								console.log("Else");
+								messagesCollection.update(
+									{text: req.body.messageText},
+									
+									{ $push: { likes:  { username: req.body.username } } }
+								)
+								return res.json(like);
+							}
+			//});
+
+			// messagesCollection.update(
+			// 	{text: req.body.messageText},
 				
-				{ $push: { likes:  { username: req.body.username } } }
-			)
-			return res.json(like);
+			// 	{ $push: { likes:  { username: req.body.username } } }
+			// )
+			// return res.json(like);
 
 		});
 
@@ -510,8 +516,6 @@ app.post('/users', function(req, res, next){
 				});
 		    });
 		});
-
-		
 	});
 	//res.send();
 });

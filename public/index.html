@@ -34,6 +34,7 @@
 		var roomNumber = 1;
 		var linkButton = false;
 		var taskButton = false;
+		var fileButton = false;
         
 		app.config(function($routeProvider, $locationProvider){
 			$routeProvider
@@ -149,32 +150,31 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 		app.controller('profileController', [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
 
 			console.log("reached");
-               $scope.imgSrc="default.png";
-function showUserProfile()
-{
-    $http.put('/show/User/profile',{name:$rootScope.currentUser}).then(function(response){
-                  console.log($rootScope.currentUser);
-				  //console.log($rootScope.meetingTaskName);
-				  $scope.userProfile = response.data;
-				   console.log(response.data);
-                    //$scope.users=response.data;
-                 });
-}
-        showUserProfile();
+			$scope.imgSrc="default.png";
+			function showUserProfile()
+			{
+				$http.put('/show/User/profile',{name:$rootScope.currentUser}).then(function(response){
+							console.log($rootScope.currentUser);
+							//console.log($rootScope.meetingTaskName);
+							$scope.userProfile = response.data;
+							console.log(response.data);
+								//$scope.users=response.data;
+							});
+			}
+			showUserProfile();
 
-$scope.submit = function()
-   {     
-          
-                          var promise = fileUpload.fileName();
-                          promise.then(function(data){
-                            $scope.image=data;
-                            //console.log($scope.image);
-                          }) 
-               var uploadUrl = '/profile';
-               //fileUpload.uploadFileToUrl(file, uploadUrl);
-               fileUpload.post(uploadUrl,$scope.myFile);
-                //storeFiles();             
-   };
+			$scope.submit = function()
+			{               
+				var promise = fileUpload.fileName();
+				promise.then(function(data){
+				$scope.image=data;
+				//console.log($scope.image);
+				}) 
+				var uploadUrl = '/profile';
+				//fileUpload.uploadFileToUrl(file, uploadUrl);
+				fileUpload.post(uploadUrl,$scope.myFile);
+				//storeFiles();             
+			};
 
 
 
@@ -263,11 +263,11 @@ $scope.submit = function()
 			$scope.likeMessage = function(user, message, date){
 				//console.log($rootScope.currentUser+ " liked a post: "+message+", date: "+date);
 				$http.put('/like', {username: $rootScope.currentUser, messageText: message, messageDate: date}).then(function(response){
-					//console.log(response.data);
+					console.log(response.data+"Response");
 					//getLikes(response.data);
-					$scope.messageLikes = response.data;
+					//$scope.messageLikes = response.data;
 					getLikes($scope.messageLikes);
-					console.log($scope.messageLikes+" Response for Likes");
+					//console.log($scope.messageLikes+" Response for Likes");
 				});
 			};
 
@@ -649,11 +649,20 @@ $scope.submit = function()
 			$scope.showLinkBox = function(){
 				$scope.clickedLink = true;
 				$scope.clickedText = false;
+				$scope.clickedFile = false;
 			}
+			//This method shows a filebox on room page when link button is clicked
+			$scope.showFileBox = function(){
+				$scope.clickedFile = true;
+				$scope.clickedLink = false;
+				$scope.clickedText = false;
+			}
+
 			//This method shows a text on room page when link button is clicked
 			$scope.showTextBox = function(){
 				$scope.clickedText = true;
 				$scope.clickedLink = false;
+				$scope.clickedFile = false;
 			}
 
 			//This function will get links on click of a button

@@ -83,6 +83,9 @@
 			<button ng-model="clickedLink" ng-click="showLinkBox()" type="button" class="btn btn-secondary" aria-label="Left Align" style="margin-bottom: 5px; ">
 			<span class= "glyphicon glyphicon-link" ></span>
 			</button>
+			<button ng-model="clickedFile" ng-click="showFileBox()" type="button" class="btn btn-secondary" aria-label="Left Align" style="margin-bottom: 5px; ">
+			<span class= "glyphicon glyphicon-file" ></span>
+			</button>
 			</br>
 			<div ng-show="clickedLink">
 				<H4 style="color: #337AB7">Label:-</H4>
@@ -91,6 +94,22 @@
 				<input type="text" class="form-control" ng-model="newLink" placeholder="Add a link">
 				<br>
 				<button type="button" class="btn btn-secondary" ng-click="SubmitNewLink()">Send Link</button>
+			</div>
+			<div ng-show="clickedFile">
+				<form encType="multipart/form-data">
+					<br>
+					<input type="file" id="examplefile" file-model="myFile.file" name="myimage">
+					<H4 style="color: #337AB7">FileName:-</H4>
+					<input type="text" class="form-control" ng-model="newLabel" placeholder="Add a file name">
+					<br>
+					<input type="submit" ng-click="submit()" class="btn btn-btn-secondary" ></input>
+				</form>
+				<!--<H4 style="color: #337AB7">Label:-</H4>
+				<input type="text" class="form-control" ng-model="newLabel" placeholder="Add a Label">
+				<H4 style="color: #337AB7">File:-</H4>
+				<span class= "glyphicon glyphicon-file" ></span>
+				<br>
+				<button type="button" class="btn btn-secondary" ng-click="SubmitNewLink()">Send Link</button>-->
 			</div>
 			<div ng-show="clickedText">
 				<input type="text" class="form-control" ng-model="newChatMessage" placeholder="Write a message!">

@@ -1,4 +1,3 @@
-
 <div class="container-fluid">
 
 <div "row feed">
@@ -11,19 +10,19 @@
 <p></p>
 <div class="col-md-2" style="border: 1px solid #337AB7; padding-top: 20px; margin-top:50px;">
     <div ng-show="image" ng-repeat="file in image">
-<img src="{{file.filename}}" class="img-circle"  width="60%"></img> </br>
-</div>
-<div ng-hide="image">
-    <img src="{{imgSrc}}" class="img-circle"  width="60%"></img> </br>
+        <img src="{{file.filename}}" class="img-circle"  width="60%"></img> </br>
+    </div>
+    <div ng-hide="image">
+        <img src="{{imgSrc}}" class="img-circle"  width="60%"></img> </br>
     </div>
 
-<p></p>
+    <p></p>
     <form encType="multipart/form-data">
-<input type="file" id="examplefile" file-model="myFile.file" name="myimage">
-<input type="submit" ng-click="submit()" class="btn btn-default" >submit</input>
-</form>
+        <input type="file" id="examplefile" file-model="myFile.file" name="myimage">
+        <input type="submit" ng-click="submit()" class="btn btn-default" > Submit</input>
+    </form>
 
-    </div>
+</div>
 
 <div class="col-md-6" style="border: 1px solid #337AB7; padding-top: 20px; margin-top:50px;" >
      
