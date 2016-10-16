@@ -43,13 +43,13 @@ app.use(express.static('public'));
 
 server.listen(80);
 io.on('connection', function(socket){
-	console.log('IO CONNECTION SUCCESSFUL');
+	//console.log('IO CONNECTION SUCCESSFUL');
 });
 
 app.post('/profile',upload.any(), function (req, res, next) {
   
-  console.log(req.body.username);
-  console.log(req.files);
+  //console.log(req.body.username);
+  //console.log(req.files);
   var filename= req.files;
 //collection.update({_id:"123"}, {$set: {author:"Jessica"}});    
  db.collection('users',function(err,collection){
@@ -62,10 +62,43 @@ app.post('/profile',upload.any(), function (req, res, next) {
 return res.json(req.files);
 
 });
+// function to save file in chat
+
+app.post('/profile/room',upload.any(), function (req, res, next) {
+  
+  //console.log(req.body.username);
+  //console.log(req.files);
+  var filename= req.files;
+//collection.update({_id:"123"}, {$set: {author:"Jessica"}});    
+/* db.collection('chatMessages',function(err,collection){
+ 	//var newCommnt= {comment:req.files};
+ collection.update({username:req.body.username},{$set:{file:req.files}}, {w:1}, function(err, result) {
+     
+//      //return res.send(req.files);
+   });
+ });*/
+return res.json(req.files);
+
+});
+
+
+
+
 
 // function to show profile
 app.put('/show/User/profile', function(req, res, next){
-	console.log( "print");
+	//console.log( "print");
+	db.collection('users', function(err, usersCollection){
+		usersCollection.find({username: req.body.name}).toArray(function(err, users){
+			//console.log(req.body.name);
+			return res.json(users);
+		});
+		return	db.collection;
+	});
+});
+
+app.put('/show/User/profile/room', function(req, res, next){
+	//console.log( "print");
 	db.collection('users', function(err, usersCollection){
 		usersCollection.find({username: req.body.name}).toArray(function(err, users){
 			//console.log(req.body.name);
@@ -77,11 +110,10 @@ app.put('/show/User/profile', function(req, res, next){
 
 
 
-
 app.put('/messages', function(req, res, next){
 
 	db.collection('messages', function(err, messagesCollection){
-		console.log(req.body.taskName+"yepo"+req.body.roomName);
+		//console.log(req.body.taskName+"yepo"+req.body.roomName);
 		messagesCollection.find({$and:[{room: req.body.roomName} , { task: req.body.taskName}]}).toArray(function(err, messages){
 			return res.json(messages);
 
@@ -181,6 +213,9 @@ app.put('/chat/links/roomandtask', function(req, res, next){
 		return	db.collection;
 	});
 });
+//function to get file in chat
+
+
 
 
 // //Function to get chat messages by Tasks
@@ -240,9 +275,11 @@ app.post('/chat/messages', function(req, res, next){
 			username: user.username,
 			date: jsonDate,
 			room: req.body.roomName,
-			task: req.body.taskName
-			//roomId: room._id
+			task: req.body.taskName,
+		    file: user.file,
 		};
+		console.log(user.username);
+		console.log(user.file);
 		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
 			io.emit('{text: req.body.newChatMessage}');
 			return res.send();
@@ -264,7 +301,7 @@ app.post('/chat/links', function(req, res, next){
 	//console.log(req.body.newChatMessage);
 	//console.log(req.body.newRoom);
 	//console.log(req.body.taskName+"HELLOOOOOWDKJLKDJS");
-	console.log(req.body.newLabel+ "Yo");
+	//console.log(req.body.newLabel+ "Yo");
 	db.collection('links', function(err, linksCollection){
 		var newLink = {
 			//room: req.body.newRoom,
@@ -325,6 +362,8 @@ app.post('/room/task/user', function(req, res, next){
 
 		db.collection('users', function(err, usersCollection){
 			usersCollection.findOne(userVar,function(err, user){
+				//console.log(user);
+				//console.log(user.file);
 				if(user){
 					db.collection('tasks', function(err, tasksCollection){
 						tasksCollection.find({$and:[{"users": {$in:[{username: req.body.username}]}}, {name: req.body.taskName}]}).toArray(function(err, users){
@@ -336,7 +375,7 @@ app.post('/room/task/user', function(req, res, next){
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.taskName },
-								{ $push: { users: {username: req.body.username }} }
+								{ $push: { users: {username: req.body.username,file:user.file } } }
 								)
 								return res.send();
 							}
@@ -348,9 +387,28 @@ app.post('/room/task/user', function(req, res, next){
 				}
 			});
 		});
-		console.log(req.body);
+		//console.log(req.body);
 		//chatMessagesCollection.find({$and:[{task: req.body.roomtaskName} , { room: req.body.meetingRoomName}]}).toArray(function(err, chatMessages){
 	//});
+});
+
+
+
+
+// function to show users
+
+app.get('/users/invite', function(req, res, next){
+
+       db.collection('users', function(err, messagesCollection){
+		messagesCollection.find().toArray(function(err, messages){
+			return res.json(messages);
+
+		});
+		return	db.collection;
+	});
+
+	//return db.collection();
+	//res.send();
 });
 
 
@@ -508,7 +566,7 @@ app.post('/users', function(req, res, next){
 				var newUser = {
 				username: req.body.username,
 				password: hash,
-				file:''
+				file:"default.png"
 				
 				};
 				usersCollection.insert(newUser, {w:1}, function(err, messages){

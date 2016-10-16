@@ -161,7 +161,8 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 							//console.log($rootScope.currentUser);
 							//console.log($rootScope.meetingTaskName);
 							$scope.userProfile = response.data;
-							console.log(response.data);
+							$rootScope.userProfile=$scope.userProfile;
+							//console.log(response.data);
 								//$scope.users=response.data;
 							});
 			}
@@ -181,7 +182,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				var uploadUrl = '/profile';
 				//fileUpload.uploadFileToUrl(file, uploadUrl);
 				fileUpload.post(uploadUrl,$scope.myFile);
-		    	             
+		    	 showUserProfile();
 			};
 
             
@@ -338,6 +339,33 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 			}
 
 
+function showUserProfile()
+			{
+				$http.put('/show/User/profile/room',{name:$rootScope.currentUser}).then(function(response){
+							//console.log($rootScope.currentUser);
+							//console.log($rootScope.meetingTaskName);
+							$scope.userProfile = response.data;
+							$rootScope.userProfile=$scope.userProfile;
+							angular.forEach($scope.userProfile, function(item, index){
+						//item.users.splice(0,1);
+						$scope.users = item.file;
+						$scope.currentImage=item.file[0].filename;
+						$scope.defaultImage=item.file;
+						$rootScope.defaultImage=$scope.defaultImage;
+						$rootScope.currentImage=$scope.currentImage;
+						console.log($scope.currentImage);
+						console.log($scope.defaultImage);
+					});
+							//console.log(response.data);
+								//$scope.users=response.data;
+							});
+			}
+
+showUserProfile();
+
+
+
+
 
 			//getMessages();
 			getRooms();
@@ -362,22 +390,25 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				});
 			};
 		});
+//, [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http)
 
-
-		app.controller('RoomController', function($rootScope, $scope, $http, $cookies){
+		app.controller('RoomController',  [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
 						
 			var socket = io.connect('http://localhost');
 			socket.on('connect', function(socket){
-				console.log('SOCKET IO');
+				//console.log('SOCKET IO');
 			});
 			socket.on('{text: req.body.newChatMessage}', function(data){
 				//getChatMessages();
 				//getChatMessagesByRoomArg($rootScope.roomName);
-				console.log("Hello everyone"+$rootScope.taskName+" AND"+$rootScope.roomName);
+				//console.log("Hello everyone"+$rootScope.taskName+" AND"+$rootScope.roomName);
 				getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
 				
 				//getChatMessagesByRoomArg(meetingRoomName);
 			});
+               //function for file
+              //$scope.userProfile=$rootScope.userprofile;
+			  //console.log($scope.userProfile);
 
 			$scope.SubmitNewChatMessage = function(){
 				//console.log($rootscope.meetingTaskName+" Rootscope taskname");
@@ -560,7 +591,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 			}
 			function getLinksByRoomAndTask(meetingTaskName, meetingRoomName){
 				$http.put('/chat/links/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
-					console.log(response.data)
+					//console.log(response.data)
 					$scope.links = response.data;
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
@@ -644,7 +675,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				});
 			}
 			function getTasks(meetingRoomName){
-				console.log("Printing the task "+meetingRoomName);
+				//console.log("Printing the task "+meetingRoomName);
 				$http.put('/tasks', {meetingRoomName: meetingRoomName}).then(function(response){
 					
 					//console.log($rootScope.meetingTaskName+" Rootscope taskname");`
@@ -696,12 +727,64 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				}
 			}
 
+$scope.submit = function()
+			{
+				            
+				var promise = fileUpload.fileName();
+				promise.then(function(data){
+				$scope.image=data;
+				//console.log($scope.image);
+				}) 
+				var uploadUrl = '/profile/room';
+				//fileUpload.uploadFileToUrl(file, uploadUrl);
+				fileUpload.post(uploadUrl,$scope.myFile);
+		    	 //showUserProfile();
+			};
+
+
+function showUserProfile()
+			{
+				$http.put('/show/User/profile/room',{name:$rootScope.currentUser}).then(function(response){
+							//console.log($rootScope.currentUser);
+							//console.log($rootScope.meetingTaskName);
+							$scope.userProfile = response.data;
+							$rootScope.userProfile=$scope.userProfile;
+							angular.forEach($scope.userProfile, function(item, index){
+						//item.users.splice(0,1);
+						$scope.users = item.file;
+						$scope.currentImage=item.file[0].filename;
+						$scope.defaultImage=item.file;
+						$rootScope.defaultImage=$scope.defaultImage;
+						$rootScope.currentImage=$scope.currentImage;
+						console.log($scope.currentImage);
+						console.log($scope.defaultImage);
+					});
+							//console.log(response.data);
+								//$scope.users=response.data;
+							});
+			}
+// function search user
+
+function showUsers()
+{
+
+	$http.get('/users/invite').then(function(response){
+                   // console.log("Get user");
+				$scope.RegisterUsers=response.data;
+                 });
+} 
+showUsers();
+
+
+
+
+showUserProfile();
 			//getChatMessagesByRoomArg("Room "+roomNumber);
 			//meetingRoomName = $rootScope.roomName;
 			//getChatMessagesByRoomArg($rootScope.roomName);
 			//console.log("HELLOWW "+$rootscope.taskName+" inhk "+$rootScope.roomName);
 			
-			console.log(meetingTaskName+ "Helowsksdjk");
+			//console.log(meetingTaskName+ "Helowsksdjk");
 			//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 			
 			
@@ -723,7 +806,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 			
 
 			//console.log($scope.chatMessage);
-		});
+		}]);
 
 
 	</script>
@@ -749,7 +832,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#/profile">Hermius</a>
-				<a class="navbar-brand" href="#/profile">Profile</a>
+			
 				<!--<a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>-->
             </div>
             <!-- Top Menu Items -->
@@ -773,13 +856,17 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
                     <span class="icon-bar"></span>
                 </button>
                 <a class="navbar-brand" href="#/">Hermius</a>
-				<a href="#/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
             </div>
             <!-- Top Menu Items -->
+		
             <ul class="nav navbar-right top-nav">
-                <li class="dropdown">
-                    <a href="" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user"></i>{{currentUser}} </a>
-                    <ul class="dropdown-menu">
+             <!--<span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" width="5%" class="img-circle" ></img></span>-->
+			    <li class="dropdown">
+                    
+					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" width="5%" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+                    
+					<ul class="dropdown-menu">
                         <li>
                             <a href="#/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
                         </li>
@@ -788,6 +875,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 							<a href  ng-click="logout()" > <i class="fa fa-fw fa-power-off"></i>Log Out</a>
                         </li>
                     </ul>
+					
                 </li>
             </ul>
 	</div>

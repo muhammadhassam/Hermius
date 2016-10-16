@@ -6,18 +6,19 @@
     <!--<ul ng-repeat="file in image">
         <li >{{file.filename}}</li>
         <img ng-src="{{file.filename}}"></img> 
+        {{thisCase.FeatureNo == 1 ? 'red light image url' : 'amber light image url'}}"
     </ul>-->
 <p></p>
 <div class="col-md-2" style="border: 1px solid #337AB7; padding-top: 20px; margin-top:50px;">
-    <div  ng-repeat="file in userProfile ">
-        <img src="{{file.file[0].filename}}" class="img-circle"  width="60%"></img> </br>
+    <div  ng-repeat="file in userProfile " ng-show="userProfile" ng-hide="image">
+        <img ng-src="{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-circle"  width="60%"></img> </br>
     </div>
-    <div ng-show="image" ng-repeat="file in image">
-        <img src="{{file.filename}}" class="img-circle"  width="60%"></img> </br>
+    <div ng-show="image" ng-repeat="file in image" >
+        <img ng-src="{{file.filename}}" class="img-circle"  width="60%"></img> </br>
     </div>
-    <div ng-hide="image">
-        <img src="{{imgSrc}}" class="img-circle"  width="60%"></img> </br>
-    </div>
+    <!--<div ng-hide="userProfile">
+        <img ng-src="{{imgSrc}}" class="img-circle"  width="60%"></img> </br>
+    </div>-->
 
     <p></p>
     <form encType="multipart/form-data">
