@@ -277,6 +277,7 @@ app.post('/chat/messages', function(req, res, next){
 			room: req.body.roomName,
 			task: req.body.taskName,
 		    file: user.file,
+			uploadFile:req.body.newChatImage
 		};
 		console.log(user.username);
 		console.log(user.file);

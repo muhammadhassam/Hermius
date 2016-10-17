@@ -753,7 +753,7 @@ $scope.submit = function()
 				console.log($rootScope.roomName);
 				console.log(meetingTaskName);
 
-                   $http.post('/chat/messages', {newChatMessage:image, roomName: $rootScope.roomName, taskName: meetingTaskName},
+                   $http.post('/chat/messages', {newChatImage:image, roomName: $rootScope.roomName, taskName: meetingTaskName},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
