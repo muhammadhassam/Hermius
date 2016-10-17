@@ -26,15 +26,15 @@
 			<input type="text" placeholder="username" ng-model="username"></input>
 			<button type="button" class="btn btn-secondary " ng-click="addPeopleInTasks()">Invite</button>
 			<BR><BR>
-			<ul class="list-group" ng-show="username!=null" style="height: 500px;">
-				<li class="list-group-item" ng-repeat="user in RegisterUsers | filter: username">
-					<span><img ng-src="{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= "10%" class="img-circle" ></img></span><a href="#/room/{{ room.name }}">{{ user.username }} </a>
+			<ul class="list-group"  style="height: 500px;" ng-show="username.length>0">
+				<li class="list-group-item" ng-repeat="user in RegisterUsers | filter: username" >
+					<span ><img ng-src="{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= width="30px" height="30px" class="img-circle" ></img></span><a href="#/room/{{ room.name }}">{{ user.username }} </a>
 				</li>
 			</ul>
 			<ul class="list-group">
 				<li class="list-group-item"  ng-repeat="user in users ">
 					<!--<a href="#/room/{{ room.name }}">{{ task.users}} </a>-->
-					<span><img ng-src="{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= "10%" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
+					<span><img ng-src="{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
 				</li>
 			</ul>
 			<!--<div ng-repeat="user in users">
@@ -65,9 +65,9 @@
 		<div ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
 			<ul class="list-group"  >
 				<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
-					<span ><img ng-src="{{  chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width= "5%" class="img-circle" ></img> </span>
-					
+					<span ><img ng-src="{{  chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="10px" height="10px" class="img-circle" ></img> </span>
 					<a href="#">{{ chatMessage.username }}</a>
+					<span><img ng-src="{{chatMessage.text}}" width="50%"></img></span>
 					<BR>
 					<small>{{ chatMessage.text }}</small>
 					<!--<span ng-repeat="file in image" ng-show="image">
@@ -77,7 +77,7 @@
 					<small style="font-size: 10px;">{{ chatMessage.date }}</small>
 				<!--</li>
                   	<li class="list-group-item" ng-repeat = "file in image" ng-show="image">
-					<!--<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
+					<span class="glyphicon glyphicon-user" aria-hidden="true"></span>
 					<a href="#">{{ chatMessage.username }}</a>
 					<BR>
 					<small>{{ chatMessage.text }}</small>

@@ -733,13 +733,36 @@ $scope.submit = function()
 				var promise = fileUpload.fileName();
 				promise.then(function(data){
 				$scope.image=data;
+				angular.forEach($scope.image, function(item, index){
+                        $rootScope.image=item.filename;
+					console.log($rootScope.image);
+				});
+			  	roughAttempt($rootScope.image);
 				//console.log($scope.image);
 				}) 
 				var uploadUrl = '/profile/room';
 				//fileUpload.uploadFileToUrl(file, uploadUrl);
 				fileUpload.post(uploadUrl,$scope.myFile);
 		    	 //showUserProfile();
+				 
 			};
+			function roughAttempt(image)
+			{
+
+                console.log(image);
+				console.log($rootScope.roomName);
+				console.log(meetingTaskName);
+
+                   $http.post('/chat/messages', {newChatMessage:image, roomName: $rootScope.roomName, taskName: meetingTaskName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+
+					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					//$scope.newChatMessage = '';
+				});
+
+			}
 
 
 function showUserProfile()
@@ -864,7 +887,7 @@ showUserProfile();
 			    <li class="dropdown">
                     
 					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" width="5%" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                     
 					<ul class="dropdown-menu">
                         <li>
