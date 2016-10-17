@@ -273,13 +273,11 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				//console.log($rootScope.currentUser+ " liked a post: "+message+", date: "+date);
 				$http.put('/like', {username: $rootScope.currentUser, messageText: message, messageDate: date}).then(function(response){
 					console.log(response.data+"Response");
-					//getLikes(response.data);
-					//$scope.messageLikes = response.data;
-					getLikes($scope.messageLikes);
-					//console.log($scope.messageLikes+" Response for Likes");
+					getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 				});
 			};
 
+			//Useless function. Can be deleted.
 			function getLikes(likes){
 				//$http.put('/like', {username: $rootScope.currentUser, messageText: message, messageDate: date}).then(function(response){
 					//console.log(response.data);
@@ -294,6 +292,9 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 					});
 				//});
 				
+			}
+			function getMessageLikes(username){
+
 			}
 			// function getMessages(){
 			// 	$http.get('/messages').then(function(response){

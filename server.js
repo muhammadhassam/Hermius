@@ -497,27 +497,28 @@ app.put('/like', function(req, res, next){
 			//console.log("Inside push");
 
 			//messagesCollection.find({"likes": {$in:[{username: req.body.username}]}}).toArray(function(err, likes){
-				console.log(like.likes+ "Likes");
-							if(like.length > 0){
-								console.log("if");
-								return res.status(400).send();
-							}
-							else{
-								// tasksCollection.update(	
-								// //{ name: req.body.taskName },
-								// //{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
-								// {name: req.body.taskName },
-								// { $push: { users: {username: req.body.username }} }
-								// )
-								// return res.send();
-								console.log("Else");
-								messagesCollection.update(
+				// console.log(like.likes+ "Likes");
+				// 			if(like.length > 0){
+				// 				console.log("if");
+				// 				return res.status(400).send();
+				// 			}
+				// 			else{
+				// 				// tasksCollection.update(	
+				// 				// //{ name: req.body.taskName },
+				// 				// //{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+				// 				// {name: req.body.taskName },
+				// 				// { $push: { users: {username: req.body.username }} }
+				// 				// )
+				// 				// return res.send();
+				// 				console.log("Else");
+
+				// 			}
+															messagesCollection.update(
 									{text: req.body.messageText},
 									
 									{ $push: { likes:  { username: req.body.username } } }
 								)
 								return res.json(like);
-							}
 			//});
 
 			// messagesCollection.update(

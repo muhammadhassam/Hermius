@@ -95,13 +95,11 @@
                             <BR>
                             <a href="" ng-click="likeMessage(message.username, message.text, message.date)" ><i style="color: #5A5A5A;" class="fa fa-thumbs-up"></i> Like </a>&nbsp;&nbsp;<i style="color: #5A5A5A;" class="fa fa-comment"></i> Comment
                             </BR>
-                            {{likes.length}} People like this
-                            <div ng-repeat="like in likes ">
-                                {{like.username}}
-                            </div>                            
+                             {{message.likes.length}}People like this                          
                             <div class="input-group">
                                 <span class="input-group-addon" id="basic-addon1">...</span>
                                 <input type="text" class="form-control" placeholder="Write a comment..." aria-describedby="basic-addon1">
+                                <button type="button" class="btn btn-primary pull-right" ng-click="SubmitNewMessageComment(message.username, message.text, message.date)">Send</button>
                             </div>
                         </div>
                     </div>
