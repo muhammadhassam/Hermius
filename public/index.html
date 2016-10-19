@@ -26,6 +26,22 @@
 	<script type="text/javascript" src="angular-route.js"></script>
 	<script type="text/javascript" src="angular-cookies.js"></script>
 	<script src="http://localhost:80/socket.io/socket.io.js"></script>
+
+
+
+
+
+
+	    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="js/plugins/morris/raphael.min.js"></script>
+    <script src="js/plugins/morris/morris.min.js"></script>
+    <script src="js/plugins/morris/morris-data.js"></script>
 	
 	<script type="text/javascript">
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
@@ -42,6 +58,7 @@
 		    templateUrl: 'home2.html',
 		    controller: 'HomeController',
 			})
+
 
 			.when('/signup', {
 		    templateUrl: 'signup.html',
@@ -85,7 +102,7 @@
 		});
 		
 
-app.directive('fileModel', ['$parse', function ($parse) {
+		app.directive('fileModel', ['$parse', function ($parse) {
             return {
                restrict: 'A',
                link: function(scope, element, attrs) {
@@ -103,10 +120,28 @@ app.directive('fileModel', ['$parse', function ($parse) {
                }
             };
          }]);
+		 
+
+		/*
+		This directive allows us to pass a function in on an enter key to do what we want.
+		*/
+		app.directive('ngEnter', function () {
+			return function (scope, element, attrs) {
+				element.bind("keydown keypress", function (event) {
+					if(event.which === 13) {
+						scope.$apply(function (){
+							scope.$eval(attrs.ngEnter);
+						});
+		
+						event.preventDefault();
+					}
+				});
+			};
+		});
 
 
 
-app.service('fileUpload', ['$http','$q', function ($http,$q) {
+		app.service('fileUpload', ['$http','$q', function ($http,$q) {
              var showImage;
              var readImage=3;
              var deffered = $q.defer();
@@ -250,11 +285,13 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 
 			//Logout Function
 			$scope.logout = function(){
+				console.log("IM IN LOG OUT METHOD")
 				$cookies.remove('token');
 				$cookies.remove('currentUser');
 				$rootScope.token = null;
 				$rootScope.currentUser = null;
 			};
+
 
 			//Remove a message
 			$scope.removeMessage = function(message){
@@ -340,29 +377,29 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 			}
 
 
-function showUserProfile()
+			function showUserProfile()
 			{
 				$http.put('/show/User/profile/room',{name:$rootScope.currentUser}).then(function(response){
-							//console.log($rootScope.currentUser);
-							//console.log($rootScope.meetingTaskName);
-							$scope.userProfile = response.data;
-							$rootScope.userProfile=$scope.userProfile;
-							angular.forEach($scope.userProfile, function(item, index){
-						//item.users.splice(0,1);
-						$scope.users = item.file;
-						$scope.currentImage=item.file[0].filename;
-						$scope.defaultImage=item.file;
-						$rootScope.defaultImage=$scope.defaultImage;
-						$rootScope.currentImage=$scope.currentImage;
-						console.log($scope.currentImage);
-						console.log($scope.defaultImage);
+					//console.log($rootScope.currentUser);
+					//console.log($rootScope.meetingTaskName);
+					$scope.userProfile = response.data;
+					$rootScope.userProfile=$scope.userProfile;
+					angular.forEach($scope.userProfile, function(item, index){
+					//item.users.splice(0,1);
+					$scope.users = item.file;
+					$scope.currentImage=item.file[0].filename;
+					$scope.defaultImage=item.file;
+					$rootScope.defaultImage=$scope.defaultImage;
+					$rootScope.currentImage=$scope.currentImage;
+					console.log($scope.currentImage);
+					console.log($scope.defaultImage);
 					});
 							//console.log(response.data);
 								//$scope.users=response.data;
-							});
+				});
 			}
 
-showUserProfile();
+			showUserProfile();
 
 
 
@@ -410,6 +447,10 @@ showUserProfile();
                //function for file
               //$scope.userProfile=$rootScope.userprofile;
 			  //console.log($scope.userProfile);
+
+
+			
+
 
 			$scope.SubmitNewChatMessage = function(){
 				//console.log($rootscope.meetingTaskName+" Rootscope taskname");
@@ -728,7 +769,7 @@ showUserProfile();
 				}
 			}
 
-$scope.submit = function()
+			$scope.submit = function()
 			{
 				            
 				var promise = fileUpload.fileName();
@@ -766,7 +807,7 @@ $scope.submit = function()
 			}
 
 
-function showUserProfile()
+			function showUserProfile()
 			{
 				$http.put('/show/User/profile/room',{name:$rootScope.currentUser}).then(function(response){
 							//console.log($rootScope.currentUser);
@@ -787,22 +828,22 @@ function showUserProfile()
 								//$scope.users=response.data;
 							});
 			}
-// function search user
+			// function search user
 
-function showUsers()
-{
+			function showUsers()
+			{
 
-	$http.get('/users/invite').then(function(response){
-                   // console.log("Get user");
-				$scope.RegisterUsers=response.data;
-                 });
-} 
-showUsers();
-
-
+				$http.get('/users/invite').then(function(response){
+							// console.log("Get user");
+							$scope.RegisterUsers=response.data;
+							});
+			} 
+			showUsers();
 
 
-showUserProfile();
+
+
+			showUserProfile();
 			//getChatMessagesByRoomArg("Room "+roomNumber);
 			//meetingRoomName = $rootScope.roomName;
 			//getChatMessagesByRoomArg($rootScope.roomName);
@@ -844,93 +885,11 @@ showUserProfile();
 	-->
 <div id="wrapper">
 
-	<div ng-hide="currentUser" >
-        <!-- Navigation -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#/profile">Hermius</a>
-			
-				<!--<a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>-->
-            </div>
-            <!-- Top Menu Items -->
-            <ul class="nav navbar-right top-nav">
-			 <li>
-				<a href="#/signup" >Not a member? Signup</a>
-        	</li>
-            </ul>
-	</div>
-
-
-	<div ng-show="currentUser" >
-        <!-- Navigation -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#/">Hermius</a>
-            </div>
-            <!-- Top Menu Items -->
-		
-            <ul class="nav navbar-right top-nav">
-             <!--<span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" width="5%" class="img-circle" ></img></span>-->
-			    <li class="dropdown">
-                    
-					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
-                    
-					<ul class="dropdown-menu">
-                        <li>
-                            <a href="#/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-							<a href  ng-click="logout()" > <i class="fa fa-fw fa-power-off"></i>Log Out</a>
-                        </li>
-                    </ul>
-					
-                </li>
-            </ul>
-	</div>
 
 </div>
 	
-	<!--<div ng-hide="currentUser" class="panel panel-primary">
-		<div class="panel-heading">
-			<h1>
-				<a href="#/" >Hermius </a>
-				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
-					<a href="#/signup">Not a member? Signup</a>
-				</span>
-			</h1>      
-		</div>
-	</div>
-
-	<div ng-show="currentUser" class="panel panel-primary">
-		<div class="panel-heading">
-			<h1>
-				<a href="#/" >Hermius </a>
-				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
-					Hi,{{currentUser}}
-					<br>
-					<a href  ng-click="logout()" >Logout</a>
-				</span>
-			</h1>      
-		</div>
-	</div>-->
-
-	<div ng-view style="margin-top: 70px;">
+	<div ng-view style="margin-top: 80px;">
+		
 	</div>
 
 
