@@ -1,0 +1,93 @@
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="js/plugins/morris/raphael.min.js"></script>
+    <script src="js/plugins/morris/morris.min.js"></script>
+    <script src="js/plugins/morris/morris-data.js"></script>
+	<div ng-hide="currentUser" >
+
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#/">Hermius</a>
+			
+				<!--<a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>-->
+            </div>
+            <!-- Top Menu Items -->
+            <ul class="nav navbar-right top-nav">
+			 <li>
+				<a href="#/signin" >Sign in </a>
+        	</li>
+            </ul>
+	</div>
+
+
+	<div ng-show="currentUser" >
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#/">Hermius</a>
+            </div>
+            <!-- Top Menu Items -->
+		
+            <ul class="nav navbar-right top-nav">
+             <!--<span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" width="5%" class="img-circle" ></img></span>-->
+			    <li class="dropdown">
+                    
+					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+                    
+					<ul class="dropdown-menu">
+                        <li>
+                            <a href="#/profile" ><i class="fa fa-fw fa-user"></i> Profile</a>
+                        </li>
+                        <li class="divider"></li>
+                        <li >
+							<a href="" ng-click="logout()" > <i class="fa fa-fw fa-power-off"></i>Log Out</a>
+                        </li>
+                    </ul>
+					
+                </li>
+            </ul>
+	</div>
+   
+
+	<div class="container">
+		
+		<div class="row row_Padding">
+			<div class="main_box"  >
+				<div class="account-wall text-center">
+				<img src = "images/logo.png" style="min-height:100px; max-width: 300px;"/>
+				<h1  class = "text-center heading " Style="font-weighht:bold; font-size:30px;">SIGNUP</h1>
+					<!-- <img class="profile-img" src="images/user.png" alt=""> -->
+					<form class="form-signin">
+						<input type="text" class="form-control" ng-model="username" placeholder="Username" required autofocus>
+						<input type="password" ng-model="password" class="form-control" placeholder="Password" required>
+						<a ng-href="#/signin" ng-click="submitSignup()" class="btn btn-sm btn-primary btn-block" style = "background-color:#00223D;"  type="submit">
+							Register</a>
+						<a href="#/signin" class="text-center new-account">Existing User? Sign in </a>
+					</form>
+				</div>
+				
+			</div>
+		</div>
+	</div>
+

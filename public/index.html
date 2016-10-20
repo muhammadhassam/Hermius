@@ -14,6 +14,13 @@
 	<!--<script src="path/to/angular.js"></script>-->
 	<!--<script src="/node_modules/angular-animate/angular-animate.js"></script>-->
 
+	<!-- Sign in stylesheet -->
+	<link rel="stylesheet" type="text/css" href="css/login-style.css" />
+	<!-- Sign up stylesheet -->
+	<link rel="stylesheet" type="text/css" href="css/signup-style.css" />
+	<!-- Landing Page stylesheet -->
+	<link rel="stylesheet" type="text/css" href="css/landing-style.css" />
+
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
 
@@ -59,14 +66,18 @@
 		    controller: 'HomeController',
 			})
 
+		   .when('/welcome', {
+		    templateUrl: 'landingpage.html',
+		    controller: 'HomeController',
+			})
 
 			.when('/signup', {
-		    templateUrl: 'signup.html',
+		    templateUrl: 'signup2.html',
 		    controller: 'SignupController',
 			})
 
 			.when('/signin', {
-		    templateUrl: 'signin.html',
+		    templateUrl: 'signin2.html',
 		    controller: 'HomeController',
 			})
 
@@ -234,7 +245,8 @@
 				console.log('SOCKET IO');
 			});
 			socket.on('{text: req.body.newMessage}', function(data){
-				getMessages();
+				//getMessages();
+				getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 			});
 
 			$scope.SubmitNewMessage = function(meetingRoomName, meetingTaskName){
@@ -275,6 +287,7 @@
 					$cookies.put('currentUser', $scope.username);
 					$rootScope.token = res.data.token;
 					$rootScope.currentUser = $scope.username;
+					
 					//alert('Successfully signed in!');
 				}, function(err) {
 					alert('Wrong Username or Password');
@@ -313,6 +326,29 @@
 					getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 				});
 			};
+			
+			//This function adds a comment to the feed
+			$scope.submitNewComment = function(user, message, date, comment){
+				console.log($rootScope.currentUser+ " commented on a post: "+message+", date: "+date+" comment: "+comment);
+				$http.put('/comment', {username: $rootScope.currentUser, messageText: message, messageDate: date, comment: comment}).then(function(response){
+					//console.log(response.data+"Response");
+					getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
+				});
+			};
+
+			//Range for n number function(min, max)
+			$scope.range = function(min, max, step){
+				var input = [];
+				//console.log(input.push()+" Input2");
+				for(var i=min; i<=max; i++){
+					step = step || 1;
+					//var pushit= input.push(i);
+					console.log(step+" Input");
+					input.push(i);
+				}
+				return input;
+			};
+
 
 			//Useless function. Can be deleted.
 			function getLikes(likes){
@@ -370,6 +406,7 @@
 			}
 			//$scope.SubmitNewLink = function(meetingTaskName){
 			$scope.getFeedsByTasks = function(taskName){
+				$scope.clickedLinkButton = false;
 				$rootScope.meetingTaskName = taskName;
 				//console.log($rootScope.meetingTaskName+"Hello");
 				//console.log($rootScope.meetingRoomName+"ueli"+taskName);
@@ -876,7 +913,7 @@
 
 	</script>
 </head>
-<body >
+<body>
 	<!--
 	<div class="panel panel-default">
 			<h1 class="page-title"><a href="#/" >Hermius </h1></a>
