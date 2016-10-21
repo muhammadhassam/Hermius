@@ -14,6 +14,13 @@
 	<!--<script src="path/to/angular.js"></script>-->
 	<!--<script src="/node_modules/angular-animate/angular-animate.js"></script>-->
 
+	<!-- Sign in stylesheet -->
+	<link rel="stylesheet" type="text/css" href="css/login-style.css" />
+	<!-- Sign up stylesheet -->
+	<link rel="stylesheet" type="text/css" href="css/signup-style.css" />
+	<!-- Landing Page stylesheet -->
+	<link rel="stylesheet" type="text/css" href="css/landing-style.css" />
+
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
 
@@ -26,6 +33,22 @@
 	<script type="text/javascript" src="angular-route.js"></script>
 	<script type="text/javascript" src="angular-cookies.js"></script>
 	<script src="http://localhost:80/socket.io/socket.io.js"></script>
+
+
+
+
+
+
+	    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+    <!-- Morris Charts JavaScript -->
+    <script src="js/plugins/morris/raphael.min.js"></script>
+    <script src="js/plugins/morris/morris.min.js"></script>
+    <script src="js/plugins/morris/morris-data.js"></script>
 	
 	<script type="text/javascript">
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
@@ -43,13 +66,18 @@
 		    controller: 'HomeController',
 			})
 
+		   .when('/welcome', {
+		    templateUrl: 'landingpage.html',
+		    controller: 'HomeController',
+			})
+
 			.when('/signup', {
-		    templateUrl: 'signup.html',
+		    templateUrl: 'signup2.html',
 		    controller: 'SignupController',
 			})
 
 			.when('/signin', {
-		    templateUrl: 'signin.html',
+		    templateUrl: 'signin2.html',
 		    controller: 'HomeController',
 			})
 
@@ -85,7 +113,7 @@
 		});
 		
 
-app.directive('fileModel', ['$parse', function ($parse) {
+		app.directive('fileModel', ['$parse', function ($parse) {
             return {
                restrict: 'A',
                link: function(scope, element, attrs) {
@@ -103,10 +131,28 @@ app.directive('fileModel', ['$parse', function ($parse) {
                }
             };
          }]);
+		 
+
+		/*
+		This directive allows us to pass a function in on an enter key to do what we want.
+		*/
+		app.directive('ngEnter', function () {
+			return function (scope, element, attrs) {
+				element.bind("keydown keypress", function (event) {
+					if(event.which === 13) {
+						scope.$apply(function (){
+							scope.$eval(attrs.ngEnter);
+						});
+		
+						event.preventDefault();
+					}
+				});
+			};
+		});
 
 
 
-app.service('fileUpload', ['$http','$q', function ($http,$q) {
+		app.service('fileUpload', ['$http','$q', function ($http,$q) {
              var showImage;
              var readImage=3;
              var deffered = $q.defer();
@@ -199,7 +245,8 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				console.log('SOCKET IO');
 			});
 			socket.on('{text: req.body.newMessage}', function(data){
-				getMessages();
+				//getMessages();
+				getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 			});
 
 			$scope.SubmitNewMessage = function(meetingRoomName, meetingTaskName){
@@ -240,6 +287,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 					$cookies.put('currentUser', $scope.username);
 					$rootScope.token = res.data.token;
 					$rootScope.currentUser = $scope.username;
+					
 					//alert('Successfully signed in!');
 				}, function(err) {
 					alert('Wrong Username or Password');
@@ -250,11 +298,13 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 
 			//Logout Function
 			$scope.logout = function(){
+				console.log("IM IN LOG OUT METHOD")
 				$cookies.remove('token');
 				$cookies.remove('currentUser');
 				$rootScope.token = null;
 				$rootScope.currentUser = null;
 			};
+
 
 			//Remove a message
 			$scope.removeMessage = function(message){
@@ -273,13 +323,34 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 				//console.log($rootScope.currentUser+ " liked a post: "+message+", date: "+date);
 				$http.put('/like', {username: $rootScope.currentUser, messageText: message, messageDate: date}).then(function(response){
 					console.log(response.data+"Response");
-					//getLikes(response.data);
-					//$scope.messageLikes = response.data;
-					getLikes($scope.messageLikes);
-					//console.log($scope.messageLikes+" Response for Likes");
+					getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
+				});
+			};
+			
+			//This function adds a comment to the feed
+			$scope.submitNewComment = function(user, message, date, comment){
+				console.log($rootScope.currentUser+ " commented on a post: "+message+", date: "+date+" comment: "+comment);
+				$http.put('/comment', {username: $rootScope.currentUser, messageText: message, messageDate: date, comment: comment}).then(function(response){
+					//console.log(response.data+"Response");
+					getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 				});
 			};
 
+			//Range for n number function(min, max)
+			$scope.range = function(min, max, step){
+				var input = [];
+				//console.log(input.push()+" Input2");
+				for(var i=min; i<=max; i++){
+					step = step || 1;
+					//var pushit= input.push(i);
+					console.log(step+" Input");
+					input.push(i);
+				}
+				return input;
+			};
+
+
+			//Useless function. Can be deleted.
 			function getLikes(likes){
 				//$http.put('/like', {username: $rootScope.currentUser, messageText: message, messageDate: date}).then(function(response){
 					//console.log(response.data);
@@ -294,6 +365,9 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 					});
 				//});
 				
+			}
+			function getMessageLikes(username){
+
 			}
 			// function getMessages(){
 			// 	$http.get('/messages').then(function(response){
@@ -332,6 +406,7 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 			}
 			//$scope.SubmitNewLink = function(meetingTaskName){
 			$scope.getFeedsByTasks = function(taskName){
+				$scope.clickedLinkButton = false;
 				$rootScope.meetingTaskName = taskName;
 				//console.log($rootScope.meetingTaskName+"Hello");
 				//console.log($rootScope.meetingRoomName+"ueli"+taskName);
@@ -339,29 +414,29 @@ app.service('fileUpload', ['$http','$q', function ($http,$q) {
 			}
 
 
-function showUserProfile()
+			function showUserProfile()
 			{
 				$http.put('/show/User/profile/room',{name:$rootScope.currentUser}).then(function(response){
-							//console.log($rootScope.currentUser);
-							//console.log($rootScope.meetingTaskName);
-							$scope.userProfile = response.data;
-							$rootScope.userProfile=$scope.userProfile;
-							angular.forEach($scope.userProfile, function(item, index){
-						//item.users.splice(0,1);
-						$scope.users = item.file;
-						$scope.currentImage=item.file[0].filename;
-						$scope.defaultImage=item.file;
-						$rootScope.defaultImage=$scope.defaultImage;
-						$rootScope.currentImage=$scope.currentImage;
-						console.log($scope.currentImage);
-						console.log($scope.defaultImage);
+					//console.log($rootScope.currentUser);
+					//console.log($rootScope.meetingTaskName);
+					$scope.userProfile = response.data;
+					$rootScope.userProfile=$scope.userProfile;
+					angular.forEach($scope.userProfile, function(item, index){
+					//item.users.splice(0,1);
+					$scope.users = item.file;
+					$scope.currentImage=item.file[0].filename;
+					$scope.defaultImage=item.file;
+					$rootScope.defaultImage=$scope.defaultImage;
+					$rootScope.currentImage=$scope.currentImage;
+					console.log($scope.currentImage);
+					console.log($scope.defaultImage);
 					});
 							//console.log(response.data);
 								//$scope.users=response.data;
-							});
+				});
 			}
 
-showUserProfile();
+			showUserProfile();
 
 
 
@@ -409,6 +484,10 @@ showUserProfile();
                //function for file
               //$scope.userProfile=$rootScope.userprofile;
 			  //console.log($scope.userProfile);
+
+
+			
+
 
 			$scope.SubmitNewChatMessage = function(){
 				//console.log($rootscope.meetingTaskName+" Rootscope taskname");
@@ -727,7 +806,7 @@ showUserProfile();
 				}
 			}
 
-$scope.submit = function()
+			$scope.submit = function()
 			{
 				            
 				var promise = fileUpload.fileName();
@@ -772,7 +851,7 @@ $scope.submit = function()
 			}
 
 
-function showUserProfile()
+			function showUserProfile()
 			{
 				$http.put('/show/User/profile/room',{name:$rootScope.currentUser}).then(function(response){
 							//console.log($rootScope.currentUser);
@@ -793,22 +872,22 @@ function showUserProfile()
 								//$scope.users=response.data;
 							});
 			}
-// function search user
+			// function search user
 
-function showUsers()
-{
+			function showUsers()
+			{
 
-	$http.get('/users/invite').then(function(response){
-                   // console.log("Get user");
-				$scope.RegisterUsers=response.data;
-                 });
-} 
-showUsers();
-
-
+				$http.get('/users/invite').then(function(response){
+							// console.log("Get user");
+							$scope.RegisterUsers=response.data;
+							});
+			} 
+			showUsers();
 
 
-showUserProfile();
+
+
+			showUserProfile();
 			//getChatMessagesByRoomArg("Room "+roomNumber);
 			//meetingRoomName = $rootScope.roomName;
 			//getChatMessagesByRoomArg($rootScope.roomName);
@@ -841,7 +920,7 @@ showUserProfile();
 
 	</script>
 </head>
-<body >
+<body>
 	<!--
 	<div class="panel panel-default">
 			<h1 class="page-title"><a href="#/" >Hermius </h1></a>
@@ -850,6 +929,7 @@ showUserProfile();
 	-->
 <div id="wrapper">
 
+<<<<<<< HEAD
 	<div ng-hide="currentUser" >
         <!-- Navigation -->
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -909,34 +989,13 @@ showUserProfile();
                 </li>
             </ul>
 	</div>
+=======
+>>>>>>> origin/master
 
 </div>
 	
-	<!--<div ng-hide="currentUser" class="panel panel-primary">
-		<div class="panel-heading">
-			<h1>
-				<a href="#/" >Hermius </a>
-				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
-					<a href="#/signup">Not a member? Signup</a>
-				</span>
-			</h1>      
-		</div>
-	</div>
-
-	<div ng-show="currentUser" class="panel panel-primary">
-		<div class="panel-heading">
-			<h1>
-				<a href="#/" >Hermius </a>
-				<span class=" glyphicon glyphicon-user pull-right" style="margin-bottom: 25px; font-size: 18px; "> 
-					Hi,{{currentUser}}
-					<br>
-					<a href  ng-click="logout()" >Logout</a>
-				</span>
-			</h1>      
-		</div>
-	</div>-->
-
-	<div ng-view style="margin-top: 70px;">
+	<div ng-view style="margin-top: 80px;">
+		
 	</div>
 
 
