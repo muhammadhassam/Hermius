@@ -81,10 +81,10 @@
 <p></p>
 <div class="col-md-2" style="border: 1px solid #337AB7; padding-top: 20px; margin-top:50px;">
     <div  ng-repeat="file in userProfile " ng-show="userProfile" ng-hide="image">
-        <img ng-src="images/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-circle"  width="60%"></img> </br>
+        <img ng-src="/images/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-circle"  width="60%"></img> </br>
     </div>
     <div ng-show="image" ng-repeat="file in image" >
-        <img ng-src="images/{{file.filename}}" class="img-circle"  width="60%"></img> </br>
+        <img ng-src="/images/{{file.filename}}" class="img-circle"  width="60%"></img> </br>
     </div>
     <!--<div ng-hide="userProfile">
         <img ng-src="{{imgSrc}}" class="img-circle"  width="60%"></img> </br>

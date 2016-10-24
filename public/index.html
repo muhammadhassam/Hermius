@@ -467,7 +467,7 @@
 		});
 //, [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http)
 
-		app.controller('RoomController',  [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
+		app.controller('RoomController',  ['$cookies', '$scope','$rootScope','fileUpload','$http',function($cookies,$scope,$rootScope, fileUpload,$http){
 						
 			var socket = io.connect('http://localhost');
 			socket.on('connect', function(socket){
@@ -677,6 +677,15 @@
 				});
 			}
 
+function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
+				$http.put('/chat/Files/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
+					//console.log(response.data)
+					$scope.Files = response.data;
+					//chatMessagess = $scope.chatMessages;
+					console.log($scope.Files);
+				});
+			}
+     
 			function getChatMessagesByRoomArg(meetingRoomName){
 				//console.log("hello");
 				//console.log(meetingRoomName);
@@ -729,7 +738,7 @@
 					// $scope.taskName = '';
 					//console.log("Room Name: "+meetingRoomName+" AND Task Name: "+taskName);
 					getLinksByRoomAndTask(taskName, meetingRoomName);
-
+                    	getFilesByRoomAndTask(taskName,meetingRoomName);
 					$scope.chatMessages = response.data;
 					$rootScope.meetingTaskName = taskName;
 					$rootScope.taskName = meetingTaskName;
@@ -814,13 +823,17 @@
 				$scope.image=data;
 				//$scope.myFile={};
 				$('#examplefile').val('');
-				 //angular.element("input[type='file']").val(null);
-				  //$scope.myFile = { file: undefined };
 				angular.forEach($scope.image, function(item, index){
                         $rootScope.image=item.filename;
-					console.log($rootScope.image);
+					//console.log($rootScope.image);
 				});
-			  	roughAttempt($rootScope.image);
+			  	fileCacther($rootScope.image);
+				  /*var n = $rootScope.image.includes('jpg');
+				  if( $rootScope.image.includes('jpg') || $rootScope.image.includes('png')){ 
+	                    console.log("image");			  
+				  }
+				  console.log(n);*/
+				showUploadfile($rootScope.image);
 				 // $rootScope.image='';
 				//console.log($scope.image);
 				}) 
@@ -832,12 +845,12 @@
 		    	 //showUserProfile();
 				 
 			};
-			function roughAttempt(image)
+			function fileCacther(image)
 			{
 
-                console.log(image);
-				console.log($rootScope.roomName);
-				console.log(meetingTaskName);
+                //console.log(image);
+				//console.log($rootScope.roomName);
+				//console.log(meetingTaskName);
 
                    $http.post('/chat/messages', {newChatImage:image, roomName: $rootScope.roomName, taskName: meetingTaskName},
 				 {headers: {
@@ -849,6 +862,28 @@
 				});
 
 			}
+
+    // function show upload files
+	function showUploadfile(image)
+			{
+
+                //console.log(image);
+				//console.log($rootScope.roomName);
+				//console.log(meetingTaskName);
+
+                   $http.post('/chat/messages/uploadFile', {newUploadFile:image,newFileName:$scope.newFileName, roomName: $rootScope.roomName, taskName: meetingTaskName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					getFilesByRoomAndTask(meetingTaskName,$rootScope.roomName);
+					$scope.newFileName = '';
+				});
+
+			}
+
+//getFilesByRoomAndTask();
 
 
 			function showUserProfile()
@@ -865,8 +900,8 @@
 						$scope.defaultImage=item.file;
 						$rootScope.defaultImage=$scope.defaultImage;
 						$rootScope.currentImage=$scope.currentImage;
-						console.log($scope.currentImage);
-						console.log($scope.defaultImage);
+						//console.log($scope.currentImage);
+						//console.log($scope.defaultImage);
 					});
 							//console.log(response.data);
 								//$scope.users=response.data;
@@ -929,7 +964,7 @@
 	-->
 <div id="wrapper">
 
-<<<<<<< HEAD
+
 	<div ng-hide="currentUser" >
         <!-- Navigation -->
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -974,7 +1009,7 @@
 			    <li class="dropdown">
                     
 					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                     
 					<ul class="dropdown-menu">
                         <li>

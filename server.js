@@ -26,7 +26,7 @@ var JWT_SECRET = 'hermeszeus';
 
 var db = null;
 //var messages;
-MongoClient.connect("mongodb://localhost:27017/hermius", function(err, dbconn){
+MongoClient.connect("mongodb://localhost:27017/hermiusFYP", function(err, dbconn){
 	if (!err) {
 		console.log("We are connected");
         db = dbconn;   
@@ -213,7 +213,20 @@ app.put('/chat/links/roomandtask', function(req, res, next){
 		return	db.collection;
 	});
 });
-//function to get file in chat
+//function to get file by Room and chat
+app.put('/chat/Files/roomandtask', function(req, res, next){
+	db.collection('files', function(err, filesCollection){
+		console.log("Checking task name: "+ req.body.roomtaskName);
+		console.log("Checking room name2 : "+ req.body.meetingRoomName); //Desn't work
+		filesCollection.find({$and:[{task: req.body.roomtaskName} , { room: req.body.meetingRoomName}]}).toArray(function(err, files){
+			///console.log(chatMessages.text);
+			//console.log(chatMessages.text);
+			return res.json(files);
+		});
+		return	db.collection;
+	});
+});
+
 
 
 
@@ -279,8 +292,8 @@ app.post('/chat/messages', function(req, res, next){
 		    file: user.file,
 			uploadFile:req.body.newChatImage
 		};
-		console.log(user.username);
-		console.log(user.file);
+		//console.log(user.username);
+		//console.log(user.file);
 		chatMessagesCollection.insert(newChatMessage, {w:1}, function(err, newChatMessage){
 			io.emit('{text: req.body.newChatMessage}');
 			return res.send();
@@ -321,6 +334,34 @@ app.post('/chat/links', function(req, res, next){
 	});
 	//res.send();
 });
+// function to insert files
+app.post('/chat/messages/uploadFile', function(req, res, next){
+	
+	var now = new Date();
+	var jsonDate = now.toJSON();
+
+	var token = req.headers.authorization;
+	var user = jwt.decode(token, JWT_SECRET);
+	db.collection('files', function(err, filesCollection){
+		var newFile = {
+			file: req.body.newUploadFile,
+			filename: req.body.newFileName,
+			username: user.username,
+			room: req.body.roomName,
+			task: req.body.taskName,
+			date: jsonDate
+		};
+		filesCollection.insert(newFile, {w:1}, function(err, newFile){
+			io.emit('{file: req.body.newUploadFile}');
+			return res.send();
+		});
+	});
+	//res.send();
+});
+
+
+
+
 
 
 //Function to select Room name
@@ -650,7 +691,7 @@ app.get('/users/find/task', function(req, res, next){
 
 //function for signing in
 app.put('/users/signin', function(req, res, next){
-	console.log(req.body.username);
+	//console.log(req.body.username);
 	db.collection('users', function(err, usersCollection){
 		usersCollection.findOne({username: req.body.username}, function(err, user){
 			bcrypt.compare(req.body.password, user.password, function(err, result){

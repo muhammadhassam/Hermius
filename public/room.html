@@ -55,7 +55,7 @@
 			    <li class="dropdown">
                     
 					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                     
 					<ul class="dropdown-menu">
                         <li>
@@ -103,13 +103,13 @@
 			<BR><BR>
 			<ul class="list-group"  style="height: 500px;" ng-show="username.length>0">
 				<li class="list-group-item" ng-repeat="user in RegisterUsers | filter: username" >
-					<span ><img ng-src="images/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= width="30px" height="30px" class="img-circle" ></img></span><a href="#/room/{{ room.name }}">{{ user.username }} </a>
+					<span ><img ng-src="/images/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= width="30px" height="30px" class="img-circle" ></img></span><a href="#/room/{{ room.name }}">{{ user.username }} </a>
 				</li>
 			</ul>
 			<ul class="list-group">
 				<li class="list-group-item"  ng-repeat="user in users ">
 					<!--<a href="#/room/{{ room.name }}">{{ task.users}} </a>-->
-					<span><img ng-src="images/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
+					<span><img ng-src="/images/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
 				</li>
 			</ul>
 			<!--<div ng-repeat="user in users">
@@ -140,9 +140,9 @@
 		<div ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
 			<ul class="list-group"  >
 				<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
-					<span ><img ng-src="images/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
+					<span ><img ng-src="/images/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
 					<a href="#">{{ chatMessage.username }}</a>
-					<span><img ng-src="images/{{chatMessage.uploadFile}}" width="50%"></img></span>
+					<span><img  ng-if="::chatMessage.uploadFile" ng-src="/images/{{chatMessage.uploadFile }}" width="50%"></img></span>
 					<BR>
 					<small>{{ chatMessage.text }}</small>
 					<!--<span ng-repeat="file in image" ng-show="image">
@@ -189,7 +189,7 @@
 					<br>
 					<input type="file" id="examplefile" file-model="myFile.file" name="myimage">
 					<H4 style="color: #337AB7">FileName:-</H4>
-					<input type="text" class="form-control" ng-model="newLabel" placeholder="Add a file name">
+					<input type="text" class="form-control" ng-model="newFileName" placeholder="Add a file name">
 					<br>
 					<input type="submit" ng-click="submit()" class="btn btn-btn-secondary" ></input>
 				</form>
@@ -233,5 +233,16 @@
 			</li>
 		</ul>
 
+             <ul class="list-group" >
+			<!--<button style="width: 100%" ng-model="clickedLinkButton" ng-click="showLinks()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
+			<!--Links
+			</button>-->
+			<li class="list-group-item" ng-repeat = "file in Files" style="overflow-wrap: break-word" >
+				<span style="color: #337AB7; font-weight: bold">File: </span>{{file.filename}}<br>
+				<a href=""> {{file.file }}</a>
+			</li>
+		</ul>
+
 	</div>
+	
 </div>
