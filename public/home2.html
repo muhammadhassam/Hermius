@@ -161,7 +161,7 @@
                                 <span class="input-group-addon" id="basic-addon1">...</span>
                                 <input ng-enter="submitNewComment(message.username, message.text, message.date, newComment)" ng-model="newComment" type="text" class="form-control" placeholder="Write a comment..." aria-describedby="basic-addon1">
                             </div> 
-                            <div class="comments" ng-repeat="n in range(1,5) | orderBy: reverse: true ">
+                            <div class="comments" ng-repeat="n in range(1,10) | orderBy: reverse: true | filter: ">
                                 <span style="color: #337AB7; font-wight: 600">{{message.comments[n].username}} </span>{{message.comments[n].text}}
                             </div>
                             </ul>
