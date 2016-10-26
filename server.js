@@ -654,7 +654,9 @@ app.post('/users', function(req, res, next){
 				var newUser = {
 				username: req.body.username,
 				password: hash,
-				file:"default.png"
+				file:"default.png",
+				email: req.body.email,
+				fullname: req.body.fullname
 				
 				};
 				usersCollection.insert(newUser, {w:1}, function(err, messages){

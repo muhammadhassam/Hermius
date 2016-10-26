@@ -72,15 +72,15 @@
 	</div>
 	
 
-
-<div>
-	<div class="col-md-3" style="background-color: #FAFAFA; border: 1px solid #efefef">
+ 
+<div id="wrapper" style="margin-top:20px;">
+	<div class="col-md-3 side-nav" style="margin-top:20px;color:white; border: 1px solid #efefef">
 		<!--<H2 style="color: #222">Welcome</H2>
 			<h4>Hi {{ currentUser}}</h4>
 			<a href ng-click="logout()">Logout.</a>-->
 			
 			<div ng-hide="meetingTaskName">
-				<H4 style="color: #222; font-weight: bold">ROOMS</H4>
+				<H4  font-weight: bold">ROOMS</H4>
 				 Write a name for Room
 				<input type="text" class="form-control" ng-model="roomName" placeholder="Write a Room Name">
 				<button type="button" class="btn btn-secondary" style="margin-top:5px;" ng-click="AssignRoomName()">Send</button>
@@ -97,7 +97,7 @@
 				</ul>
 			</div>
 
-			<H2 style="color: #337AB7">People</H2>
+			<H2 style="font-wight:bold">People</H2>
 			<input type="text" placeholder="username" ng-model="username"></input>
 			<button type="button" class="btn btn-secondary " ng-click="addPeopleInTasks()">Invite</button>
 			<BR><BR>
@@ -116,10 +116,14 @@
 				{{user.username}}
 			</div>-->
 	</div>
-	<div ng-hide="meetingRoomName"  class="col-md-7" style="border: 1px solid #efefef; background-color: #e1e1e1">
+	<div id="page-wrapper">
+	
+	<div  ng-hide="meetingRoomName"  class="col-md-9" style="border: 1px solid #efefef; background-color: #e1e1e1">
 		<h2 style="text-align: center; ">Nothing to display here. Please select a MeetingRoom/Project</h2>
 	</div>
-	<div ng-show="meetingRoomName"  class="col-md-7" style="border: 1px solid #efefef;">
+	<div id="chatBox">
+
+	<div  ng-show="meetingRoomName"  class="col-md-9" style="border: 1px solid #efefef;">
 		<div style="background-color: #f7f7f7; padding: 10px">
 			<span style="font-size: 24px; ">
 			<i class="fa fa-users" aria-hidden="true" style="font-size: 30px; margin-top: 10px; "></i>
@@ -131,13 +135,13 @@
 			</span>
 		</div>
 
-		<div ng-hide="meetingTaskName" style=" height: 400px; ">
+		<div class="col-md-12" ng-hide="meetingTaskName" style=" height: 400px; ">
 			<h4 style="text-align: left; color: red ">Nothing to display here. Please select an existing Task or Add a new one
 				using the right column.
 			</h4>
 		</div>
 		
-		<div ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
+		<div  ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
 			<ul class="list-group"  >
 				<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
 					<span ><img ng-src="/images/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
@@ -208,7 +212,9 @@
 			<small>Logged in as <a href=""> {{ currentUser }}</a></small>
 		</div>
 	</div>
-	<div  ng-show="meetingRoomName" class = "col-md-2" style="background-color: #FAFAFA; border: 1px solid #efefef">
+
+	</div>
+	<div  ng-show="meetingRoomName" class = "col-md-3 rightside-nav" style="background-color: #FAFAFA; border: 1px solid #efefef">
 		<H2 style="color: #337AB7">Tasks</H2>
 		<h4>Add a new task in {{ meetingRoomName }}</h4>
 		<input type="text" class="form-control" ng-model="taskName" placeholder="Write a task Name">
@@ -233,16 +239,19 @@
 			</li>
 		</ul>
 
-             <ul class="list-group" >
-			<!--<button style="width: 100%" ng-model="clickedLinkButton" ng-click="showLinks()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">-->
-			<!--Links
-			</button>-->
-			<li class="list-group-item" ng-repeat = "file in Files" style="overflow-wrap: break-word" >
+		<ul class="list-group" ng-show="meetingTaskName">
+			<button style="width: 100%" ng-model="clickedFileButton" ng-click="showFiles()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Files
+			</button>
+			<li class="list-group-item" ng-repeat = "file in Files" style="overflow-wrap: break-word" ng-show="clickedFileButton">
 				<span style="color: #337AB7; font-weight: bold">File: </span>{{file.filename}}<br>
-				<a href=""> {{file.file }}</a>
+				<a href="images/{{file.file}}"> {{file.file }}</a>
 			</li>
 		</ul>
 
 	</div>
 	
+
 </div>
+
+		

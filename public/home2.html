@@ -72,7 +72,7 @@
 
     <div id="wrapper">            
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
-            <div class="collapse navbar-collapse navbar-ex1-collapse">
+            <div class="collapse navbar-collapse navbar-ex1-collapse" >
                 <ul class="nav navbar-nav side-nav">
                     <!--<li class="active">
                         <a href="javascript:;" data-toggle="collapse" data-target="#demo"><i class="fa fa-fw fa-arrows-v"></i> #Albayrak <i class="fa fa-fw fa-caret-down"></i></a>
@@ -82,19 +82,19 @@
                             </li>
                             <li>
                                 <a href="#">#Graphics</a>
-                            </li>
+                            </li>background-color: rgba(169,3,41,1);
                         </ul>
                     </li>-->
                     <li><h4 style="color: white; text-align: left; margin-top: 25px; margin-left: 15px;"> Projects & Tasks</h4></li>
                     <li><h3 ng-hide="clickedLinkButton" style="color: white; text-align: left;  margin-left: 15px;">  Select a Project/Room</h3></li>
                     <li><h3 ng-show="clickedLinkButton" style="color: white; text-align: left;  margin-left: 15px;">  Select a Task</h3></li>
                     <ul class="list-group" style="margin-top: 15px;" ng-repeat = "room in rooms">
-                        <button ng-hide="clickedLinkButton" style="width: 100%; text-align: left" ng-model="room.name" ng-click="showLinks(room.name)" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button ng-hide="clickedLinkButton" style="width: 100%; text-align: left" ng-model="room.name" ng-click="showLinks(room.name)"  class="side-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                         <i class="fa fa-fw fa-arrows-v"></i>#{{room.name }}
                         </button>
                     </ul>
                         
-                    <li ng-repeat="task in tasks" class="list-group-item"  style="padding: 5px 00px 10px 00px;overflow-wrap: break-word; background-color: #222; color: white; border: #222; margin-left: 5px;" ng-show="clickedLinkButton">
+                    <li ng-repeat="task in tasks" class="list-group-item" style="padding: 5px 00px 10px 00px;overflow-wrap: break-word; background-color: rgba(169,3,41,1);222; color: white; border: 2px; margin-left: 5px;" ng-show="clickedLinkButton">
                             <a href="" style="color: white" ng-click="getFeedsByTasks(task.name)"> <i class="fa fa-fw fa-arrows-v"></i>#{{task.name}}<br></a>
                     </li>
                         
@@ -104,7 +104,7 @@
                 </ul>
             </div>
             <!-- /.navbar-collapse -->
-        </nav>
+        
         <div id="page-wrapper">
 
             <div class="container-fluid">
@@ -136,7 +136,7 @@
                         </div>
 
                         <div ng-show="meetingTaskName" class="new-message" ng-show="currentUser">
-                            <img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><span class="username">{{currentUser}}</span> 
+                            <img ng-src="/images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><span class="username">{{currentUser}}</span> 
                             <input type="text" class="form-control" ng-model="newMessage" placeholder="Write something about task you selected...">
                             <br>
                             <span style="color: #337AB7"> #{{meetingRoomName}} #{{meetingTaskName}}</span>
@@ -161,7 +161,7 @@
                                 <span class="input-group-addon" id="basic-addon1">...</span>
                                 <input ng-enter="submitNewComment(message.username, message.text, message.date, newComment)" ng-model="newComment" type="text" class="form-control" placeholder="Write a comment..." aria-describedby="basic-addon1">
                             </div> 
-                            <div class="comments" ng-repeat="n in range(1,10) | orderBy: reverse: true | filter: ">
+                            <div class="comments" ng-repeat="n in range(1,2) | orderBy: reverse: true ">
                                 <span style="color: #337AB7; font-wight: 600">{{message.comments[n].username}} </span>{{message.comments[n].text}}
                             </div>
                             </ul>

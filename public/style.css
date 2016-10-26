@@ -87,6 +87,11 @@
 
 
 /* Side Navigation */
+.rightside-nav {
+        bottom: 0;
+
+    }
+
 
 @media(min-width:768px) {
     .side-nav {
@@ -98,10 +103,20 @@
         border: none;
         border-radius: 0;
         overflow-y: auto;
-        background-color: #222;
+        /*background-color: #222;*/
         bottom: 0;
         overflow-x: hidden;
         padding-bottom: 40px;
+
+
+        background: rgba(169,3,41,1);
+        background: -moz-linear-gradient(left, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
+        background: -webkit-gradient(left top, right top, color-stop(0%, rgba(169,3,41,1)), color-stop(44%, rgba(143,2,34,1)), color-stop(100%, rgba(109,0,25,1)));
+        background: -webkit-linear-gradient(left, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
+        background: -o-linear-gradient(left, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
+        background: -ms-linear-gradient(left, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
+        background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
+        filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019', GradientType=1 );
     }
 
     .side-nav>li>a {
@@ -112,7 +127,8 @@
     .side-nav li a:hover,
     .side-nav li a:focus {
         outline: none;
-        background-color: #000 !important;
+        /*background-color: #000 !important;*/
+        background-color: rgba(169,3,41,1);
     }
 }
 
@@ -129,6 +145,13 @@
 
 .side-nav>li>ul>li>a:hover {
     color: #fff;
+}
+.side-button{
+    background-color: rgba(169,3,41,1);
+    padding: 10px;
+    margin: 0xp;
+    border: 2px;
+    color: white;
 }
 
 
@@ -204,6 +227,40 @@
 
 /* Feed styling ENDS*/
 
+/* Profile Page Style Starts*/
+.profile-heading{
+    color: white;
+    margin-top: -30px;
+    height: 100px;
+    text-align: center;
+
+    
+    background: rgba(216,3,53,1);
+    background: -moz-linear-gradient(left, rgba(216,3,53,1) 0%, rgba(176,3,43,1) 44%, rgba(133,0,31,1) 100%);
+    background: -webkit-gradient(left top, right top, color-stop(0%, rgba(216,3,53,1)), color-stop(44%, rgba(176,3,43,1)), color-stop(100%, rgba(133,0,31,1)));
+    background: -webkit-linear-gradient(left, rgba(216,3,53,1) 0%, rgba(176,3,43,1) 44%, rgba(133,0,31,1) 100%);
+    background: -o-linear-gradient(left, rgba(216,3,53,1) 0%, rgba(176,3,43,1) 44%, rgba(133,0,31,1) 100%);
+    background: -ms-linear-gradient(left, rgba(216,3,53,1) 0%, rgba(176,3,43,1) 44%, rgba(133,0,31,1) 100%);
+    background: linear-gradient(to right, rgba(216,3,53,1) 0%, rgba(176,3,43,1) 44%, rgba(133,0,31,1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#d80335', endColorstr='#85001f', GradientType=1 );
+
+    
+}
+.profile-row{
+    /*padding: 10px 100px 10px 100px;*/
+    margin: 50px;
+    /*margin-top: -30px;*/
+    /*background-color: #f7f7f7;*/
+}
+.profile-sidebar{
+    /*background-color: #e7e7e7;*/
+    text-align: center;
+}
+.profile-image{
+    width: 350px;
+    height: 350px;
+}
+/* Profile Page Style Ends*/
 
 /* Landing Page Style Starts*/
 
@@ -216,3 +273,4 @@
 /* Signup Page Style Starts*/
 
 /* Signup Page Style Ends*/
+

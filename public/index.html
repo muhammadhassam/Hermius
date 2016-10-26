@@ -196,11 +196,12 @@
 		app.controller('profileController', [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
 
 			//console.log("reached");
-//			$scope.user = {};
-//$scope.user.latitude = myLat;
+			//			$scope.user = {};
+			//$scope.user.latitude = myLat;
 			console.log($rootScope.currentUser);
 			$scope.currentUser=$rootScope.currentUser;
 			$scope.imgSrc="default.png";
+
 			function showUserProfile()
 			{
 				$http.put('/show/User/profile',{name:$rootScope.currentUser}).then(function(response){
@@ -212,9 +213,11 @@
 								//$scope.users=response.data;
 							});
 			}
+
 			showUserProfile();
                  //$scope.user = {latitude: myLat}; 
-				 $scope.myFile={username:$rootScope.currentUser};
+			$scope.myFile={username:$rootScope.currentUser};
+
 			$scope.submit = function()
 			{
 				//$scope.myFile={username:$rootScope.currentUser};
@@ -229,6 +232,14 @@
 				//fileUpload.uploadFileToUrl(file, uploadUrl);
 				fileUpload.post(uploadUrl,$scope.myFile);
 		    	 showUserProfile();
+			};
+			
+			$scope.logout = function(){
+				console.log("IM IN LOG OUT METHOD")
+				$cookies.remove('token');
+				$cookies.remove('currentUser');
+				$rootScope.token = null;
+				$rootScope.currentUser = null;
 			};
 
             
@@ -397,6 +408,7 @@
 					linkButton = false;
 				}
 			}
+			
 
 			
 			function getFeedsByRoomNameAng(meetingRoomName){
@@ -458,7 +470,9 @@
 			$scope.submitSignup = function(){
 				var newUser = {
 					username: $scope.username,
-					password: $scope.password
+					password: $scope.password,
+					fullname: $scope.fullname,
+					email: $scope.email
 				};
 				$http.post('/users', newUser).then(function(){
 					alert('User Successfully created');
@@ -801,6 +815,18 @@ function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
 				else{
 					$scope.clickedLinkButton = false;
 					linkButton = false;
+				}
+			}
+
+			//This function will get links on click of a button
+			$scope.showFiles = function(){
+				if(fileButton == false ){
+					$scope.clickedFileButton = true;
+					fileButton = true;
+				}
+				else{
+					$scope.clickedFileButton = false;
+					fileButton = false;
 				}
 			}
 			//This function will get links on click of a button
