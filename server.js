@@ -709,8 +709,8 @@ app.put('/users/signin', function(req, res, next){
 	});
 	//res.send();
 });
-
-app.listen(3015, function () {
+var port = process.env.PORT || 3015;
+app.listen(port, function () {
   console.log('Example app listening on port 3015!');
 });
 
