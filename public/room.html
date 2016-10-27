@@ -55,7 +55,7 @@
 			    <li class="dropdown">
                     
 					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/fileuploads/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                     
 					<ul class="dropdown-menu">
                         <li>
@@ -96,22 +96,23 @@
 					</li>
 				</ul>
 			</div>
-
-			<H2 style="font-wight:bold">People</H2>
-			<input type="text" placeholder="username" ng-model="username"></input>
+           <div ng-show="meetingTaskName" >
+			<H2 style="font-weight:bold">People</H2>
+			<input style="color:black" type="text" placeholder="username" ng-model="username"></input>
 			<button type="button" class="btn btn-secondary " ng-click="addPeopleInTasks()">Invite</button>
 			<BR><BR>
 			<ul class="list-group"  style="height: 500px;" ng-show="username.length>0">
 				<li class="list-group-item" ng-repeat="user in RegisterUsers | filter: username" >
-					<span ><img ng-src="/images/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= width="30px" height="30px" class="img-circle" ></img></span><a href="#/room/{{ room.name }}">{{ user.username }} </a>
+					<span ><img ng-src="/fileuploads/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= width="30px" height="30px" class="img-circle" ></img></span><a href="#/room/{{ room.name }}">{{ user.username }} </a>
 				</li>
 			</ul>
 			<ul class="list-group">
 				<li class="list-group-item"  ng-repeat="user in users ">
 					<!--<a href="#/room/{{ room.name }}">{{ task.users}} </a>-->
-					<span><img ng-src="/images/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
+					<span><img ng-src="/fileuploads/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
 				</li>
 			</ul>
+			</div>
 			<!--<div ng-repeat="user in users">
 				{{user.username}}
 			</div>-->
@@ -144,9 +145,9 @@
 		<div  ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
 			<ul class="list-group"  >
 				<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
-					<span ><img ng-src="/images/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
+					<span ><img ng-src="/fileuploads/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
 					<a href="#">{{ chatMessage.username }}</a>
-					<span><img  ng-if="::chatMessage.uploadFile" ng-src="/images/{{chatMessage.uploadFile }}" width="50%"></img></span>
+					<span><img  ng-if="::chatMessage.uploadFile" ng-src="/fileuploads/{{chatMessage.uploadFile }}" width="50%"></img></span>
 					<BR>
 					<small>{{ chatMessage.text }}</small>
 					<!--<span ng-repeat="file in image" ng-show="image">
@@ -245,7 +246,7 @@
 			</button>
 			<li class="list-group-item" ng-repeat = "file in Files" style="overflow-wrap: break-word" ng-show="clickedFileButton">
 				<span style="color: #337AB7; font-weight: bold">File: </span>{{file.filename}}<br>
-				<a href="images/{{file.file}}"> {{file.file }}</a>
+				<a href="fileuploads/{{file.file}}"> {{file.file }}</a>
 			</li>
 		</ul>
 

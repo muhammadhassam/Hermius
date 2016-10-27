@@ -54,7 +54,7 @@
             <li class="dropdown">
                 
                 <!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-                <a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+                <a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/fileuploads/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                 
                 <ul class="dropdown-menu">
                     <li>
@@ -76,16 +76,17 @@
 <div class="row profile-row" >
 <div class="col-md-6 profile-sidebar">
     <div  ng-repeat="file in userProfile " ng-show="userProfile" ng-hide="image">
-        <img ng-src="/images/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-thumbnail profile-image"  ></img> </br>
+        <img ng-src="/fileuploads/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-thumbnail profile-image"  ></img> </br>
     </div>
 
     <div ng-show="image" ng-repeat="file in image" >
-        <img ng-src="/images/{{file.filename}}" class="img-thumbnail profile-image"  ></img> </br>
+        <img ng-src="/fileuploads/{{file.filename}}" class="img-thumbnail profile-image"  ></img> </br>
     </div>
 
     <form encType="multipart/form-data">
       <input type="text" ng-show="hide" ng-model="myFile.username">
-        <input type="file" id="examplefile" file-model="myFile.file" name="myimage">
+        <input type="file" id="examplefile" file-model="myFile.file" name="myimage"  accept="image/*">
+        <span ng-show="filetype"><h1 style="color:red">Choose image type file</h1></span>
         <input type="submit" ng-click="submit()" class="btn btn-default" > Submit</input>
     </form>
 
