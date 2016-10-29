@@ -260,22 +260,18 @@
     width: 350px;
     height: 350px;
 }
-/* Profile Page Style Ends*/
 
-
-/* Not Signed in Page Style Starts*/
+/* Not Signed in  Style Starts*/
 .signin{
-    padding: 20px;
-    margin-top:-30px; 
-    text-align: center;
     background-color: #f3f3f3;
+    text-align: center;
+    margin-top: -32px;
     height: 80%;
+    padding: 20px;
 }
-
-
 /* Not Signed in Style Ends*/
 
-
+/* Profile Page Style Ends*/
 
 /* Landing Page Style Starts*/
 
@@ -288,5 +284,4 @@
 /* Signup Page Style Starts*/
 
 /* Signup Page Style Ends*/
-
 

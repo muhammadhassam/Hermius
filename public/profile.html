@@ -69,84 +69,64 @@
             </li>
         </ul>
 </div>
-<<<<<<< HEAD
+
 <div ng-show="currentUser">
     <div class="row profile-heading" >
         <h2>{{currentUser}}: Profile</h2>
-=======
-
-<div class="row profile-heading" >
-    <h2>{{currentUser}}: Profile</h2>
-</div>
-<div class="row profile-row" >
-<div class="col-md-6 profile-sidebar">
-    <div  ng-repeat="file in userProfile " ng-show="userProfile" ng-hide="image">
-        <img ng-src="/fileuploads/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-thumbnail profile-image"  ></img> </br>
->>>>>>> origin/master
     </div>
     <div class="row profile-row" >
-    <div class="col-md-6 profile-sidebar">
-        <div  ng-repeat="file in userProfile " ng-show="userProfile" ng-hide="image">
-            <img ng-src="/images/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-thumbnail profile-image"  ></img> </br>
+
+            <div class="col-md-6 profile-sidebar">
+                <div  ng-repeat="file in userProfile " ng-show="userProfile" ng-hide="image">
+                    <img ng-src="/images/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-thumbnail profile-image"  ></img> </br>
+                </div>
+
+                <div ng-show="image" ng-repeat="file in image" >
+                    <img ng-src="/fileuploads/{{file.filename}}" class="img-thumbnail profile-image"  ></img> </br>
+                </div>
+
+                <form encType="multipart/form-data">
+                <input type="text" ng-show="hide" ng-model="myFile.username">
+                    <input type="file" id="examplefile" file-model="myFile.file" name="myimage"  accept="image/*">
+                    <span ng-show="filetype"><h1 style="color:red">Choose image type file</h1></span>
+                    <input type="submit" ng-click="submit()" class="btn btn-default" > Submit</input>
+                </form>
+
+            </div>
+
+        <div class="col-md-6">  
+            <div class="container-fluid">
+                <div >  
+                    <b class="text-muted">  Full Name </b>
+                    <h3 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{use.fullname}}</h3>
+                    </br>
+                </div>
+
+                <div >  
+                    <b class="text-muted">  Username </b>
+                    <h3 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{use.username}}</h3>
+                    </br>
+                </div>
+                
+                <div >
+                    <b class="text-muted"> Email </b>
+                    <h3 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> {{use.email}}</h3>
+                    </br>
+                </div>
+                
+                <div >
+                    <b class="text-muted"> Team </b>
+                    <h3> <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Fc College</h3>
+                    </br>
+                </div>
+                <button ng-click="changeprofile()" class="btn btn-default">UPDATE</button>
+            </div>
         </div>
-
-<<<<<<< HEAD
-        <div ng-show="image" ng-repeat="file in image" >
-            <img ng-src="/images/{{file.filename}}" class="img-thumbnail profile-image"  ></img> </br>
-        </div>
-
-        <form encType="multipart/form-data">
-        <input type="text" ng-show="hide" ng-model="myFile.username">
-            <input type="file" id="examplefile" file-model="myFile.file" name="myimage">
-            <input type="submit" ng-click="submit()" class="btn btn-default" > Submit</input>
-        </form>
-=======
-    <div ng-show="image" ng-repeat="file in image" >
-        <img ng-src="/fileuploads/{{file.filename}}" class="img-thumbnail profile-image"  ></img> </br>
-    </div>
-
-    <form encType="multipart/form-data">
-      <input type="text" ng-show="hide" ng-model="myFile.username">
-        <input type="file" id="examplefile" file-model="myFile.file" name="myimage"  accept="image/*">
-        <span ng-show="filetype"><h1 style="color:red">Choose image type file</h1></span>
-        <input type="submit" ng-click="submit()" class="btn btn-default" > Submit</input>
-    </form>
->>>>>>> origin/master
-
-    </div>
-
-    <div class="col-md-6">
-        <div class="container-fluid">
-            <div >  
-                <b class="text-muted">  Full Name </b>
-                <h3 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{use.fullname}}</h3>
-                </br>
-            </div>
-
-            <div >  
-                <b class="text-muted">  Username </b>
-                <h3 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> {{use.username}}</h3>
-                </br>
-            </div>
-            
-            <div >
-                <b class="text-muted"> Email </b>
-                <h3 ng-repeat="use in userProfile"><span class="glyphicon glyphicon-envelope" aria-hidden="true"></span> {{use.email}}</h3>
-                </br>
-            </div>
-            
-            <div >
-                <b class="text-muted"> Team </b>
-                <h3> <span class="glyphicon glyphicon-globe" aria-hidden="true"></span> Fc College</h3>
-                </br>
-            </div>
-            <button ng-click="changeprofile()" class="btn btn-default">UPDATE</button>
-        </div>
-    </div>
     </div>
 </div>
 
 <div ng-hide="currentUser" class="signin">
     <img src="images/logo.png"></img>
-    <h2>You are not signed in. Please <a ng-href="#/signin">sign up or sign in</h2></a>
+    <h2>You are not signed in. Please <a ng-href="#/signin">sign in to continue</a></h2>
 </div>
+
