@@ -262,6 +262,21 @@
 }
 /* Profile Page Style Ends*/
 
+
+/* Not Signed in Page Style Starts*/
+.signin{
+    padding: 20px;
+    margin-top:-30px; 
+    text-align: center;
+    background-color: #f3f3f3;
+    height: 80%;
+}
+
+
+/* Not Signed in Style Ends*/
+
+
+
 /* Landing Page Style Starts*/
 
 /* Landing Page Style Ends*/
@@ -273,4 +288,5 @@
 /* Signup Page Style Starts*/
 
 /* Signup Page Style Ends*/
+
 
