@@ -1,0 +1,5 @@
+CsCS100,Rauf Butt,8:00-9:00,A,3,S201
+Maths102,Nazish Shahid,9:00-10:00,B,3,E221
+Maths103,Nazish Shahid,9:00-10:00,B,3,E221
+Maths105,Nazish Shahid,9:00-10:00,B,3,E221
+Maths201,N Shahid,9:00-10:00,B,3,E221

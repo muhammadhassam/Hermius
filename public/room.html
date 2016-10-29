@@ -55,7 +55,7 @@
 			    <li class="dropdown">
                     
 					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/fileuploads/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                     
 					<ul class="dropdown-menu">
                         <li>
@@ -72,6 +72,7 @@
 	</div>
 	
 
+<<<<<<< HEAD
 <div ng-show="currentUser">
 	<div id="wrapper" style="margin-top:20px;">
 		<div class="col-md-3 side-nav" style="margin-top:20px;color:white; border: 1px solid #efefef">
@@ -84,6 +85,84 @@
 					Write a name for Team
 					<input type="text" class="form-control" ng-model="teamName" placeholder="Write a Team Name">
 					<button type="button" class="btn btn-secondary" style="margin-top:5px;" ng-click="AssignTeamName()">Send</button>
+=======
+ 
+<div id="wrapper" style="margin-top:20px;">
+	<div class="col-md-3 side-nav" style="margin-top:20px;color:white; border: 1px solid #efefef">
+		<!--<H2 style="color: #222">Welcome</H2>
+			<h4>Hi {{ currentUser}}</h4>
+			<a href ng-click="logout()">Logout.</a>-->
+			
+			<div ng-hide="meetingTaskName">
+				<H4  font-weight: bold">ROOMS</H4>
+				 Write a name for Room
+				<input type="text" class="form-control" ng-model="roomName" placeholder="Write a Room Name">
+				<button type="button" class="btn btn-secondary" style="margin-top:5px;" ng-click="AssignRoomName()">Send</button>
+				<BR>
+				<BR>
+					
+				<h4>Select from previous meeting rooms</h4>
+				<ul  class="list-group" >
+					<li class="list-group-item" ng-repeat = "room in rooms">
+						<!--<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>-->
+						<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-link" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>
+						
+					</li>
+				</ul>
+			</div>
+           <div ng-show="meetingTaskName" >
+			<H2 style="font-weight:bold">People</H2>
+			<input style="color:black" type="text" placeholder="username" ng-model="username"></input>
+			<button type="button" class="btn btn-secondary " ng-click="addPeopleInTasks()">Invite</button>
+			<BR><BR>
+			<ul class="list-group"  style="height: 500px;" ng-show="username.length>0">
+				<li class="list-group-item" ng-repeat="user in RegisterUsers | filter: username" >
+					<span ><img ng-src="/fileuploads/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width= width="30px" height="30px" class="img-circle" ></img></span><a href="#/room/{{ room.name }}">{{ user.username }} </a>
+				</li>
+			</ul>
+			<ul class="list-group">
+				<li class="list-group-item"  ng-repeat="user in users ">
+					<!--<a href="#/room/{{ room.name }}">{{ task.users}} </a>-->
+					<span><img ng-src="/fileuploads/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
+				</li>
+			</ul>
+			</div>
+			<!--<div ng-repeat="user in users">
+				{{user.username}}
+			</div>-->
+	</div>
+	<div id="page-wrapper">
+	
+	<div  ng-hide="meetingRoomName"  class="col-md-9" style="border: 1px solid #efefef; background-color: #e1e1e1">
+		<h2 style="text-align: center; ">Nothing to display here. Please select a MeetingRoom/Project</h2>
+	</div>
+	<div id="chatBox">
+
+	<div  ng-show="meetingRoomName"  class="col-md-9" style="border: 1px solid #efefef;">
+		<div style="background-color: #f7f7f7; padding: 10px">
+			<span style="font-size: 24px; ">
+			<i class="fa fa-users" aria-hidden="true" style="font-size: 30px; margin-top: 10px; "></i>
+			<!--<H2 style="color: #337AB7" >Project Name: {{ roomName }}, TaskName: {{ meetingTaskName }}</H2>-->
+			Project: <span style="color: red">#{{ roomName }}</span><span ng-hide="meetingTaskName"> (Select a task)</span>
+				<span ng-show="meetingTaskName"> - TaskName: <span style="color: red">#{{ meetingTaskName }}</span>
+			<br>
+			Lets get the ball rolling on <span style="color: red"> {{ meetingTaskName }} </span>
+			</span>
+		</div>
+
+		<div class="col-md-12" ng-hide="meetingTaskName" style=" height: 400px; ">
+			<h4 style="text-align: left; color: red ">Nothing to display here. Please select an existing Task or Add a new one
+				using the right column.
+			</h4>
+		</div>
+		
+		<div  ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
+			<ul class="list-group"  >
+				<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
+					<span ><img ng-src="/fileuploads/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
+					<a href="#">{{ chatMessage.username }}</a>
+					<span><img  ng-if="::chatMessage.uploadFile" ng-src="/fileuploads/{{chatMessage.uploadFile }}" width="50%"></img></span>
+>>>>>>> origin/master
 					<BR>
 					<BR>
 						
@@ -257,6 +336,7 @@
 				</li>
 			</ul>
 
+<<<<<<< HEAD
 			<ul class="list-group" ng-show="meetingTaskName">
 				<button style="width: 100%" ng-model="clickedFileButton" ng-click="showFiles()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 				Files
@@ -270,6 +350,17 @@
 		</div>
 		
 		</div>
+=======
+		<ul class="list-group" ng-show="meetingTaskName">
+			<button style="width: 100%" ng-model="clickedFileButton" ng-click="showFiles()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Files
+			</button>
+			<li class="list-group-item" ng-repeat = "file in Files" style="overflow-wrap: break-word" ng-show="clickedFileButton">
+				<span style="color: #337AB7; font-weight: bold">File: </span>{{file.filename}}<br>
+				<a href="fileuploads/{{file.file}}"> {{file.file }}</a>
+			</li>
+		</ul>
+>>>>>>> origin/master
 
 	</div>
 	

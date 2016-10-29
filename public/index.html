@@ -125,7 +125,14 @@
                   element.bind('change', function(evt){
                      scope.$apply(function(){
                         modelSetter(scope, element[0].files[0]);
-                        console.log(element[0].files[0]);
+                        /*console.log(element[0].files[0]);
+						var fileName=element[0].files[0].name;
+						var extn = fileName.split(".").pop();
+						console.log(fileName);
+						console.log(extn);
+						if( extn == 'jpg' || extn == 'jpeg' || extn == 'png' || extn == 'gif')
+							console.log("file uploaded");
+						else console.log($error);*/
                      });
                   });
                }
@@ -153,18 +160,16 @@
 
 
 		app.service('fileUpload', ['$http','$q', function ($http,$q) {
-             var showImage;
-             var readImage=3;
+             
              var deffered = $q.defer();
-            //this.uploadFileToUrl = function(file, uploadUrl){
+            
               this.post =function(uploadUrl,data){
-                //$rootScope.$apply();
+            
                var fd = new FormData();
                for(var key in data)
-               //{
-               //fd.append('file', file);
+               
                fd.append(key,data[key]);
-              //}
+              
                $http.post(uploadUrl, fd, {
                   transformRequest: angular.identity,
                   headers: {'Content-Type': undefined}
@@ -184,7 +189,7 @@
                       
                    return deffered.promise;
             }
-            //console.log("Ssssss");
+            
             
 
 
@@ -198,7 +203,7 @@
 			//console.log("reached");
 			//			$scope.user = {};
 			//$scope.user.latitude = myLat;
-			console.log($rootScope.currentUser);
+			//console.log($rootScope.currentUser);
 			$scope.currentUser=$rootScope.currentUser;
 			$scope.imgSrc="default.png";
 
@@ -215,7 +220,7 @@
 			}
 
 			showUserProfile();
-                 //$scope.user = {latitude: myLat}; 
+                 
 			$scope.myFile={username:$rootScope.currentUser};
 
 			$scope.submit = function()
@@ -229,6 +234,19 @@
 				//console.log($scope.image);
 				}) 
 				var uploadUrl = '/profile';
+				var file =$scope.myFile.file;
+				//console.log(file.dir);
+				var filename=file.name
+				console.log(filename);
+				var extn = filename.split(".").pop();
+						console.log(extn);
+						if( extn == 'jpg' || extn == 'jpeg' || extn == 'png' || extn == 'gif')
+							console.log("file uploaded");
+						else {
+							$scope.filetype="file";
+							 $scope.myFile={};
+							 alert("Choose image type file");
+						}
 				//fileUpload.uploadFileToUrl(file, uploadUrl);
 				fileUpload.post(uploadUrl,$scope.myFile);
 		    	 showUserProfile();
@@ -852,8 +870,20 @@ function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
 				angular.forEach($scope.image, function(item, index){
                         $rootScope.image=item.filename;
 					//console.log($rootScope.image);
+
+					var extn = $rootScope.image.split(".").pop();
+						console.log(extn);
+						if( extn == 'jpg' || extn == 'jpeg' || extn == 'png' || extn == 'gif')
+						{
+							ImageCatcher($rootScope.image);
+							console.log("file uploaded");
+						}
+						else{ 
+							 FileCatcher($rootScope.image);
+
+						}
 				});
-			  	fileCacther($rootScope.image);
+			  	
 				  /*var n = $rootScope.image.includes('jpg');
 				  if( $rootScope.image.includes('jpg') || $rootScope.image.includes('png')){ 
 	                    console.log("image");			  
@@ -871,7 +901,28 @@ function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
 		    	 //showUserProfile();
 				 
 			};
-			function fileCacther(image)
+
+
+function FileCatcher(image)
+			{
+
+                //console.log(image);
+				//console.log($rootScope.roomName);
+				//console.log(meetingTaskName);
+
+                   $http.post('/chat/messages', {newChatMessage:image, roomName: $rootScope.roomName, taskName: meetingTaskName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(){
+
+					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					//$scope.newChatMessage = '';
+				});
+
+			}
+
+
+			function ImageCatcher(image)
 			{
 
                 //console.log(image);
@@ -1035,7 +1086,7 @@ function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
 			    <li class="dropdown">
                     
 					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/fileuploads/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                     
 					<ul class="dropdown-menu">
                         <li>
