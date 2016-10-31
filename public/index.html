@@ -20,6 +20,8 @@
 	<link rel="stylesheet" type="text/css" href="css/signup-style.css" />
 	<!-- Landing Page stylesheet -->
 	<link rel="stylesheet" type="text/css" href="css/landing-style.css" />
+	<!-- NEW Landing Page stylesheet -->
+    <link href="css/landing-page.css" rel="stylesheet">
 
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
@@ -53,7 +55,7 @@
 	<script type="text/javascript">
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
 
-		var meetingRoomName, meetingTaskName;
+		var meetingRoomName, meetingTaskName, meetingTeamName;
 		var roomNumber = 1;
 		var linkButton = false;
 		var taskButton = false;
@@ -61,12 +63,17 @@
         
 		app.config(function($routeProvider, $locationProvider){
 			$routeProvider
-		   .when('/', {
+		   .when('/home', {
 		    templateUrl: 'home2.html',
 		    controller: 'HomeController',
 			})
 
-		   .when('/welcome', {
+		   .when('/', {
+		    templateUrl: 'landingpage2.html',
+		    controller: 'HomeController',
+			})
+
+			.when('/landingEX', {
 		    templateUrl: 'landingpage.html',
 		    controller: 'HomeController',
 			})
@@ -291,6 +298,15 @@
 				});
 			};
 
+			//This function gets rooms based on meetingTeamName teams
+			function getRooms(meetingTeamName){
+				//console.log("Printing the task "+meetingRoomName);
+				$http.put('/rooms/find', {meetingTeamName: meetingTeamName}).then(function(response){
+					//console.log($rootScope.meetingTaskName+" Rootscope taskname");`
+					$scope.rooms = response.data;
+					//console.log($scope.tasks);
+				});
+			}
 			//This function gets rooms
 			function getRooms(){
 				$http.get('/rooms').then(function(response){
@@ -565,9 +581,60 @@
 				});
 			};
 
+			$scope.AssignTeamNameArg = function(teamName){
+				
+				 	//$cookies.put('teamToken', res.data.token);
+					$cookies.put('teamName', teamName);
+					//$rootScope.teamName = res.data.token;
+					$rootScope.teamName = teamName;
 
+					//getTeams();
+					//getRooms();
+
+					meetingTeamName = teamName;
+
+					console.log(meetingTeamName+"TEEAAAM");
+					$rootScope.meetingTeamName = teamName;
+					//$scope.teamName = '';
+					//getRooms();
+					getRooms(meetingTeamName);
+					//getChatMessagesByRoom();
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				
+			};
+			//This function is for assigning a Team name so that rooms/projects can be selected
+			$scope.AssignTeamName = function(){
+				$http.put('/newTeam', {newTeam: $scope.teamName},
+				 {headers: {
+				 	'authorization': $rootScope.token
+				 }}).then(function(res){
+				 	//console.log($scope.roomName);
+					
+
+				 	$cookies.put('teamToken', res.data.token);
+					$cookies.put('teamName', $scope.teamName);
+					$rootScope.teamName = res.data.token;
+					$rootScope.teamName = $scope.teamName;
+
+					getTeams();
+					//getRooms();
+
+					meetingTeamName = $scope.teamName;
+					//console.log(meetingRoomName);
+					$rootScope.meetingTeamName = $scope.teamName;
+					$scope.teamName = '';
+					getRooms();
+					//getChatMessagesByRoom();
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				}, function(err){
+					alert('Team already exists');
+				});
+			};
+
+			//Assign a Room name so that tasks can be selected
 			$scope.AssignRoomName = function(){
-				$http.put('/newRoom', {newRoom: $scope.roomName},
+				console.log(meetingTeamName+" Team Name");
+				$http.put('/newRoom', {newRoom: $scope.roomName, teamName: meetingTeamName},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(res){
@@ -579,7 +646,7 @@
 					$rootScope.roomToken = res.data.token;
 					$rootScope.roomName = $scope.roomName;
 
-					getRooms();
+					getRooms(meetingTeamName);
 
 					meetingRoomName = $scope.roomName;
 					//console.log(meetingRoomName);
@@ -709,7 +776,7 @@
 				});
 			}
 
-function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
+			function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
 				$http.put('/chat/Files/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log(response.data)
 					$scope.Files = response.data;
@@ -742,10 +809,36 @@ function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
 				});
 			}
 
+
+			$scope.getChatMessagesByTeamNameAng = function(meetingTeamName){
+				//console.log("hello2");
+				//console.log(meetingRoomName+"front 2");
+				//console.log(meetingRoomName+"New");
+				
+
+				//*****WAITING METHOD***
+				//getRooms(meetingTeamName);
+				
+				// $http.put('/teams/rooms', {meetingTeamName: meetingTeamName}).then(function(response){
+				// 	//console.log(newRoom);
+				// 	//$scope.chatMessages = response.data;
+				// 	$rootScope.meetingTeamName = meetingTeamName;
+				// 	$rootScope.teamName = meetingTeamName;
+				// 	meetingTeamName = $rootScope.teamName;
+				// 	//chatMessagess = $scope.chatMessages;
+				// 	//console.log($scope.chatMessages);
+				// });
+				$rootScope.meetingTeamName = meetingTeamName;
+				$rootScope.teamName = meetingTeamName;
+				meetingTeamName = $rootScope.teamName;
+
+			}
+
 			$scope.getChatMessagesByRoomNameAng = function(meetingRoomName){
 				//console.log("hello2");
 				//console.log(meetingRoomName+"front 2");
 				//console.log(meetingRoomName+"New");
+				getRooms(meetingTeamName+"TEAM NAME FOR ROOM");
 				getTasks(meetingRoomName);
 				$http.put('/chat/messages/roomNameAng', {meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log(newRoom);
@@ -794,6 +887,21 @@ function getFilesByRoomAndTask(meetingTaskName, meetingRoomName){
 					$scope.rooms = response.data;
 				});
 			}
+			function getTeams(){
+				$http.get('/teams').then(function(response){
+					$scope.teams = response.data;
+				});
+			}
+			//This function gets rooms based on meetingTeamName teams
+			function getRooms(meetingTeamName){
+				console.log("Printing the team "+meetingTeamName);
+				$http.put('/rooms/find', {meetingTeamName: meetingTeamName}).then(function(response){
+					//console.log($rootScope.meetingTaskName+" Rootscope taskname");`
+					$scope.rooms = response.data;
+					//console.log($scope.tasks);
+				});
+			}
+
 			function getTasks(meetingRoomName){
 				//console.log("Printing the task "+meetingRoomName);
 				$http.put('/tasks', {meetingRoomName: meetingRoomName}).then(function(response){
@@ -1018,6 +1126,7 @@ function FileCatcher(image)
 			//console.log("HELLO2 " +$rootScope.roomName);
 			//getChatMessagesByRoomArg(meetingRoomName);
 			//getChatMessages();
+			getTeams();
 			getRooms();
 			//getUsers();
 			//getUsersBasedOnTask();
@@ -1042,67 +1151,7 @@ function FileCatcher(image)
 <div id="wrapper">
 
 
-	<div ng-hide="currentUser" >
-        <!-- Navigation -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#/profile">Hermius</a>
-			
-				<!--<a href="/profile"><i class="fa fa-fw fa-user"></i> Profile</a>-->
-            </div>
-            <!-- Top Menu Items -->
-            <ul class="nav navbar-right top-nav">
-			 <li>
-				<a href="#/signup" >Not a member? Signup</a>
-        	</li>
-            </ul>
-	</div>
 
-
-	<div ng-show="currentUser" >
-        <!-- Navigation -->
-        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#/">Hermius</a>
-            </div>
-            <!-- Top Menu Items -->
-		
-            <ul class="nav navbar-right top-nav">
-             <!--<span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" width="5%" class="img-circle" ></img></span>-->
-			    <li class="dropdown">
-                    
-					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="/fileuploads/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
-                    
-					<ul class="dropdown-menu">
-                        <li>
-                            <a href="#/profile"><i class="fa fa-fw fa-user"></i> Profile</a>
-                        </li>
-                        <li class="divider"></li>
-                        <li>
-							<a href  ng-click="logout()" > <i class="fa fa-fw fa-power-off"></i>Log Out</a>
-                        </li>
-                    </ul>
-					
-                </li>
-            </ul>
-	</div>
-=======
->>>>>>> origin/master
 
 </div>
 	

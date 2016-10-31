@@ -108,8 +108,8 @@
         overflow-x: hidden;
         padding-bottom: 40px;
 
-
-        background: rgba(169,3,41,1);
+        /*background: url(images/bg-pattern.png),linear-gradient(to left,#7b4397,#dc2430);*/
+        background:  rgba(169,3,41,1);
         background: -moz-linear-gradient(left, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         background: -webkit-gradient(left top, right top, color-stop(0%, rgba(169,3,41,1)), color-stop(44%, rgba(143,2,34,1)), color-stop(100%, rgba(109,0,25,1)));
         background: -webkit-linear-gradient(left, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);

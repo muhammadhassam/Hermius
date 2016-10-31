@@ -146,6 +146,20 @@ app.get('/chat/messages/room', function(req, res, next){
 });
 
 //Function to get chat messages by Room Name for Front Angular Page
+app.put('/teams/rooms', function(req, res, next){
+	db.collection('chatMessages', function(err, chatMessagesCollection){
+		//console.log("Hello 2");
+		//console.log(req.body.meetingRoomName);
+		chatMessagesCollection.find({room: req.body.meetingRoomName}).toArray(function(err, chatMessages){
+			//console.log(chatMessages.text);
+			//console.log(chatMessages.text);
+			return res.json(chatMessages);
+		});
+		return	db.collection;
+	});
+});
+
+//Function to get chat messages by Room Name for Front Angular Page
 app.put('/chat/messages/roomNameAng', function(req, res, next){
 	db.collection('chatMessages', function(err, chatMessagesCollection){
 		//console.log("Hello 2");
@@ -244,6 +258,29 @@ app.put('/chat/Files/roomandtask', function(req, res, next){
 // 	});
 // });
 
+
+//Function to get teams
+app.get('/teams', function(req, res, next){
+	db.collection('teams', function(err, messagesCollection){
+		messagesCollection.find().toArray(function(err, messages){
+			return res.json(messages);
+
+		});
+		return	db.collection;
+	});
+});
+
+
+//Function to get Rooms based on teams
+app.put('/rooms/find', function(req, res, next){
+	//console.log(req.body.meetingRoomName+ " print");
+	db.collection('rooms', function(err, roomsCollection){
+		roomsCollection.find({team: req.body.meetingTeamName}).toArray(function(err, rooms){
+			return res.json(rooms);
+		});
+		return	db.collection;
+	});
+});
 //Function to get rooms
 app.get('/rooms', function(req, res, next){
 	db.collection('rooms', function(err, messagesCollection){
@@ -265,6 +302,7 @@ app.put('/tasks', function(req, res, next){
 		return	db.collection;
 	});
 });
+
 
 
 //Function to insert CHAT messages
@@ -363,7 +401,40 @@ app.post('/chat/messages/uploadFile', function(req, res, next){
 
 
 
+//Function to select Team name
+app.put('/newTeam', function(req, res, next){
 
+	var token = req.headers.authorization;
+	var user = jwt.decode(token, JWT_SECRET);
+	//console.log(req.body.newRoom);
+	db.collection('teams', function(err, teamsCollection){
+		var newTeam = {
+			//room: req.body.newRoom,
+
+			name: req.body.newTeam,
+			rooms:[
+				{
+					name: req.body.newRoom
+				}
+			]
+			//user: user._id,
+			//username: user.username
+		};
+		teamsCollection.findOne(newTeam,function(err, team){
+			if(team){
+				return res.status(400).send();
+			}
+			else{
+				teamsCollection.insert(newTeam, {w:1}, function(err, messages){
+					
+					//var token = jwt.encode(user, JWT_SECRET);
+					//return res.json({token: token});
+					return res.send();
+				});
+			}
+		});
+	});
+});
 //Function to select Room name
 app.put('/newRoom', function(req, res, next){
 
@@ -374,7 +445,8 @@ app.put('/newRoom', function(req, res, next){
 		var newRoom = {
 			//room: req.body.newRoom,
 
-			name: req.body.newRoom
+			name: req.body.newRoom,
+			team: req.body.teamName
 			//user: user._id,
 			//username: user.username
 		};
@@ -392,7 +464,19 @@ app.put('/newRoom', function(req, res, next){
 			}
 		});
 	});
+
+	// db.collection('teams', function(err, teamsCollection){
+	// 		teamsCollection.update(	
+	// 		//{ name: req.body.taskName },
+	// 		//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+	// 		{name: req.body.teamName },
+	// 		{ $push: { rooms: {name: req.body.newRoom } } }
+	// 		)
+	// 		return res.send();
+	// });
 });
+
+
 
 app.post('/room/task/user', function(req, res, next){
 	//db.collection('tasks', function(err, tasksCollection){
