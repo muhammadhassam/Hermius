@@ -1,6 +1,17 @@
 <html ng-app="hermius">
 <head>
 	<title>Hermius</title>
+	
+	<script src="https://www.atlasestateagents.co.uk/javascript/tether.min.js"></script><!-- Tether for Bootstrap --> 
+	<!-- jQuery -->
+    <script src="js/jquery.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+
+	<!-- Bootstrap Core JavaScript -->
+    <script src="bootstrap/js/bootstrap.js"></script>
+
     <!-- Bootstrap Core CSS -->
     <link href="css/bootstrap.min.css" rel="stylesheet">
 
@@ -14,6 +25,8 @@
 	<!--<script src="path/to/angular.js"></script>-->
 	<!--<script src="/node_modules/angular-animate/angular-animate.js"></script>-->
 
+    
+
 	<!-- Sign in stylesheet -->
 	<link rel="stylesheet" type="text/css" href="css/login-style.css" />
 	<!-- Sign up stylesheet -->
@@ -26,7 +39,6 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/css/bootstrap.min.css" integrity="sha384-2hfp1SzUoho7/TsGGGDaFdsuuDL0LX2hnUp6VkX3CUQ2K4K+xjboZdsXyp4oUHZj" crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.4/js/bootstrap.min.js" integrity="sha384-VjEeINv9OSwtWFLAtmc4JCtEJXXBub00gtSnszmspDLCtC0I4z4nqz7rEFbIZLLU" crossorigin="anonymous"></script>
 
-	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
 	<link rel="stylesheet" type="text/css" href="bootstrap/css/bootstrap.css">
 	<!-- Custom Stylesheets -->
@@ -36,16 +48,7 @@
 	<script type="text/javascript" src="angular-cookies.js"></script>
 	<script src="http://localhost:80/socket.io/socket.io.js"></script>
 
-
-
-
-
-
-	    <!-- jQuery -->
-    <script src="js/jquery.js"></script>
-
-    <!-- Bootstrap Core JavaScript -->
-    <script src="js/bootstrap.min.js"></script>
+	
 
     <!-- Morris Charts JavaScript -->
     <script src="js/plugins/morris/raphael.min.js"></script>
@@ -119,6 +122,21 @@
 			}
 		});
 		
+		app.directive('schrollBottom', function () {
+		return {
+			scope: {
+			schrollBottom: "="
+			},
+			link: function (scope, element) {
+			scope.$watchCollection('schrollBottom', function (newValue) {
+				if (newValue)
+				{
+				$(element).scrollTop($(element)[0].scrollHeight);
+				}
+			});
+			}
+		}
+		});
 
 		app.directive('fileModel', ['$parse', function ($parse) {
             return {
@@ -282,8 +300,10 @@
 			});
 			socket.on('{text: req.body.newMessage}', function(data){
 				//getMessages();
+				
 				getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 			});
+
 
 			$scope.SubmitNewMessage = function(meetingRoomName, meetingTaskName){
 				//console.log("Room"+meetingRoomName+", Task: "+meetingTaskName);
@@ -525,7 +545,9 @@
 				//getChatMessages();
 				//getChatMessagesByRoomArg($rootScope.roomName);
 				//console.log("Hello everyone"+$rootScope.taskName+" AND"+$rootScope.roomName);
+				//console.log(+$rootScope.taskNamee+" AND"+$rootScope.roomName);
 				getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
+				
 				
 				//getChatMessagesByRoomArg(meetingRoomName);
 			});
@@ -534,7 +556,7 @@
 			  //console.log($scope.userProfile);
 
 
-			
+		
 
 
 			$scope.SubmitNewChatMessage = function(){
@@ -1011,7 +1033,7 @@
 			};
 
 
-function FileCatcher(image)
+			function FileCatcher(image)
 			{
 
                 //console.log(image);
@@ -1048,8 +1070,8 @@ function FileCatcher(image)
 
 			}
 
-    // function show upload files
-	function showUploadfile(image)
+			// function show upload files
+			function showUploadfile(image)
 			{
 
                 //console.log(image);
@@ -1068,7 +1090,7 @@ function FileCatcher(image)
 
 			}
 
-//getFilesByRoomAndTask();
+			//getFilesByRoomAndTask();
 
 
 			function showUserProfile()
@@ -1090,7 +1112,7 @@ function FileCatcher(image)
 					});
 							//console.log(response.data);
 								//$scope.users=response.data;
-							});
+					});
 			}
 			// function search user
 
@@ -1098,9 +1120,9 @@ function FileCatcher(image)
 			{
 
 				$http.get('/users/invite').then(function(response){
-							// console.log("Get user");
-							$scope.RegisterUsers=response.data;
-							});
+				// console.log("Get user");
+					$scope.RegisterUsers=response.data;
+				});
 			} 
 			showUsers();
 

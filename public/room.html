@@ -1,14 +1,22 @@
-    <!-- jQuery -->
+
+	<!-- jQuery -->
     <script src="js/jquery.js"></script>
 
     <!-- Bootstrap Core JavaScript -->
     <script src="js/bootstrap.min.js"></script>
 
+
     <!-- Morris Charts JavaScript -->
     <script src="js/plugins/morris/raphael.min.js"></script>
     <script src="js/plugins/morris/morris.min.js"></script>
     <script src="js/plugins/morris/morris-data.js"></script>
-
+	
+	<script type="text/javascript">
+		$(document).on('click', '[data-toggle="lightbox"]', function(event) {
+		event.preventDefault();
+		$(this).ekkoLightbox();
+		});
+	</script>
 
 
 	<div ng-hide="currentUser" >
@@ -46,7 +54,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#/">Hermius</a>
+                <a class="navbar-brand" href="#/home">Hermius</a>
             </div>
             <!-- Top Menu Items -->
 		
@@ -76,7 +84,7 @@
 
 <div ng-show="currentUser"> 
 	<div id="wrapper" style="margin-top:20px;">
-		<div class="col-md-3 side-nav" style="margin-top:20px;color:white; border: 1px solid #efefef">
+		<div class="col-md-4 side-nav" style="margin-top:20px;color:white; border: 1px solid #efefef">
 			<!--<H2 style="color: #222">Welcome</H2>
 				<h4>Hi {{ currentUser}}</h4>
 				<a href ng-click="logout()">Logout.</a>-->
@@ -149,7 +157,7 @@
 
 		<div id="page-wrapper">
 		
-			<div  ng-hide="meetingRoomName"  class="col-md-9" style="border: 1px solid #efefef; background-color: #e1e1e1">
+			<div  ng-hide="meetingRoomName"  class="col-md-8" style="border: 1px solid #efefef; background-color: #e1e1e1">
 				<h2 style="text-align: center; ">Nothing to display here. Please select a MeetingRoom/Project</h2>
 			</div>
 			
@@ -172,12 +180,13 @@
 					</h4>
 				</div>
 				
-				<div  ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; ">
+				<div ng-show="meetingTaskName" style=" height: 400px;overflow: scroll; " schroll-bottom="chatMessages">
 					<ul class="list-group"  >
-						<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
+						<li  class="list-group-item" ng-repeat = "chatMessage in chatMessages" >
 							<span ><img ng-src="/fileuploads/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
 							<a href="#">{{ chatMessage.username }}</a>
-							<span><img  ng-if="::chatMessage.uploadFile" ng-src="/fileuploads/{{chatMessage.uploadFile }}" width="50%"></img></span>
+							</br>
+							<a href="/fileuploads/{{chatMessage.uploadFile }}" data-type="image" data-toggle="lightbox"><img  ng-if="::chatMessage.uploadFile" ng-src="/fileuploads/{{chatMessage.uploadFile }}" width="30%" class="img-fluid"></img></a>
 							<BR>
 							<small>{{ chatMessage.text }}</small>
 							<!--<span ng-repeat="file in image" ng-show="image">
@@ -260,7 +269,7 @@
 					Tasks
 					</button>
 					<li class="list-group-item" ng-repeat = "task in tasks" style="overflow-wrap: break-word" ng-show="clickedTaskButton">
-						<button type="button" class="btn btn-link" ng-click="getChatMessagesByTaskNameAng(meetingRoomName, task.name)"><span  style="color: #337AB7"> #{{ task.name }} </span></button>
+						<button type="button" class="btn btn-link" ng-click="getChatMessagesByTaskNameAng(meetingRoomName, task.name);"><span  style="color: #337AB7"> #{{ task.name }} </span></button>
 					</li>
 				</ul>
 				<ul class="list-group" ng-show="meetingTaskName">
@@ -279,8 +288,12 @@
 					</button>
 					<li class="list-group-item" ng-repeat = "file in Files" style="overflow-wrap: break-word" ng-show="clickedFileButton">
 						<span style="color: #337AB7; font-weight: bold">File: </span>{{file.filename}}<br>
-
 						<a href="fileuploads/{{file.file}}"> {{file.file }}</a>
+						<p style="font-weight: normal; color: grey">
+							{{file.username}}
+							</br>
+							{{file.date}}
+						</p>
 					</li>
 				</ul>
 
@@ -293,5 +306,7 @@
     <img src="images/logo.png"></img>
     <h2>You are not signed in. Please <a ng-href="#/signin">sign in to continue</a></h2>
 </div>
+
+
 
 		

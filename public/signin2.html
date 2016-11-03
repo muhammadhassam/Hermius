@@ -53,7 +53,7 @@
 			    <li class="dropdown">
                     
 					<!--<span><img ng-src="{{currentImage}}" width="5%" class="img-circle"></img></span>-->
-					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
+					<a href="" class="dropdown-toggle" data-toggle="dropdown"><span><img ng-src="images/{{  defaultImage=='default.png' ? defaultImage : currentImage }}" style="width: 30px; height: 30px; margin-right: 5px;" class="img-circle" ></img></span><i></i>{{currentUser}} </a>
                     
 					<ul class="dropdown-menu">
                         <li>
@@ -69,9 +69,9 @@
             </ul>
 	</div>
    
+   <!--When User is not signed in -->
 	<div class="container" >
-		
-		<div class="row row_Padding">
+		<div ng-hide="currentUser" class="row row_Padding">
 			<div class="main_box"  >
 				<div class="account-wall text-center">
 				<img src = "images/logo.png" style="min-height:100px; max-width: 300px;"/>
@@ -90,3 +90,11 @@
 			</div>
 		</div>
 	</div>
+    <!--/When User is not signed in -->
+
+    <!--When User is already signed in -->
+    <div ng-show="currentUser" class="signin">
+        <img src="images/logo.png"></img>
+        <h2>You are already signed in.<a ng-href="#/home">Go to App</a></h2>
+    </div>
+    <!--/When User is already signed in -->
