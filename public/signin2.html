@@ -77,10 +77,12 @@
 				<img src = "images/logo.png" style="min-height:100px; max-width: 300px;"/>
 				<h1  class = "text-center heading" Style="font-weighht:bold; font-size:30px;">LOGIN</h1>
 					<!-- <img class="profile-img" src="images/user.png" alt=""> -->
-					<form class="form-signin">
-					<input type="text" ng-model="username" class="form-control" placeholder="Username" required autofocus>
-					<input type="password" ng-model="password" class="form-control" placeholder="Password" required>
-					<a ng-href="#/home" class="btn btn-sm btn-primary btn-block" ng-click="signin()" style = "background-color:#00223D;"  type="submit">
+					<form class="form-signin" name="form">
+					<input type="text" ng-model="username" class="form-control" placeholder="Username" name="Username" required autofocus>
+                     <span ng-show="form.Username.$dirty && form.Username.$error.required"> Enter username </span>
+					<input type="password" ng-model="password" class="form-control" placeholder="Password" name="Password" required>
+                     <span ng-show="form.Password.$dirty && form.Password.$error.required">Enter your password</span>
+					<a ng-href="#/home" class="btn btn-sm btn-primary btn-block" ng-click="signin()" ng-disabled="form.$invalid" style = "background-color:#00223D;"  type="submit">
 						Sign in</a>
 					<a href="#" class="pull-right need-help">Need help? </a><span class="clearfix"></span>
 					<a href="#/signup" class="text-center new-account">Create an account </a>

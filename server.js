@@ -26,7 +26,7 @@ var JWT_SECRET = 'hermeszeus';
 
 var db = null;
 //var messages;
-MongoClient.connect("mongodb://localhost:27017/hermiusFYP", function(err, dbconn){
+MongoClient.connect("mongodb://localhost:27017/FinalFYP", function(err, dbconn){
 	if (!err) {
 		console.log("We are connected");
         db = dbconn;   
@@ -260,9 +260,10 @@ app.put('/chat/Files/roomandtask', function(req, res, next){
 
 
 //Function to get teams
-app.get('/teams', function(req, res, next){
+//tasksCollection.find({"users":{$in:[{username: req.body.username}]}})
+app.put('/teams', function(req, res, next){
 	db.collection('teams', function(err, messagesCollection){
-		messagesCollection.find().toArray(function(err, messages){
+		messagesCollection.find({"teamUsers":{$in:[{username: req.body.username}]}}).toArray(function(err, messages){
 			return res.json(messages);
 
 		});
@@ -272,10 +273,13 @@ app.get('/teams', function(req, res, next){
 
 
 //Function to get Rooms based on teams
+//roomsCollection.find({team: req.body.meetingTeamName})
 app.put('/rooms/find', function(req, res, next){
-	//console.log(req.body.meetingRoomName+ " print");
+	console.log(req.body.username+ " print");
+	console.log("team "+req.body.meetingTeamName);
 	db.collection('rooms', function(err, roomsCollection){
-		roomsCollection.find({team: req.body.meetingTeamName}).toArray(function(err, rooms){
+		roomsCollection.find({$and:[{"roomUsers": {$in:[{username:req.body.username}]}}, {team: req.body.meetingTeamName}]}).toArray(function(err, rooms){
+			console.log(rooms);
 			return res.json(rooms);
 		});
 		return	db.collection;
@@ -397,7 +401,27 @@ app.post('/chat/messages/uploadFile', function(req, res, next){
 	//res.send();
 });
 
+//function to show login users rooms and tasks
 
+app.put('/show/loginUser',function(req,res,next){
+	console.log("roooommmmmm");
+	console.log(req.body.name);
+	console.log(req.body.roomName);
+	console.log(req.body.username);
+db.collection('tasks', function(err, tasksCollection){
+		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.username}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
+			console.log(tasks);
+			console.log(tasks.length);
+			//if(tasks.length>0)
+			//{
+			return res.json(tasks);
+			//return res.send();
+			//}
+		});
+		return	db.collection;
+});
+
+});
 
 
 
@@ -408,29 +432,44 @@ app.put('/newTeam', function(req, res, next){
 	var user = jwt.decode(token, JWT_SECRET);
 	//console.log(req.body.newRoom);
 	db.collection('teams', function(err, teamsCollection){
+		console.log(req.body.username);
 		var newTeam = {
 			//room: req.body.newRoom,
 
 			name: req.body.newTeam,
-			rooms:[
+			teamUsers:[
 				{
-					name: req.body.newRoom
+					//name: req.body.username
 				}
 			]
 			//user: user._id,
 			//username: user.username
 		};
-		teamsCollection.findOne(newTeam,function(err, team){
+		teamsCollection.findOne({name: req.body.newTeam},function(err, team){
 			if(team){
 				return res.status(400).send();
 			}
 			else{
 				teamsCollection.insert(newTeam, {w:1}, function(err, messages){
 					
-					//var token = jwt.encode(user, JWT_SECRET);
-					//return res.json({token: token});
+				
+				 teamsCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.newTeam},
+								{ $push: { teamUsers: {username: req.body.username } } }
+								)
 					return res.send();
 				});
+// push users array
+                 
+				/* teamsCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.newTeam},
+								{ $push: { teamUsers: {username: req.body.username } } }
+								)*/
+
 			}
 		});
 	});
@@ -446,7 +485,12 @@ app.put('/newRoom', function(req, res, next){
 			//room: req.body.newRoom,
 
 			name: req.body.newRoom,
-			team: req.body.teamName
+			team: req.body.teamName,
+			roomUsers:[
+				{
+					
+				}
+			]
 			//user: user._id,
 			//username: user.username
 		};
@@ -459,8 +503,17 @@ app.put('/newRoom', function(req, res, next){
 					
 					//var token = jwt.encode(user, JWT_SECRET);
 					//return res.json({token: token});
+					roomsCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.newRoom},
+								{ $push: { roomUsers: {username: req.body.username } } }
+								)
 					return res.send();
 				});
+
+               
+
 			}
 		});
 	});
@@ -482,30 +535,72 @@ app.post('/room/task/user', function(req, res, next){
 	//db.collection('tasks', function(err, tasksCollection){
 
 		var userVar = {
-			username: req.body.username
+			username: req.body.name
 		};
 		//console.log("userVar: "+userVar);
 
 		db.collection('users', function(err, usersCollection){
-			usersCollection.findOne(userVar,function(err, user){
+			usersCollection.findOne({username: req.body.name},function(err, user){
 				//console.log(user);
 				//console.log(user.file);
+				//{$and:[{"users":{$in:[req.body.username]}},{name:req.body.taskName}]}
+				console.log("tassssskk workkk");
+				console.log("task is"+ req.body.taskName);
+				//console.log(req.body.username);
+				console.log(req.body.name);
+				console.log(req.body.pername);
+				var dat=req.body.pername;
 				if(user){
 					db.collection('tasks', function(err, tasksCollection){
-						tasksCollection.find({$and:[{"users": {$in:[{username: req.body.username}]}}, {name: req.body.taskName}]}).toArray(function(err, users){
-							if(users.length > 0){
-								return res.status(400).send();
+						tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name}]}}, {name: req.body.taskName}]}).toArray(function(err, task){
+							console.log("check is"+task.length);
+							console.log(task);
+							if(task.length>0){
+								console.log(task.users);
+                                  return res.status(400).send();
+
 							}
+								
+							//}
 							else{
+								//console.log(req.body.loginUser);
 								tasksCollection.update(	
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.taskName },
-								{ $push: { users: {username: req.body.username,file:user.file } } }
+								{ $push: { users: {username: req.body.name,file:user.file } } }
 								)
+                                
+
+
+                                  db.collection('rooms',function(err,roomCollection){
+                                     roomCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.roomName },
+								{ $push: { roomUsers: {username: req.body.name} } }
+								)
+                                 
+								  });
+
+
+                                 db.collection('teams',function(err,roomCollection){
+                                     roomCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.teamName },
+								{ $push: { teamUsers: {username: req.body.name} } }
+								)
+                                 
+								  });
+
+
+                               
 								return res.send();
 							}
-						});
+							
+							});
+						
 					});	
 				}
 				else{
@@ -539,31 +634,92 @@ app.get('/users/invite', function(req, res, next){
 
 
 //Function to Add a task
+//function(err, user)
 app.put('/newTask', function(req, res, next){
 
 	//var token = req.headers.authorization;
 	//var user = jwt.decode(token, JWT_SECRET);
 	//console.log(req.body.newTask+" addedddd in "+req.body.newRoom+ " added");
+	db.collection('users', function(err, usersCollection){
+	
+		usersCollection.findOne({username: req.body.loginUser},function(err, user){
+	//if(user)
+	//{	
+		   //console.log(user);
+		   //console.log("name is "+user.username);
+          //console.log("file is "+user.file);
 	db.collection('tasks', function(err, tasksCollection){
 		var newTask = {
 			name: req.body.newTask,
 			room: req.body.newRoom,
+			team:req.body.newTeam,
 			users: [
 				{
-					username: req.body.newUser
+				   username:req.body.login
 				}
 				]
 			//user: user._id,
 			//username: user.username
 		};
+			tasksCollection.findOne({$and:[{room: req.body.newRoom},{name:req.body.newTask}]},function(err, task){
+			if(task){
+				console.log("task is");
+				console.log(task);
+				return res.status(400).send();
+				
+			}
+			else
+			{
+				console.log("else");
 		tasksCollection.insert(newTask, {w:1}, function(err, tasks){
 			//var token = jwt.encode(user, JWT_SECRET);
 			//return res.json({token: token});
-			return res.send();
+			//return res.send();
+          tasksCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.newTask},
+								{ $push: { users: {username: req.body.loginUser,file:user.file } } }
+								)
+
 		});
 
+		/*tasksCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.newTask},
+								{ $push: { users: {username: req.body.loginUser,file:user.file } } }
+								)*/
+	                    db.collection('rooms',function(err,roomCollection){
+                                     roomCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.newRoom },
+								{ $push: { roomUsers: {username: req.body.loginUser} } }
+								)
+                                 
+								  });
+
+
+                                 db.collection('teams',function(err,roomCollection){
+                                     roomCollection.update(	
+								//{ name: req.body.taskName },
+								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
+								{name: req.body.newTeam },
+								{ $push: { teamUsers: {username: req.body.loginUser} } }
+								)
+								 });
+								 return  res.send();
+			}
+		});
+
+             
 	});
-	//res.send();
+	//}
+	//return  res.send();
+	});
+	});
+	
 });
 
 //Function to show users when user clicks on task or invite
@@ -743,13 +899,22 @@ app.post('/users', function(req, res, next){
 				fullname: req.body.fullname
 				
 				};
+				//});
+				usersCollection.findOne({username: req.body.username},function(err, user){
+			if(user){
+				return res.status(400).send();
+			}
+			else{
 				usersCollection.insert(newUser, {w:1}, function(err, messages){
-				return res.send();
+				//return res.send();
 				});
+                return res.send();
+			}
 		    });
 		});
 	});
 	//res.send();
+});
 });
 
 
@@ -780,6 +945,7 @@ app.put('/users/signin', function(req, res, next){
 	//console.log(req.body.username);
 	db.collection('users', function(err, usersCollection){
 		usersCollection.findOne({username: req.body.username}, function(err, user){
+            if(user){
 			bcrypt.compare(req.body.password, user.password, function(err, result){
 				if(result){
 					var token = jwt.encode(user, JWT_SECRET);
@@ -789,12 +955,14 @@ app.put('/users/signin', function(req, res, next){
 					return res.status(400).send();
 				}
 			});
+            }else {
+                return res.status(400).send();
+            }
 		});
-	});
-	//res.send();
+	});	
 });
-var port = process.env.PORT || 3015;
-app.listen(port, function () {
+
+app.listen(3015, function(){
   console.log('Example app listening on port 3015!');
 });
 

@@ -146,7 +146,7 @@
 
                         <div ng-repeat = "message in messages | orderBy: reverse:true" class="singlefeed" class="animate-repeat">
                             <span style="font-size: 20px;" class="fa fa-user" aria-hidden="true"></span> <span class="username">{{message.username}}</span>
-                            <a href ng-click="removeMessage(message)"> <span style="color: #5A5A5A" class="glyphicon glyphicon-remove pull-right" aria-hidden="true"></span></a>
+                            <a href ng-click="removeMessage(message)"><span  class="glyphicon glyphicon-remove" style="margin-left:800px;" aria-hidden="true"></span></a>
                             <br>
                             <a ng-model="date">Date: {{message.date}}</a>
                             <br>

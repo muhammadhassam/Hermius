@@ -78,7 +78,7 @@
 
             <div class="col-md-6 profile-sidebar">
                 <div  ng-repeat="file in userProfile " ng-show="userProfile" ng-hide="image">
-                    <img ng-src="/images/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-thumbnail profile-image"  ></img> </br>
+                    <img ng-src="/fileuploads/{{file.file=='default.png' ? file.file : file.file[0].filename }}" class="img-thumbnail profile-image"  ></img> </br>
                 </div>
 
                 <div ng-show="image" ng-repeat="file in image" >
@@ -87,7 +87,7 @@
 
                 <form encType="multipart/form-data" style="text-align:center">
                 <input type="text" ng-show="hide" ng-model="myFile.username" >
-                    <input type="file" id="examplefile" file-model="myFile.file" name="myimage"  accept="image/*">
+                    <input type="file" id="profilefile" file-model="myFile.file" name="myimage"  accept="image/*">
                     <span ng-show="filetype"><h1 style="color:red">Choose image type file</h1></span>
                     <input type="submit" ng-click="submit()" class="btn btn-default" > Submit</input>
                 </form>

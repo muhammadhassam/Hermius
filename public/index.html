@@ -132,14 +132,7 @@
                   element.bind('change', function(evt){
                      scope.$apply(function(){
                         modelSetter(scope, element[0].files[0]);
-                        /*console.log(element[0].files[0]);
-						var fileName=element[0].files[0].name;
-						var extn = fileName.split(".").pop();
-						console.log(fileName);
-						console.log(extn);
-						if( extn == 'jpg' || extn == 'jpeg' || extn == 'png' || extn == 'gif')
-							console.log("file uploaded");
-						else console.log($error);*/
+                        
                      });
                   });
                }
@@ -166,51 +159,8 @@
 
 
 
-		app.service('fileUpload', ['$http','$q', function ($http,$q) {
-             
-             var deffered = $q.defer();
-            
-              this.post =function(uploadUrl,data){
-            
-               var fd = new FormData();
-               for(var key in data)
-               
-               fd.append(key,data[key]);
-              
-               $http.post(uploadUrl, fd, {
-                  transformRequest: angular.identity,
-                  headers: {'Content-Type': undefined}
-               })
-            
-               .success(function(response){
-               deffered.resolve(response);
-               //$scope.myFile = { file: undefined };
-               })
-            
-               .error(function(reponse){
-               })
-                    
-            }
-            this.fileName = function()
-            {           
-                      
-                   return deffered.promise;
-            }
-            
-            
+		app.controller('profileController',function($scope,$rootScope,$http){
 
-
-         }]);
-
-
-
-
-		app.controller('profileController', [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http){
-
-			//console.log("reached");
-			//			$scope.user = {};
-			//$scope.user.latitude = myLat;
-			//console.log($rootScope.currentUser);
 			$scope.currentUser=$rootScope.currentUser;
 			$scope.imgSrc="default.png";
 
@@ -232,17 +182,9 @@
 
 			$scope.submit = function()
 			{
-				//$scope.myFile={username:$rootScope.currentUser};
-				//$scope.myFile.username= $rootScope.currentUser;  
-				//$scope.myFile.username={username:$rootScope.currentUser};            
-				var promise = fileUpload.fileName();
-				promise.then(function(data){
-				$scope.image=data;
-				//console.log($scope.image);
-				}) 
-				var uploadUrl = '/profile';
+				
 				var file =$scope.myFile.file;
-				//console.log(file.dir);
+
 				var filename=file.name
 				console.log(filename);
 				var extn = filename.split(".").pop();
@@ -254,8 +196,27 @@
 							 $scope.myFile={};
 							 alert("Choose image type file");
 						}
-				//fileUpload.uploadFileToUrl(file, uploadUrl);
-				fileUpload.post(uploadUrl,$scope.myFile);
+            
+               var fd = new FormData();
+               for(var key in $scope.myFile)
+               
+               fd.append(key,$scope.myFile[key]);
+              
+               $http.post('/profile', fd, {
+                  transformRequest: angular.identity,
+                  headers: {'Content-Type': undefined}
+               })
+            
+               .success(function(response){
+			     $scope.image=response;
+				 $('#profilefile').val('');
+               })
+            
+               .error(function(reponse){
+               });
+                
+				
+				
 		    	 showUserProfile();
 			};
 			
@@ -267,12 +228,10 @@
 				$rootScope.currentUser = null;
 			};
 
-            
+	//	});
 
+		});
 
-
-
-		}]);
 
 		app.controller('HomeController', function($rootScope, $scope, $http, $cookies){
 
@@ -285,7 +244,7 @@
 				getMessagesbyRoomAndTask($rootScope.meetingRoomName, $rootScope.meetingTaskName);
 			});
 
-			$scope.SubmitNewMessage = function(meetingRoomName, meetingTaskName){
+		$scope.SubmitNewMessage = function(meetingRoomName, meetingTaskName){
 				//console.log("Room"+meetingRoomName+", Task: "+meetingTaskName);
 				$http.post('/messages', {newMessage: $scope.newMessage, roomName: meetingRoomName, taskName: meetingTaskName},
 				 {headers: {
@@ -489,15 +448,11 @@
 
 
 			//getMessages();
-			getRooms();
+			//getRooms();
 		});
 
 
-			// $scope.createRoom = function(message){
-			// 	$http.post('/room', newUser).then(function(){
-			// 		alert('User Successfully created');
-			// 	});
-			// };
+		
 
 
 		app.controller('SignupController', function($scope, $http){
@@ -510,28 +465,40 @@
 				};
 				$http.post('/users', newUser).then(function(){
 					alert('User Successfully created');
+				},function(err){
+					alert('User already exists');
 				});
 			};
 		});
 //, [ '$scope','$rootScope','fileUpload','$http',function($scope,$rootScope, fileUpload,$http)
 
-		app.controller('RoomController',  ['$cookies', '$scope','$rootScope','fileUpload','$http',function($cookies,$scope,$rootScope, fileUpload,$http){
+		app.controller('RoomController',function($cookies,$scope,$rootScope,$http){
 						
 			var socket = io.connect('http://localhost');
 			socket.on('connect', function(socket){
 				//console.log('SOCKET IO');
 			});
 			socket.on('{text: req.body.newChatMessage}', function(data){
-				//getChatMessages();
-				//getChatMessagesByRoomArg($rootScope.roomName);
-				//console.log("Hello everyone"+$rootScope.taskName+" AND"+$rootScope.roomName);
-				getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
+			
+				getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
 				
 				//getChatMessagesByRoomArg(meetingRoomName);
 			});
-               //function for file
-              //$scope.userProfile=$rootScope.userprofile;
-			  //console.log($scope.userProfile);
+			socket.on('{text: req.body.newLink}', function(data){
+				getLinksByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				//getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
+				
+				//getChatMessagesByRoomArg(meetingRoomName);
+
+			});
+			//'{file: req.body.newUploadFile}'
+               socket.on('{file: req.body.newUploadFile}', function(data){
+				//getLinksByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				//getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
+				getFilesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				//getChatMessagesByRoomArg(meetingRoomName);
+
+			});
 
 
 			
@@ -551,7 +518,8 @@
 					//console.log(meetingTaskName+"AND AND AND"+ $rootScope.roomName);
 					//console.log(meetingTaskName+ "Hellow boy2");
 					//console.log($rootscope.taskName+ "Hellow boy");
-					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
 					$scope.newChatMessage = '';
 				});
 			};
@@ -571,7 +539,7 @@
 						'authorization': $rootScope.token
 					}}).then(function(){
 
-						getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+						getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
 						$scope.newChatMessage = '';
 					});
 					
@@ -593,18 +561,19 @@
 
 					meetingTeamName = teamName;
 
-					console.log(meetingTeamName+"TEEAAAM");
+					//console.log(meetingTeamName+"TEEAAAM");
 					$rootScope.meetingTeamName = teamName;
 					//$scope.teamName = '';
 					//getRooms();
-					getRooms(meetingTeamName);
+					console.log($rootScope.meetingTeamName);
+					getRooms($rootScope.meetingTeamName);
 					//getChatMessagesByRoom();
 					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 				
 			};
 			//This function is for assigning a Team name so that rooms/projects can be selected
 			$scope.AssignTeamName = function(){
-				$http.put('/newTeam', {newTeam: $scope.teamName},
+				$http.put('/newTeam', {newTeam: $scope.teamName,username:$rootScope.currentUser},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(res){
@@ -623,7 +592,7 @@
 					//console.log(meetingRoomName);
 					$rootScope.meetingTeamName = $scope.teamName;
 					$scope.teamName = '';
-					getRooms();
+					//getRooms();
 					//getChatMessagesByRoom();
 					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 				}, function(err){
@@ -634,7 +603,7 @@
 			//Assign a Room name so that tasks can be selected
 			$scope.AssignRoomName = function(){
 				console.log(meetingTeamName+" Team Name");
-				$http.put('/newRoom', {newRoom: $scope.roomName, teamName: meetingTeamName},
+				$http.put('/newRoom', {newRoom: $scope.roomName, teamName: meetingTeamName,username:$rootScope.currentUser},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(res){
@@ -646,13 +615,14 @@
 					$rootScope.roomToken = res.data.token;
 					$rootScope.roomName = $scope.roomName;
 
-					getRooms(meetingTeamName);
+					
 
 					meetingRoomName = $scope.roomName;
 					//console.log(meetingRoomName);
 					$rootScope.meetingRoomName = $scope.roomName;
 					$scope.roomName = '';
 					//getChatMessagesByRoom();
+					getRooms(meetingTeamName);
 					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
 				}, function(err){
 					alert('Room/Project already exists');
@@ -662,7 +632,7 @@
 			//This function creates a task from front end page room.html
 			$scope.AssignTaskName = function(){
 				//console.log("Rootsccope"+$rootScope.meetingRoomName);
-				$http.put('/newTask', {newTask: $scope.taskName,  newRoom: $rootScope.meetingRoomName},
+				$http.put('/newTask', {newTask: $scope.taskName, loginUser:$rootScope.currentUser, newRoom: $rootScope.meetingRoomName,newTeam:$rootScope.meetingTeamName},
 				 {headers: {
 				 	'authorization': $rootScope.token
 				 }}).then(function(res){
@@ -675,10 +645,12 @@
 
 					meetingTaskName = $scope.taskName;
 					
-					getTasks($rootScope.meetingRoomName);
+					//getTasks($rootScope.meetingRoomName);
+					showTaskandRoomforUser();
 
 					//Extra added line -Reminder
-					getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
+					getChatMessagesByRoomAndTask($rootScope.roomName, $rootScope.taskName);
+					//getChatMessagesByRoomAndTask($rootScope.taskName, $rootScope.roomName);
 					
 					//console.log(meetingTaskName+"Boa");
 					
@@ -688,6 +660,8 @@
 					
 					
 					//res.send();
+				},function(err){
+					alert('Task already exists in this room');
 				});
 			};
 
@@ -696,9 +670,10 @@
 			//This function adds people in tasks (front end room.html)
 			$scope.addPeopleInTasks = function(){
 				//console.log("Current Task: "+ meetingTaskName);
-				//console.log("Current Room: "+ $rootScope.meetingRoomName);
-				$http.post('/room/task/user', {username: $scope.username, taskName: meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
+				//console.log("Current Room: "+ $scope.pername);
+				$http.post('/room/task/user', {name: $scope.username, taskName: meetingTaskName, roomName: $rootScope.meetingRoomName,teamName:meetingTeamName}).then(function(response){
 					//console.log("User added");
+					console.log("Current Room: "+ $scope.username);
 					getUsersBasedOnTask(meetingTaskName);
 					$scope.username = "";
 				},function(err){
@@ -759,9 +734,8 @@
 			// 	});
 			// }
 
-			function getChatMessagesByRoomAndTask(meetingTaskName, meetingRoomName){
+			function getChatMessagesByRoomAndTask(meetingRoomName, meetingTaskName){
 				$http.put('/chat/messages/roomandtask', {roomtaskName: meetingTaskName, meetingRoomName: meetingRoomName}).then(function(response){
-					//console.log()
 					$scope.chatMessages = response.data;
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
@@ -839,13 +813,15 @@
 				//console.log(meetingRoomName+"front 2");
 				//console.log(meetingRoomName+"New");
 				getRooms(meetingTeamName+"TEAM NAME FOR ROOM");
-				getTasks(meetingRoomName);
+				//getTasks(meetingRoomName);
+				
 				$http.put('/chat/messages/roomNameAng', {meetingRoomName: meetingRoomName}).then(function(response){
 					//console.log(newRoom);
 					//$scope.chatMessages = response.data;
 					$rootScope.meetingRoomName = meetingRoomName;
 					$rootScope.roomName = meetingRoomName;
 					meetingRoomName = $rootScope.roomName;
+					showTaskandRoomforUser();
 					//chatMessagess = $scope.chatMessages;
 					//console.log($scope.chatMessages);
 				});
@@ -871,6 +847,7 @@
 
 					$scope.showTextBox();
 					getUsersBasedOnTask(meetingTaskName);
+					getChatMessagesByRoomAndTask( meetingRoomName, meetingTaskName);
 
 				});
 			}
@@ -882,20 +859,20 @@
 				});
 			}
 
-			function getRooms(){
+			/*function getRooms(){
 				$http.get('/rooms').then(function(response){
 					$scope.rooms = response.data;
 				});
-			}
+			}*/
 			function getTeams(){
-				$http.get('/teams').then(function(response){
+				$http.put('/teams',{username:$rootScope.currentUser}).then(function(response){
 					$scope.teams = response.data;
 				});
 			}
 			//This function gets rooms based on meetingTeamName teams
 			function getRooms(meetingTeamName){
-				console.log("Printing the team "+meetingTeamName);
-				$http.put('/rooms/find', {meetingTeamName: meetingTeamName}).then(function(response){
+				console.log("Printing the team "+ $rootScope.meetingTeamName);
+				$http.put('/rooms/find', {meetingTeamName: $rootScope.meetingTeamName,username:$rootScope.currentUser}).then(function(response){
 					//console.log($rootScope.meetingTaskName+" Rootscope taskname");`
 					$scope.rooms = response.data;
 					//console.log($scope.tasks);
@@ -969,10 +946,21 @@
 
 			$scope.submit = function()
 			{
-				            
-				var promise = fileUpload.fileName();
-				promise.then(function(data){
-				$scope.image=data;
+
+
+                 var fd = new FormData();
+               for(var key in $scope.myFile)
+               
+               fd.append(key,$scope.myFile[key]);
+              
+               $http.post('/profile/room', fd, {
+                  transformRequest: angular.identity,
+                  headers: {'Content-Type': undefined}
+               })
+            
+               .success(function(response){
+			     $scope.image=response;
+				 //$scope.image=data;
 				//$scope.myFile={};
 				$('#examplefile').val('');
 				angular.forEach($scope.image, function(item, index){
@@ -980,7 +968,7 @@
 					//console.log($rootScope.image);
 
 					var extn = $rootScope.image.split(".").pop();
-						console.log(extn);
+						//console.log(extn);
 						if( extn == 'jpg' || extn == 'jpeg' || extn == 'png' || extn == 'gif')
 						{
 							ImageCatcher($rootScope.image);
@@ -990,23 +978,13 @@
 							 FileCatcher($rootScope.image);
 
 						}
+						showUploadfile($rootScope.image);
 				});
-			  	
-				  /*var n = $rootScope.image.includes('jpg');
-				  if( $rootScope.image.includes('jpg') || $rootScope.image.includes('png')){ 
-	                    console.log("image");			  
-				  }
-				  console.log(n);*/
-				showUploadfile($rootScope.image);
-				 // $rootScope.image='';
-				//console.log($scope.image);
-				}) 
-				var uploadUrl = '/profile/room';
-				//$scope.myFile={};
-				//fileUpload.uploadFileToUrl(file, uploadUrl);
-				fileUpload.post(uploadUrl,$scope.myFile);
-				 //$scope.myFile = { file: undefined };
-		    	 //showUserProfile();
+               })
+            
+               .error(function(reponse){
+               });
+       
 				 
 			};
 
@@ -1023,7 +1001,8 @@ function FileCatcher(image)
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
 
-					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
 					//$scope.newChatMessage = '';
 				});
 
@@ -1042,7 +1021,8 @@ function FileCatcher(image)
 				 	'authorization': $rootScope.token
 				 }}).then(function(){
 
-					getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+					getChatMessagesByRoomAndTask($rootScope.roomName, meetingTaskName);
 					//$scope.newChatMessage = '';
 				});
 
@@ -1106,8 +1086,27 @@ function FileCatcher(image)
 
 
 
+function showTaskandRoomforUser()
+	   {
+           $http.put('/show/loginUser',{name:$rootScope.currentUser,taskName:meetingTaskName, roomName: $rootScope.meetingRoomName}).then(function(response){
+                  console.log($rootScope.currentUser);
+				  console.log(meetingTaskName);
+				  console.log($rootScope.meetingRoomName);
+				  $scope.userTasks = response.data;
+				   console.log(response.data);
+
+                 });
+	   }
+	   showTaskandRoomforUser();
+
+
+
+
+
 
 			showUserProfile();
+            getTeams();
+
 			//getChatMessagesByRoomArg("Room "+roomNumber);
 			//meetingRoomName = $rootScope.roomName;
 			//getChatMessagesByRoomArg($rootScope.roomName);
@@ -1126,9 +1125,9 @@ function FileCatcher(image)
 			//console.log("HELLO2 " +$rootScope.roomName);
 			//getChatMessagesByRoomArg(meetingRoomName);
 			//getChatMessages();
-			getTeams();
+			//getTeams();
 			getRooms();
-			//getUsers();
+			////getUsers();
 			//getUsersBasedOnTask();
 
 			//getTasks($rootScope.taskName);
@@ -1136,7 +1135,7 @@ function FileCatcher(image)
 			
 
 			//console.log($scope.chatMessage);
-		}]);
+		});
 
 
 	</script>

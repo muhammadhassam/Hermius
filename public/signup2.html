@@ -78,13 +78,19 @@
 				<img src = "images/logo.png" style="min-height:100px; max-width: 300px;"/>
 				<h1  class = "text-center heading " Style="font-weighht:bold; font-size:30px;">SIGNUP</h1>
 					<!-- <img class="profile-img" src="images/user.png" alt=""> -->
-					<form class="form-signin">
-                        <input type="text" ng-model="fullname" class="form-control" placeholder="Full Name" required>
-						<input type="text" class="form-control" ng-model="username" placeholder="Username" required autofocus>
-						<input type="password" ng-model="password" class="form-control" placeholder="Password" required>
-                        <input type="text" ng-model="email" class="form-control" placeholder="Email" required>
+					<form class="form-signin" name="form">
+                        <input type="text" name="Name" ng-model="fullname" class="form-control" placeholder="Full Name" required>
+                        <span ng-show="form.Name.$dirty && form.Name.$error.required"> Enter your name </span>
+						<input type="text" class="form-control" ng-model="username" name="username" placeholder="Username" required autofocus>
+				        <span ng-show="form.username.$dirty && form.username.$error.required">Enter username </span>
+                        <input type="password" ng-model="password" class="form-control" placeholder="Password" name="Password" required ng-minlength="5" ng-maxlength="10">
+                        <span ng-show="form.Password.$dirty && form.Password.$error.required"> Required</span>
+                         <span ng-show="form.Password.$error.minlength">too short! </span>
+                         <span ng-show="form.Password.$error.maxlength">too long! </span>	
+                        <input type="text" ng-model="email" name="email" class="form-control" placeholder="Email" required>
+                        <span ng-show="form.email.$dirty && form.email.$error.required"> Not an Email </span>
                         </br>
-						<a ng-href="#/signin" ng-click="submitSignup()" class="btn btn-sm btn-primary btn-block" style = "background-color:#00223D;"  type="submit">
+						<a ng-href="#/signin" ng-disabled="form.$invalid" ng-click="submitSignup()" class="btn btn-sm btn-primary btn-block" style = "background-color:#00223D;"  type="submit">
 							Register</a>
 						<a href="#/signin" class="text-center new-account">Existing User? Sign in </a>
 					</form>

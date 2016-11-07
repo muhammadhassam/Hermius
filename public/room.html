@@ -112,7 +112,7 @@
 					<h4>Select from existing rooms/projects</h4>
 					<ul  class="list-group" >
 						<li class="list-group-item" ng-repeat = "room in rooms">
-							<!--<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>-->
+							<!-- rooms <a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>-->
 							<a href=""><button type="button" class="btn btn-link" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>					
 						</li>
 					</ul>
@@ -259,7 +259,7 @@
 					<button style="width: 100%" ng-model="clickedTaskButton" ng-click="showTasks()" class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 					Tasks
 					</button>
-					<li class="list-group-item" ng-repeat = "task in tasks" style="overflow-wrap: break-word" ng-show="clickedTaskButton">
+					<li class="list-group-item" ng-repeat = "task in userTasks" style="overflow-wrap: break-word" ng-show="clickedTaskButton">
 						<button type="button" class="btn btn-link" ng-click="getChatMessagesByTaskNameAng(meetingRoomName, task.name)"><span  style="color: #337AB7"> #{{ task.name }} </span></button>
 					</li>
 				</ul>
