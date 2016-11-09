@@ -90,10 +90,13 @@
 		    templateUrl: 'signin2.html',
 		    controller: 'HomeController',
 			})
-
 			.when('/room', {
 		    templateUrl: 'room.html',
 		    controller: 'RoomController',
+			})
+			.when('/home/:meetingRoomName', {
+		    templateUrl: 'home2.html',
+		    controller: 'HomeController',
 			}) 
 			.when('/room/:meetingRoomName', {
 		    templateUrl: 'room.html',
@@ -277,9 +280,12 @@
 			};
 			function getTeams(){
 				$http.put('/teams',{username:$rootScope.currentUser}).then(function(response){
+					console.log($rootScope.currentUser);
 					$scope.teams = response.data;
+					console.log($scope.teams);
 				});
 			}
+			getTeams();
 
 			//This function gets rooms based on meetingTeamName teams
 		/*	function getRooms(meetingTeamName){
@@ -290,6 +296,29 @@
 					//console.log($scope.tasks);
 				});
 			}*/
+			//AssignTeamNameArg(team.name)
+				$scope.AssignTeamNameArg = function(teamName){
+				
+				 	//$cookies.put('teamToken', res.data.token);
+					$cookies.put('teamName', teamName);
+					//$rootScope.teamName = res.data.token;
+					$rootScope.teamName = teamName;
+
+					//getTeams();
+					//getRooms();
+
+					meetingTeamName = teamName;
+
+					//console.log(meetingTeamName+"TEEAAAM");
+					$rootScope.meetingTeamName = teamName;
+					//$scope.teamName = '';
+					//getRooms();
+					console.log($rootScope.meetingTeamName);
+					getRooms($rootScope.meetingTeamName);
+					//getChatMessagesByRoom();
+					//getChatMessagesByRoomAndTask(meetingTaskName, $rootScope.roomName);
+				
+			};
 			function getRooms(meetingTeamName){
 				console.log("Printing the team "+ $rootScope.meetingTeamName);
 				$http.put('/rooms/find', {meetingTeamName: $rootScope.meetingTeamName,username:$rootScope.currentUser}).then(function(response){
@@ -314,18 +343,18 @@
 				});
 			}*/
                 
-				function showTaskandRoomforUser()
+				function showTaskandRoomforUser(meetingRoomName)
 	   {
-           $http.put('/show/loginUser',{name:$rootScope.currentUser,taskName:$rootScope.meetingTaskName, roomName: meetingRoomName}).then(function(response){
+           $http.put('/show/loginUser/home',{name:$rootScope.currentUser,taskName:$rootScope.meetingTaskName, roomName:meetingRoomName}).then(function(response){
                   console.log($rootScope.currentUser);
-				  console.log($rootScope.meetingTaskName);
+				  //console.log($rootScope.meetingTaskName);
 				  console.log(meetingRoomName);
 				  $scope.tasks = response.data;
-				   console.log(response.data);
+				   console.log($scope.tasks);
 
                  });
 	   }
-	   showTaskandRoomforUser();			
+	   //showTaskandRoomforUser();			
 			//Login function
 			$scope.signin = function(){
 				//console.log($scope.username);
@@ -438,8 +467,10 @@
 					$scope.clickedLinkButton = true;
 					linkButton = true;
 					//getTasks(meetingRoomName);
+					console.log(meetingRoomName);
+					showTaskandRoomforUser(meetingRoomName);
 					getFeedsByRoomNameAng(meetingRoomName);
-					getRooms(meetingTeamName);
+					//getRooms(meetingTeamName);
 				}
 				else{
 					$scope.clickedLinkButton = false;
@@ -450,8 +481,8 @@
 
 			
 			function getFeedsByRoomNameAng(meetingRoomName){
-				getTasks(meetingRoomName);
-                showTaskandRoomforUser();
+				//getTasks(meetingRoomName);
+                showTaskandRoomforUser(meetingRoomName);
 				$rootScope.meetingRoomName = meetingRoomName;
 
 			}
@@ -494,7 +525,7 @@
 
 
 			//getMessages();
-			//getRooms();
+			getRooms();
 		});
 
 

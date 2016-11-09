@@ -455,16 +455,17 @@ app.post('/chat/messages/uploadFile', function(req, res, next){
 	//res.send();
 });
 
-//function to show login users rooms and tasks
 
-app.put('/show/loginUser',function(req,res,next){
+
+
+app.put('/show/loginUser/home',function(req,res,next){
 	console.log("roooommmmmm");
 	console.log(req.body.name);
 	console.log(req.body.roomName);
-	console.log(req.body.username);
+	//console.log(req.body.username);
 	db.collection('users', function(err, usersCollection){
 			usersCollection.findOne({username: req.body.name},function(err, user){
-				if(user) {
+				//if(user) {
           db.collection('tasks', function(err, tasksCollection){
 		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name,file:user.file}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
 			console.log(tasks);
@@ -476,7 +477,39 @@ app.put('/show/loginUser',function(req,res,next){
 			//}
 		});
 });
-				}
+				//}
+			});
+		return	db.collection;
+});
+
+});
+
+
+
+
+
+//function to show login users rooms and tasks
+
+app.put('/show/loginUser',function(req,res,next){
+	console.log("roooommmmmm");
+	console.log(req.body.name);
+	console.log(req.body.roomName);
+	//console.log(req.body.username);
+	db.collection('users', function(err, usersCollection){
+			usersCollection.findOne({username: req.body.name},function(err, user){
+				//if(user) {
+          db.collection('tasks', function(err, tasksCollection){
+		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name,file:user.file}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
+			console.log(tasks);
+			console.log(tasks.length);
+			//if(tasks.length>0)
+			//{
+			return res.json(tasks);
+			//return res.send();
+			//}
+		});
+});
+				//}
 			});
 		return	db.collection;
 });
@@ -808,6 +841,7 @@ app.post('/messages', function(req, res, next){
 			username: user.username,
 			room: req.body.roomName,
 			task: req.body.taskName,
+			file:user.file,
 			date: jsonDate,
 			likes: [
 				{
@@ -877,6 +911,9 @@ app.put('/like', function(req, res, next){
 //Function to comment on  a post
 app.put('/comment', function(req, res, next){
 	console.log(req.body.username+ " commented on a post: "+req.body.messageText+", date: "+req.body.messageDate+" comment:"+req.body.comment);
+	//db.collection('users',function(err,usersCollection){
+      //        usersCollection.find({username:req.body.username},function(err,user){
+
 	db.collection('messages', function(err, messagesCollection){
 		messagesCollection.find({$and:[{text: req.body.messageText}, { date: req.body.messageDate}]}).toArray(function(err, comment){
 			//console.log("Inside push");
@@ -922,6 +959,10 @@ app.put('/comment', function(req, res, next){
 		// )
 		// return res.send();
 	});
+		//	  });
+
+
+	//});
 });
 
 

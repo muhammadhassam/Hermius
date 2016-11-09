@@ -70,6 +70,7 @@
 	</div>
 
 <div ng-show="currentUser">
+
     <div id="wrapper">            
             <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
             <div class="collapse navbar-collapse navbar-ex1-collapse" >
@@ -85,6 +86,15 @@
                             </li>background-color: rgba(169,3,41,1);
                         </ul>
                     </li>-->
+                     
+    <h4>Select from existing teams</h4>
+					<ul  class="list-group" >
+						<li class="list-group-item" ng-repeat = "team in teams">
+							<!--<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>-->
+							<a href="#/home/{{team.name}}"><button type="button" class="btn btn-link" ng-click="AssignTeamNameArg(team.name)">{{ team.name }} </button></a>					
+						</li>
+					</ul>
+        
                     <li><h4 style="color: white; text-align: left; margin-top: 25px; margin-left: 15px;"> Projects & Tasks</h4></li>
                     <li><h3 ng-hide="clickedLinkButton" style="color: white; text-align: left;  margin-left: 15px;">  Select a Project/Room</h3></li>
                     <li><h3 ng-show="clickedLinkButton" style="color: white; text-align: left;  margin-left: 15px;">  Select a Task</h3></li>
@@ -145,7 +155,8 @@
                         </div>
 
                         <div ng-repeat = "message in messages | orderBy: reverse:true" class="singlefeed" class="animate-repeat">
-                            <span style="font-size: 20px;" class="fa fa-user" aria-hidden="true"></span> <span class="username">{{message.username}}</span>
+                            <span ><img ng-src="/fileuploads/{{ message.file=='default.png' ? message.file : message.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
+                            <span style="font-size: 20px;"></span> <span class="username">{{message.username}}</span>
                             <a href ng-click="removeMessage(message)"><span  class="glyphicon glyphicon-remove" style="margin-left:800px;" aria-hidden="true"></span></a>
                             <br>
                             <a ng-model="date">Date: {{message.date}}</a>
