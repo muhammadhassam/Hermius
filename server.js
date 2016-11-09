@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 var bcrypt = require('bcryptjs');
 var jwt = require('jwt-simple');
 var app = express();
+var emoji = require('node-emoji');
 var datetime = require('node-datetime');
 var http = http = require('http').Server(app);
 var server = require('http').createServer(app);
@@ -323,6 +324,59 @@ app.post('/chat/messages', function(req, res, next){
 	//console.log(req.body.taskName+"HELLOOOOOWDKJLKDJS");
 	
 	db.collection('chatMessages', function(err, chatMessagesCollection){
+		if(req.body.newChatMessage==':)')
+		{
+			//console.log("happy smiley");
+			req.body.newChatMessage=emoji.get('smiley');
+		}
+		else if(req.body.newChatMessage==':(')
+		{
+			req.body.newChatMessage=emoji.get('disappointed');
+		}
+		else if(req.body.newChatMessage==':P')
+		{
+			req.body.newChatMessage=emoji.get('stuck_out_tongue_winking_eye');
+		}
+		else if(req.body.newChatMessage==":'(")
+		{
+			req.body.newChatMessage=emoji.get('cry');
+		}
+		else if(req.body.newChatMessage==":*")
+		{
+			req.body.newChatMessage=emoji.get('kissing_heart');
+		}
+		else if(req.body.newChatMessage==';)')
+		{
+			req.body.newChatMessage=emoji.get('wink');
+		}
+		else if(req.body.newChatMessage=='<3')
+		{
+			req.body.newChatMessage=emoji.get('heart');
+		}
+		else if(req.body.newChatMessage=='(y)')
+		{
+			req.body.newChatMessage=emoji.get('thumbsup');
+		}
+		else if(req.body.newChatMessage==':3')
+		{
+			req.body.newChatMessage=emoji.get('angry');
+		}
+		else if(req.body.newChatMessage=='B-|')
+		{
+			req.body.newChatMessage=emoji.get('sunglasses');
+		}
+		else if(req.body.newChatMessage==':-P')
+		{
+			req.body.newChatMessage=emoji.get('stuck_out_tongue_closed_eyes');
+		}
+		else if(req.body.newChatMessage==':poop:')
+		{
+			req.body.newChatMessage=emoji.get('poop');
+		}
+		else if(req.body.newChatMessage=='3:)')
+		{
+			req.body.newChatMessage=emoji.get('smiley_cat');
+		}
 		var newChatMessage = {
 			//room: req.body.newRoom,
 			text: req.body.newChatMessage,
@@ -408,8 +462,11 @@ app.put('/show/loginUser',function(req,res,next){
 	console.log(req.body.name);
 	console.log(req.body.roomName);
 	console.log(req.body.username);
-db.collection('tasks', function(err, tasksCollection){
-		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.username}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
+	db.collection('users', function(err, usersCollection){
+			usersCollection.findOne({username: req.body.name},function(err, user){
+				if(user) {
+          db.collection('tasks', function(err, tasksCollection){
+		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name,file:user.file}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
 			console.log(tasks);
 			console.log(tasks.length);
 			//if(tasks.length>0)
@@ -418,6 +475,9 @@ db.collection('tasks', function(err, tasksCollection){
 			//return res.send();
 			//}
 		});
+});
+				}
+			});
 		return	db.collection;
 });
 
@@ -552,7 +612,7 @@ app.post('/room/task/user', function(req, res, next){
 				var dat=req.body.pername;
 				if(user){
 					db.collection('tasks', function(err, tasksCollection){
-						tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name}]}}, {name: req.body.taskName}]}).toArray(function(err, task){
+						tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name,file:user.file}]}}, {name: req.body.taskName}]}).toArray(function(err, task){
 							console.log("check is"+task.length);
 							console.log(task);
 							if(task.length>0){
@@ -570,7 +630,7 @@ app.post('/room/task/user', function(req, res, next){
 								{name: req.body.taskName },
 								{ $push: { users: {username: req.body.name,file:user.file } } }
 								)
-                                
+                                //,file:user.file
 
 
                                   db.collection('rooms',function(err,roomCollection){
@@ -655,7 +715,7 @@ app.put('/newTask', function(req, res, next){
 			team:req.body.newTeam,
 			users: [
 				{
-				   username:req.body.login
+				  // username:req.body.login
 				}
 				]
 			//user: user._id,
@@ -679,7 +739,7 @@ app.put('/newTask', function(req, res, next){
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.newTask},
-								{ $push: { users: {username: req.body.loginUser,file:user.file } } }
+								{ $push: { users: {username: req.body.loginUser,file:user.file} } }
 								)
 
 		});
