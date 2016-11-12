@@ -118,7 +118,10 @@
         background: linear-gradient(to right, rgba(169,3,41,1) 0%, rgba(143,2,34,1) 44%, rgba(109,0,25,1) 100%);
         filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#a90329', endColorstr='#6d0019', GradientType=1 );
     }
-
+    .side-nav>h4 {
+		color: white;
+        width: 225px;
+    }
     .side-nav>li>a {
 		color: white;
         width: 225px;

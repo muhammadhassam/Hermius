@@ -46,7 +46,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#/">Hermius</a>
+                <a class="navbar-brand" href="#/home">Hermius</a>
             </div>
             <!-- Top Menu Items -->
 		
@@ -176,9 +176,9 @@
 					<ul class="list-group"  >
 						<li class="list-group-item" ng-repeat = "chatMessage in chatMessages">
 							<span ><img ng-src="/fileuploads/{{ chatMessage.file=='default.png' ? chatMessage.file : chatMessage.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img> </span>
-							<a href="#">{{ chatMessage.username }}</a>
-							<span><img  ng-if="::chatMessage.uploadFile" ng-src="/fileuploads/{{chatMessage.uploadFile }}" width="50%"></img></span>
-							<BR>
+							<a href="#">{{ chatMessage.username }}</a></br>
+							<span><img style="margin-top: 5px;" ng-if="::chatMessage.uploadFile" ng-src="/fileuploads/{{chatMessage.uploadFile }}" width="50%"></img></span>
+							</BR>
 							<small>{{ chatMessage.text }}</small>
 							<!--<span ng-repeat="file in image" ng-show="image">
 								<img ng-src="{{file.filename}}" width= "50%" class="img-circle" ></img>
