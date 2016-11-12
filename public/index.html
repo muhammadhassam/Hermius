@@ -359,10 +359,10 @@
 
                  });
 	   }
-	  /* $scope.reload = function()
+	   $scope.reload = function()
        {
         location.reload(); 
-       }*/
+       }
 	   //showTaskandRoomforUser();			
 			//Login function
 			$scope.signin = function(){
@@ -373,7 +373,7 @@
 					$cookies.put('currentUser', $scope.username);
 					$rootScope.token = res.data.token;
 					$rootScope.currentUser = $scope.username;
-					//location.reload();
+					location.reload();
 					//alert('Successfully signed in!');
 				}, function(err) {
 					alert('Wrong Username or Password');
