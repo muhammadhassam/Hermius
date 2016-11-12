@@ -500,11 +500,11 @@ app.put('/show/loginUser',function(req,res,next){
 	console.log(req.body.name);
 	console.log(req.body.roomName);
 	//console.log(req.body.username);
-	db.collection('users', function(err, usersCollection){
-			usersCollection.findOne({username: req.body.name},function(err, user){
+	//db.collection('users', function(err, usersCollection){
+			//usersCollection.findOne({username: req.body.name},function(err, user){
 				//if(user) {
           db.collection('tasks', function(err, tasksCollection){
-		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name,file:user.file}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
+		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
 			console.log(tasks);
 			console.log(tasks.length);
 			//if(tasks.length>0)
@@ -512,8 +512,8 @@ app.put('/show/loginUser',function(req,res,next){
 			return res.json(tasks);
 			//return res.send();
 			//}
-		});
-});
+		//});
+//});
 				//}
 			});
 		return	db.collection;
@@ -650,7 +650,7 @@ app.post('/room/task/user', function(req, res, next){
 				var dat=req.body.pername;
 				if(user){
 					db.collection('tasks', function(err, tasksCollection){
-						tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name,file:user.file}]}}, {name: req.body.taskName}]}).toArray(function(err, task){
+						tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name}]}}, {name: req.body.taskName}]}).toArray(function(err, task){
 							console.log("check is"+task.length);
 							console.log(task);
 							if(task.length>0){
@@ -666,7 +666,7 @@ app.post('/room/task/user', function(req, res, next){
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.taskName },
-								{ $push: { users: {username: req.body.name,file:user.file } } }
+								{ $push: { users: {username: req.body.name } } }
 								)
                                 //,file:user.file
 
@@ -797,7 +797,7 @@ app.put('/newTask', function(req, res, next){
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.newTask},
-								{ $push: { users: {username: req.body.loginUser,file:user.file} } }
+								{ $push: { users: {username: req.body.loginUser} } }
 								)
 
 		});
