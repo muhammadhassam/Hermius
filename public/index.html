@@ -58,7 +58,7 @@
 	<script type="text/javascript">
 		var app = angular.module('hermius', ['ngRoute', 'ngCookies']);
 
-		var meetingRoomName, meetingTaskName, meetingTeamName;
+		var meetingRoomName, meetingTaskName, meetingTeamName,selectedUser;
 		var roomNumber = 1;
 		var linkButton = false;
 		var taskButton = false;
@@ -100,6 +100,10 @@
 			}) 
 			.when('/room/:meetingRoomName', {
 		    templateUrl: 'room.html',
+		    controller: 'RoomController',
+			})
+			.when('/user/profile', {
+		    templateUrl: 'userProfile.html',
 		    controller: 'RoomController',
 			})
 			.when('/profile', {
@@ -216,6 +220,7 @@
 							$scope.filetype="file";
 							 $scope.myFile={};
 							 alert("Choose image type file");
+							 location.reload();
 						}
             
                var fd = new FormData();
@@ -354,10 +359,10 @@
 
                  });
 	   }
-	   $scope.reload = function()
+	  /* $scope.reload = function()
        {
         location.reload(); 
-       }
+       }*/
 	   //showTaskandRoomforUser();			
 			//Login function
 			$scope.signin = function(){
@@ -368,7 +373,7 @@
 					$cookies.put('currentUser', $scope.username);
 					$rootScope.token = res.data.token;
 					$rootScope.currentUser = $scope.username;
-					location.reload();
+					//location.reload();
 					//alert('Successfully signed in!');
 				}, function(err) {
 					alert('Wrong Username or Password');
@@ -763,8 +768,17 @@
 				$http.post('/room/task/user', {name: $scope.username, taskName: meetingTaskName, roomName: $rootScope.meetingRoomName,teamName:meetingTeamName}).then(function(response){
 					//console.log("User added");
 					console.log("Current Room: "+ $scope.username);
+					selectedUser=$scope.username;
+					$rootScope.selectedUser=$scope.username;
 					getUsersBasedOnTask(meetingTaskName);
 					$scope.username = "";
+					var cond=$rootScope.currentUser;
+					//if(selectedUser=="hassam")
+					//{
+						//console.log("alert");
+					//alert(selectedUser+" is added in " +meetingTeamName+ " ,"+$rootScope.meetingRoomName+ " and "+meetingTaskName);
+				    //location.reload();	
+				//}
 				},function(err){
 					console.log(err);
 					if(err.status == 404){
@@ -1032,6 +1046,23 @@
 					taskButton = false;
 				}
 			}
+
+$scope.ShowClickUserProfile = function(selectedUser)
+{
+    	$http.put('/show/click/user/profile', {username:selectedUser}).then(function(response){
+					//console.log($rootScope.meetingTaskName+" Rootscope taskname");
+				     $rootScope.selectedUser=selectedUser;
+					$scope.clickUserprofile = response.data;
+					$rootScope.clickUserprofile = response.data;
+					console.log("profile");
+					console.log(selectedUser);
+					console.log($scope.clickUserprofile);
+					
+				});
+
+
+}
+
 
 			$scope.submit = function()
 			{

@@ -59,6 +59,11 @@ app.post('/profile',upload.any(), function (req, res, next) {
      
 //      //return res.send(req.files);
    });
+   /*db.students.update(
+   { _id: 1, grades: 80 },
+   { $set: { "grades.$" : 82 } }
+)*/
+
  });
 return res.json(req.files);
 
@@ -724,6 +729,26 @@ app.get('/users/invite', function(req, res, next){
 	//return db.collection();
 	//res.send();
 });
+// function to show user profile on click
+     app.put('/show/click/user/profile', function(req, res, next){
+
+       db.collection('users', function(err, messagesCollection){
+		messagesCollection.find({username:req.body.username}).toArray(function(err, messages){
+			return res.json(messages);
+
+		});
+		return	db.collection;
+
+	});
+	//console.log("profile");
+
+	//return db.collection();
+	//res.send();
+});
+
+
+
+
 
 
 //Function to Add a task

@@ -137,7 +137,7 @@
 				<ul class="list-group">
 					<li class="list-group-item"  ng-repeat="user in users ">
 						<!--<a href="#/room/{{ room.name }}">{{ task.users}} </a>-->
-						<span><img ng-src="/fileuploads/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="">{{ user.username }} </a>
+						<span><img ng-src="/fileuploads/{{  user.file=='default.png' ? user.file : user.file[0].filename }}" width="30px" height="30px" class="img-circle" ></img></span><a href="#/user/profile" ng-click="ShowClickUserProfile(user.username)">{{ user.username }} </a>
 					</li>
 				</ul>
 				</div>
