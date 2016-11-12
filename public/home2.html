@@ -87,15 +87,18 @@
                         </ul>
                     </li>-->
                      
-    <h4>Select from existing teams</h4>
-					<ul  class="list-group" >
-						<li class="list-group-item" ng-repeat = "team in teams">
+                    <h4 ng-hide="clickedLinkButton" style="color: white; text-align: left;  margin-left: 15px; margin-top: 30px">Select a team</h4>
+					<ul  class="list-group" ng-repeat = "team in teams">
+						<!--<li class="list-group-item" >-->
 							<!--<a href="#/room/{{ room.name }}"><button type="button" class="btn btn-secondary" ng-click="getChatMessagesByRoomNameAng(room.name)">{{ room.name || room.text }} </button></a>-->
-							<a href="#/home/{{team.name}}"><button type="button" class="btn btn-link" ng-click="AssignTeamNameArg(team.name)">{{ team.name }} </button></a>					
-						</li>
+							<!--<a href="#/home/{{team.name}}"><button type="button" class="btn btn-link" ng-click="AssignTeamNameArg(team.name)">{{ team.name }} </button></a>					-->
+                            <button ng-hide="clickedLinkButton" style="width: 100%; text-align: left" ng-model="room.name" ng-click="AssignTeamNameArg(team.name)"  class="side-button" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-fw fa-arrows-v"></i>#{{team.name }}
+                            </button>
+                        <!--</li>-->
 					</ul>
-        
-                    <li><h4 style="color: white; text-align: left; margin-top: 25px; margin-left: 15px;"> Projects & Tasks</h4></li>
+                    <div ng-show="meetingTeamName">
+                    <!--<li><h4 style="color: white; text-align: left; margin-top: 25px; margin-left: 15px;"> Projects & Tasks</h4></li>-->
                     <li><h3 ng-hide="clickedLinkButton" style="color: white; text-align: left;  margin-left: 15px;">  Select a Project/Room</h3></li>
                     <li><h3 ng-show="clickedLinkButton" style="color: white; text-align: left;  margin-left: 15px;">  Select a Task</h3></li>
                     <ul class="list-group" style="margin-top: 15px;" ng-repeat = "room in rooms">
@@ -107,7 +110,7 @@
                     <li ng-repeat="task in tasks" class="list-group-item" style="padding: 5px 00px 10px 00px;overflow-wrap: break-word; background-color: rgba(169,3,41,1);222; color: white; border: 2px; margin-left: 5px;" ng-show="clickedLinkButton">
                             <a href="" style="color: white" ng-click="getFeedsByTasks(task.name)"> <i class="fa fa-fw fa-arrows-v"></i>#{{task.name}}<br></a>
                     </li>
-                        
+                    </div>    
                     <li>
                         <a href="#/room" ng-click="reload()"><i class="fa fa-fw fa-desktop"></i> Create a meeting Room/Project</a>
                     </li>
