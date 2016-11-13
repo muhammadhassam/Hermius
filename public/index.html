@@ -245,6 +245,14 @@
 				
 		    	 showUserProfile();
 			};
+			$scope.changeprofile = function(){
+				$http.put('/User/updateProfile',{fullname:$rootScope.currentUser}).then(function(response){
+							
+							 //console.log("change");
+							});
+                
+
+			}
 			
 			$scope.logout = function(){
 				console.log("IM IN LOG OUT METHOD")
@@ -796,8 +804,9 @@
 			function getUsersBasedOnTask(taskName){
 				$http.put('/showUsers',{taskName: taskName}).then(function(response){
 					$scope.taskUsers = response.data;
+					console.log($scope.taskUsers);
 					angular.forEach($scope.taskUsers, function(item, index){
-						item.users.splice(0,1);
+						//item.users.splice(0,1);
 						$scope.users = item.users;
 					});
 				});

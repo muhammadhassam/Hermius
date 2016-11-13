@@ -27,7 +27,7 @@ var JWT_SECRET = 'hermeszeus';
 
 var db = null;
 //var messages;
-MongoClient.connect("mongodb://localhost:27017/FinalFYP", function(err, dbconn){
+MongoClient.connect("mongodb://localhost:27017/FinalFYP1", function(err, dbconn){
 	if (!err) {
 		console.log("We are connected");
         db = dbconn;   
@@ -472,7 +472,7 @@ app.put('/show/loginUser/home',function(req,res,next){
 			usersCollection.findOne({username: req.body.name},function(err, user){
 				//if(user) {
           db.collection('tasks', function(err, tasksCollection){
-		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name,file:user.file}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
+		tasksCollection.find({$and:[{"users": {$in:[{username:req.body.name}]}}, {room: req.body.roomName}]}).toArray(function(err, tasks){
 			console.log(tasks);
 			console.log(tasks.length);
 			//if(tasks.length>0)
@@ -522,6 +522,23 @@ app.put('/show/loginUser',function(req,res,next){
 });
 
 
+app.put('/User/updateProfile', function(req, res, next){
+
+       /*db.collection('users', function(err, messagesCollection){
+		messagesCollection.find().toArray(function(err, messages){
+			return res.json(messages);
+
+		});*/
+		//return	db.collection;
+		console.log("change");
+	});
+
+
+
+
+
+
+
 
 //Function to select Team name
 app.put('/newTeam', function(req, res, next){
@@ -537,7 +554,7 @@ app.put('/newTeam', function(req, res, next){
 			name: req.body.newTeam,
 			teamUsers:[
 				{
-					//name: req.body.username
+					username: req.body.username
 				}
 			]
 			//user: user._id,
@@ -551,12 +568,12 @@ app.put('/newTeam', function(req, res, next){
 				teamsCollection.insert(newTeam, {w:1}, function(err, messages){
 					
 				
-				 teamsCollection.update(	
+				/* teamsCollection.update(	
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.newTeam},
 								{ $push: { teamUsers: {username: req.body.username } } }
-								)
+								)*/
 					return res.send();
 				});
 // push users array
@@ -586,7 +603,9 @@ app.put('/newRoom', function(req, res, next){
 			team: req.body.teamName,
 			roomUsers:[
 				{
-					
+				  
+					username: req.body.username
+				   	
 				}
 			]
 			//user: user._id,
@@ -601,12 +620,12 @@ app.put('/newRoom', function(req, res, next){
 					
 					//var token = jwt.encode(user, JWT_SECRET);
 					//return res.json({token: token});
-					roomsCollection.update(	
+				/*	roomsCollection.update(	
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.newRoom},
 								{ $push: { roomUsers: {username: req.body.username } } }
-								)
+								)*/
 					return res.send();
 				});
 
@@ -773,7 +792,7 @@ app.put('/newTask', function(req, res, next){
 			team:req.body.newTeam,
 			users: [
 				{
-				  // username:req.body.login
+				   username:req.body.loginUser
 				}
 				]
 			//user: user._id,
@@ -793,12 +812,12 @@ app.put('/newTask', function(req, res, next){
 			//var token = jwt.encode(user, JWT_SECRET);
 			//return res.json({token: token});
 			//return res.send();
-          tasksCollection.update(	
+         /* tasksCollection.update(	
 								//{ name: req.body.taskName },
 								//{$and:[{name: req.body.roomtaskName} , { room: req.body.meetingRoomName}]},
 								{name: req.body.newTask},
 								{ $push: { users: {username: req.body.loginUser} } }
-								)
+								)*/
 
 		});
 
